@@ -14,3 +14,6 @@ The immutable original proposal.
 
 ### Web App Proposal.docx
 The mutable proposal.
+
+### Mockup_Library_Furniture_ERD
+Mockup of the DB and how Entity Classes relate to one another
