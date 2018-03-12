@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css?family=Lato');
+
+/* HSU COLOR SCHEMA:
+	#25551B, #0C4301, #5C8021, #87A625, #B65300, #984907, #933621, #5e2417*/
+
+body{
+	font-family: 'Lato', sans-serif; 
+}
+
+header{
+	background-color: #25551B;
+}
+
+h1, h3{
+	color: white;
+}
+
+nav{
+	background-color: #0C4301;
+	
+}
+
+nav > p{
+	border-bottom: 5px solid #0C4301;
+}
+
+.selected{
+	background-color: #25551B;
+	border-bottom: 5px solid #87A625;
+}
+
+
+nav > p:hover{
+	background-color: #25551B;
+	border-bottom: 5px solid #87A625;
+}
+
+nav > p > a{
+	color: white;
+	text-decoration: none;
+
+}
+
+main{
+	background-color: white;
+}
+
+main.login_main{
+	background-color: #5C8021;
+}
+
+form.layout-selector{
+	background-color:  #933621;
+}
+
+fieldset{
+	border: none;
+	background-color: #87A625;
+}
+
+form.layout-selector > fieldset{
+	background-color: transparent;
+}
+
+legend{
+	background-color: #933621;
+}
+
+footer{
+	background-color: #B65300;
+}
