@@ -56,10 +56,11 @@ nav > p{
 }
 
 main{
-	width: 100%;
-	height: 100%;
 	position: absolute;
-	margin-top: 140px;
+	top: 140px;
+	left: 0;
+	right: 0;
+	bottom: 0;
 }
 
 fieldset{
@@ -98,13 +99,27 @@ select{
 	display: inline;
 }
 
+#mapid{
+	display: block;
+	width: 100%;
+	height: 85%;
+}
+
 footer{
 	position: fixed;
 	bottom: 0;
 	left: 0;
 	width: 100%;
+	height: 5%;
+}
+
+.footd{
+	position: relative;
+	width: 100%;
+	height: 5%;
 }
 
 footer > p{
 	text-align: center;
 }
+

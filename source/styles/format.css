@@ -69,3 +69,7 @@ legend{
 footer{
 	background-color: #B65300;
 }
+
+footer > p{
+	font-weight: bold;
+}
