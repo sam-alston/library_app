@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!--
+    by: Eric Mott
+-->
+
+<head>
+    <title> Library App </title>
+    <meta charset="utf-8" />
+    
+    <link href="test.css" type="text/css" rel="stylesheet"/>
+  	
+</head>
+
+<body>
+	<!--<button onclick="minus()" id="plus"> - </button>-->
+	<button onclick="plus()" id="minus">+</button>
+
+<script>
+function plus(){
+    seat_places.push(seat);
+    cb = document.createElement('input');
+
+	furniture.seat_places.push(seat);
+	cb.type = "checkbox";
+	cb.name = "seat";
+	cb.value = "occupied";
+    
+}
+
+var furniture = {
+	num_seats: 4,
+	x: 24,
+	y: 50,
+	type: 'table_4',
+	whiteboard: 'false',
+	seat_places: []
+	};
+	
+var seat = {
+	occupied: 'false',
+	social: 'false',
+	study: 'false',
+	tech: 'false'
+	};
+	
+for (i = 0; i < furniture.num_seats; i++)
+{
+	furniture.seat_places.push(seat);
+
+	var label = document.createElement('label')
+	label.htmlFor = "id";
+	label.appendChild(document.createTextNode('Seat' + i));
+
+	var cb = document.createElement('input');
+	cb.type = "checkbox";
+	cb.name = "seat";
+	cb.value = "occupied";
+	
+	document.body.appendChild(cb);
+	document.body.appendChild(label);
+}
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+#mapid 
+{ 
+	height: 100em; 
+}
+
+button
+{
+	position: fixed;
+	bottom: 0px;
+	right: 0px;	
+}
+
+#minus
+{
+	position: fixed;
+	bottom: 20px;
+	right: 0px;	
+}
+
