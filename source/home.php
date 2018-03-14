@@ -28,7 +28,7 @@
         <?php
             if (!array_key_exists("username", $_SESSION)){
                 ?>
-                <p class="invalid-login"> Please first login before accessing the app</p>
+                <p class="invalid-login"> Please first <a href="index.php">login</a> before accessing the app</p>
                 <?php
             }
             else{
