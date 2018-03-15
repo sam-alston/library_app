@@ -3,17 +3,24 @@
 	height: 100em; 
 }
 
-button
+#minus
 {
 	position: fixed;
 	bottom: 0px;
 	right: 0px;	
 }
 
-#minus
+#plus
 {
 	position: fixed;
 	bottom: 20px;
 	right: 0px;	
+}
+
+.div {
+    padding: 0 18px;
+    display: none;
+    background-color: white;
+    overflow: hidden;
 }
 
