@@ -14,20 +14,10 @@
 </head>
 
 <body>
-	<!--<button onclick="minus()" id="plus"> - </button>-->
-	<button onclick="plus()" id="minus">+</button>
+	<button onclick="minus()" id="minus"> - </button>
+	<button onclick="plus()" id="plus">+</button>
 
 <script>
-function plus(){
-    seat_places.push(seat);
-    cb = document.createElement('input');
-
-	furniture.seat_places.push(seat);
-	cb.type = "checkbox";
-	cb.name = "seat";
-	cb.value = "occupied";
-    
-}
 
 var furniture = {
 	num_seats: 4,
@@ -47,19 +37,102 @@ var seat = {
 	
 for (i = 0; i < furniture.num_seats; i++)
 {
+//push a seat to the seat array
 	furniture.seat_places.push(seat);
 
-	var label = document.createElement('label')
+//create the label for the checkbox, will be Seat + (seat #)
+	var label = document.createElement('label');
 	label.htmlFor = "id";
-	label.appendChild(document.createTextNode('Seat' + i));
+	label.appendChild(document.createTextNode(' Seat ' + (i + 1)));
 
+//create the checkbox for the occupied input
 	var cb = document.createElement('input');
 	cb.type = "checkbox";
+	cb.id = 'checkbox' + (i + 1);
 	cb.name = "seat";
 	cb.value = "occupied";
 	
-	document.body.appendChild(cb);
+//creates a button to push for a drop down menu for each seat
+	var dd_button = document.createElement('button');
+	dd_button.name = "dropdown";
+	dd_button.className = "dropbutton";
+	
+//creates a div the will be in the drop down menu with more options for each seat
+	var dd_div = document.createElement('div');
+	dd_div.name = "div";
+	dd_div.className = "div";
+	
+//testing div content
+	var newContent = document.createTextNode("Hi there and greetings!"); 
+	dd_div.appendChild(newContent);
+
+//adds a new line for each seat
+	var br = document.createElement('br');
+	
+	document.body.appendChild(dd_button);
+	document.body.appendChild(dd_div);
 	document.body.appendChild(label);
+	document.body.appendChild(cb);
+	document.body.appendChild(br);
+}
+
+//this is the variable for the drop down menu
+var dd = document.getElementsByClassName("dropbutton");
+
+for (i = 0; i < dd.length; i++) 
+{
+    dd[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var div = this.nextElementSibling;
+        if (div.style.display === "block") {
+            div.style.display = "none";
+        } else {
+            div.style.display = "block";
+        }
+    });
+}
+
+function plus(){
+//add the seat first so i can set 'length' to the correct value
+	furniture.seat_places.push(seat);
+	
+//create all the variables i will be needing in the function
+	var length = furniture.seat_places.length;
+    var cb = document.createElement('input');
+    var br = document.createElement('br');
+    var label = document.createElement('label');
+	label.htmlFor = "id";
+	label.id = "label"+length;
+	label.appendChild(document.createTextNode('Seat ' + (furniture.seat_places.length + 1)));
+
+	cb.type = "checkbox";
+	cb.id = "checkbox"+length;
+	cb.name = "seat";
+	cb.value = "occupied";
+	
+//adds the elements to the body of the popup
+	document.body.appendChild(label);
+	document.body.appendChild(cb);
+	document.body.appendChild(br);
+}
+
+function minus(){
+	var length = furniture.seat_places.length;
+	if(furniture.seat_places.length > furniture.num_seats)
+	{
+		var removeLabel = document.getElementById("label"+length);
+    	removeLabel.remove();
+    	
+    	var removeCB = document.getElementById("checkbox"+length);
+    	removeCB.remove();
+    	
+    	furniture.seat_places.pop();
+	}
+	
+	else
+	{
+		alert("You can't remove default seats");
+	}
 }
 
 
