@@ -37,43 +37,7 @@ var seat = {
 	
 for (i = 0; i < furniture.num_seats; i++)
 {
-//push a seat to the seat array
-	furniture.seat_places.push(seat);
-
-//create the label for the checkbox, will be Seat + (seat #)
-	var label = document.createElement('label');
-	label.htmlFor = "id";
-	label.appendChild(document.createTextNode(' Seat ' + (i + 1)));
-
-//create the checkbox for the occupied input
-	var cb = document.createElement('input');
-	cb.type = "checkbox";
-	cb.id = 'checkbox' + (i + 1);
-	cb.name = "seat";
-	cb.value = "occupied";
-	
-//creates a button to push for a drop down menu for each seat
-	var dd_button = document.createElement('button');
-	dd_button.name = "dropdown";
-	dd_button.className = "dropbutton";
-	
-//creates a div the will be in the drop down menu with more options for each seat
-	var dd_div = document.createElement('div');
-	dd_div.name = "div";
-	dd_div.className = "div";
-	
-//testing div content
-	var newContent = document.createTextNode("Hi there and greetings!"); 
-	dd_div.appendChild(newContent);
-
-//adds a new line for each seat
-	var br = document.createElement('br');
-	
-	document.body.appendChild(dd_button);
-	document.body.appendChild(dd_div);
-	document.body.appendChild(label);
-	document.body.appendChild(cb);
-	document.body.appendChild(br);
+	plus();
 }
 
 //this is the variable for the drop down menu
@@ -92,25 +56,49 @@ for (i = 0; i < dd.length; i++)
     });
 }
 
-function plus(){
-//add the seat first so i can set 'length' to the correct value
+function plus()
+{
+//push a seat to the seat array
 	furniture.seat_places.push(seat);
 	
-//create all the variables i will be needing in the function
+//used to make unique id's for each of the elements
 	var length = furniture.seat_places.length;
-    var cb = document.createElement('input');
-    var br = document.createElement('br');
-    var label = document.createElement('label');
-	label.htmlFor = "id";
-	label.id = "label"+length;
-	label.appendChild(document.createTextNode('Seat ' + (furniture.seat_places.length + 1)));
 
+//create the label for the checkbox, will be Seat + (seat #)
+	var label = document.createElement('label');
+	//label.htmlFor = "id";
+	label.id = "label"+length;
+	label.appendChild(document.createTextNode(' Seat ' + (length)));
+
+//create the checkbox for the occupied input
+	var cb = document.createElement('input');
 	cb.type = "checkbox";
-	cb.id = "checkbox"+length;
+	cb.id = 'checkbox' + length;
 	cb.name = "seat";
 	cb.value = "occupied";
 	
-//adds the elements to the body of the popup
+//creates a button for a drop down menu for each seat
+	var dd_button = document.createElement('button');
+	dd_button.name = "dropdown";
+	dd_button.id = "dd_button"+length;
+	dd_button.className = "dropbutton";
+	
+//creates a div the will be in the drop down menu with more options for each seat
+	var dd_div = document.createElement('div');
+	dd_div.name = "div";
+	dd_div.id = "dd_div" + length;
+	dd_div.className = "div";
+	
+//testing div content
+	var newContent = document.createTextNode("Hi there and greetings!"); 
+	dd_div.appendChild(newContent);
+
+//adds a new line for each seat
+	var br = document.createElement('br');
+	br.id = "br"+length;
+	
+	document.body.appendChild(dd_button);
+	document.body.appendChild(dd_div);
 	document.body.appendChild(label);
 	document.body.appendChild(cb);
 	document.body.appendChild(br);
@@ -118,13 +106,25 @@ function plus(){
 
 function minus(){
 	var length = furniture.seat_places.length;
+	
+//used to make sure the user doesn't delete the default seats
 	if(furniture.seat_places.length > furniture.num_seats)
 	{
+	//removing each of the element in the the popup
+		var removeDD = document.getElementById("dd_button"+length);
+    	removeDD.remove();
+    	
+    	var removeDD_div = document.getElementById("dd_div"+length);
+    	removeDD_div.remove();
+		
 		var removeLabel = document.getElementById("label"+length);
     	removeLabel.remove();
     	
     	var removeCB = document.getElementById("checkbox"+length);
     	removeCB.remove();
+    	
+    	var removeBR = document.getElementById("br"+length);
+    	removeBR.remove();
     	
     	furniture.seat_places.pop();
 	}
