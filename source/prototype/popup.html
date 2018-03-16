@@ -14,8 +14,24 @@
 </head>
 
 <body>
+
+	<div id="seat_div"></div>
+	<div id="wb_div">
+		<button onclick="wb_drop()" id="wb_button" class="wb"></button>
+		<label>
+			Whiteboard <input type="checkbox" name="wb"></input>
+		</label>
+		
+		<div id="wb_div">
+			<label id="wb_label" class="div">
+				Partion <input type="radio" name="wb" value="partion"/> <br />
+				 
+				Writing <input type="radio" name="wb" value="writing"/> <br />
+			</label>
+		</div>
+	</div>
 	<button onclick="minus()" id="minus"> - </button>
-	<button onclick="plus()" id="plus">+</button>
+	<button onclick="plus()" id="plus">+</button> 
 
 <script>
 
@@ -40,21 +56,6 @@ for (i = 0; i < furniture.num_seats; i++)
 	plus();
 }
 
-//this is the variable for the drop down menu
-var dd = document.getElementsByClassName("dropbutton");
-
-for (i = 0; i < dd.length; i++) 
-{
-    dd[i].addEventListener("click", function() {
-        this.classList.toggle("active");
-        var div = this.nextElementSibling;
-        if (div.style.display === "block") {
-            div.style.display = "none";
-        } else {
-            div.style.display = "block";
-        }
-    });
-}
 
 function plus()
 {
@@ -66,14 +67,13 @@ function plus()
 
 //create the label for the checkbox, will be Seat + (seat #)
 	var label = document.createElement('label');
-	//label.htmlFor = "id";
 	label.id = "label"+length;
 	label.appendChild(document.createTextNode(' Seat ' + (length)));
 
 //create the checkbox for the occupied input
 	var cb = document.createElement('input');
 	cb.type = "checkbox";
-	cb.id = 'checkbox' + length;
+	cb.id = "checkbox"+ length;
 	cb.name = "seat";
 	cb.value = "occupied";
 	
@@ -88,20 +88,36 @@ function plus()
 	dd_div.name = "div";
 	dd_div.id = "dd_div" + length;
 	dd_div.className = "div";
-	
-//testing div content
-	var newContent = document.createTextNode("Hi there and greetings!"); 
-	dd_div.appendChild(newContent);
+	div_content(dd_div);
 
 //adds a new line for each seat
 	var br = document.createElement('br');
 	br.id = "br"+length;
 	
-	document.body.appendChild(dd_button);
-	document.body.appendChild(dd_div);
-	document.body.appendChild(label);
-	document.body.appendChild(cb);
-	document.body.appendChild(br);
+	document.body.firstElementChild.appendChild(dd_button);
+	document.body.firstElementChild.appendChild(label);
+	document.body.firstElementChild.appendChild(cb);
+	document.body.firstElementChild.appendChild(dd_div);
+	document.body.firstElementChild.appendChild(br);
+	
+//this is the variable for the drop down menu
+	var dd = document.getElementsByClassName("dropbutton");
+	
+	dd[(dd.length - 1)].addEventListener("click",
+    	function() 
+    		{
+        		var div = this.nextElementSibling.nextElementSibling.nextElementSibling;
+       			if (div.style.display === "block") 
+       			{
+            		div.style.display = "none";
+        		} 
+        		
+        		else 
+        		{
+           			div.style.display = "block";
+        		}
+    		});
+	
 }
 
 function minus(){
@@ -135,6 +151,61 @@ function minus(){
 	}
 }
 
+function div_content(dd_div)
+{
+	var length = furniture.seat_places.length;
+	var soc_label = document.createElement('label');
+	soc_label.id = "soc_label"+length;
+	soc_label.appendChild(document.createTextNode('Social ' + (length)));
+	
+	var social = document.createElement('input');
+	social.type = "radio";
+	social.id = "social"+length;
+	social.name = "activity";
+	
+	var study_label = document.createElement('label');
+	study_label.id = "study_label"+length;
+	study_label.appendChild(document.createTextNode('Study ' + (length)));
+	
+	var study = document.createElement('input');
+	study.type = "radio";
+	study.id = "study"+length;
+	study.name = "activity";
+	
+	var tech_label = document.createElement('label');
+	tech_label.id = "tech_label"+length;
+	tech_label.appendChild(document.createTextNode('Technology ' + (length)));
+	
+	var tech = document.createElement('input');
+	tech.type = "checkbox";
+	tech.id = "tech"+length;
+	
+	var soc_br = document.createElement('br');
+	var study_br = document.createElement('br');
+	
+	dd_div.appendChild(soc_label);
+	dd_div.appendChild(social);
+	dd_div.appendChild(soc_br);
+	dd_div.appendChild(study_label);
+	dd_div.appendChild(study);
+	dd_div.appendChild(study_br);
+	dd_div.appendChild(tech_label);
+	dd_div.appendChild(tech);
+}
+
+function wb_drop()
+{
+    var div = document.getElementById('wb_label');
+    if (div.style.display === "block") 
+    {
+        div.style.display = "none";
+    } 
+        		
+    else 
+    {
+        div.style.display = "block";
+    }
+}
 
 </script>
 
