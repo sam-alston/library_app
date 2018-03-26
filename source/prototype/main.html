@@ -3,6 +3,7 @@
 
 <!--
     by: Eric Mott
+    http://nrs-projects.humboldt.edu/~em73/LibraryApp/main.html
 -->
 
 <head>
@@ -34,7 +35,7 @@
   <script>
 
   // initialize the map
-   var mymap = L.map('mapid', {
+  var mymap = L.map('mapid', {
   	 crs: L.CRS.Simple
   	 });
   
@@ -49,6 +50,10 @@
     	fillOpacity: 0.5,
     	radius: 15}).addTo(mymap);
     var popup = L.popup();
+
+/*mymap.on('click', function(e) {
+    alert("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng)
+});*/
 
 function onMapClick(e) {
     popup
