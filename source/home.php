@@ -44,8 +44,7 @@
                 
 
                 <?php
-                $dbh = new PDO('mysql:host=localhost;dbname=toysdb;charset=utf8mb4', 'root', '');
-
+                    $dbh = new PDO('mysql:host=localhost;dbname=toysdb;charset=utf8mb4', 'root', '');
                 ?>
                 <p>This is where the print statement should go</p>
                 <?php

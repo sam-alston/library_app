@@ -48,8 +48,20 @@
                 <p class="nav"><a href="logout.php">Logout</a></p>
             </nav>
 
+            <?php
+
+                $dbh = new PDO('mysql:host=localhost;dbname=hsu_library;charset=utf8mb4', 'root', '');
+
+                $stmt1 = $dbh->query("SELECT floor FROM layout where floor = /*insert floor selected here */");
+
+                /*statment for after layout is selected*/
+                $stmt2 = $dbh->query("SELECT layout_image FROM layout where layout_id = /*Selected Layout*/");
+
+            ?>
+
             <form class="layout-selector" id="lay-select">
                 <fieldset>
+                    <!-- Set up a Query here to add options for each layout based on what floors are available in the databse-->
                     <select name="floor-select">
                         <option value="default">Choose a Floor</option>
                         <option value="floorplan.svg">Floor 1</option>
@@ -57,7 +69,7 @@
                         <option value="f3">Floor 3</option>
                     </select>
                     <select name="layout-select">
-                        <!--REPLACE THIS PLACEHOLDER SELECT WITH SELECT POPULATED BY PREVIOUS SELECTION layoud -->
+                        <!-- Populate these options with those from the database-->
                         <option value="default">Choose a Layout</option>
                         <option value="lay-1">Layout 1</option>
                         <option value="lay-2">Layout 2</option>

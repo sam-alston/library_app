@@ -22,6 +22,7 @@ nav{
 
 nav > p{
 	border-bottom: 5px solid #0C4301;
+	transition: background-color 1s;
 }
 
 .selected{
