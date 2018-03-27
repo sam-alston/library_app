@@ -1,5 +1,7 @@
 <?php
 	session_start();
+
+	//initilize an admin account for only those who know it to access it
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -26,7 +28,7 @@
     	  	?>
 			    <form class="login" action="<?= htmlentities($_SERVER['PHP_SELF'], ENT_QUOTES) ?>" method="post">
 			    	<fieldset >
-			    		<legend>Please Enter Humboldt(Oracle) Login</legend>
+			    		<legend>Please Enter App Login</legend>
 			    		<label for="username_in">Username: </label>
 			    		<input type="text" name="username_in" required="required">
 			    		<label for="password_in">Password: </label>
@@ -36,37 +38,44 @@
 			    </form>
 			<?php
 			}
-
 			else
 			{
 			    
 			    $username = strip_tags($_POST['username_in']);
 			    $password = $_POST['password_in'];
+			    $author = "has no value";
+
+			    if($username == "admin" && $password == "gdc4562" ){
 
 			    // set up db connection string THIS WILL BE REPLACED WITH HUMBOLDT ACCOUNT INFORMATION
-			    $db_conn_str = "(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)
-			                                   (HOST = cedar.humboldt.edu)
-			                                   (PORT = 1521))
-			                        (CONNECT_DATA = (SID = STUDENT)))";
-			    $conn = oci_connect($username, $password, $db_conn_str);
-			    if (! $conn)
-        		{
-					?>
-					<p> Could not log into Oracle, sorry. </p>
-					<footer>
-					    <p>Designed by Web App team</p>
-					    <p>	&copy; Humboldt State University</p>
-					</footer>
-	</main>
-</body>
-</html>
-					<?php
-					exit;
+			    $db_conn_str = new PDO('mysql:host=localhost;hsu_library', "root", "");
+
+			    try{
+				    $dbh = new PDO('mysql:host=localhost;hsu_library', "root", "");
+				    foreach($dbh->query('SELECT * from furniture') as $row) {
+				        print_r($row);
+				    }
+				    $dbh = null;
+					}
+				catch (PDOException $e){
+					    print "Error!: " . $e->getMessage() . "<br/>";
+					    die();
 				}
+			
 				//if I reach here, I have connected to my username and password, and can now travel to the next page and store session variables
 				$_SESSION["username"] = $username;
 				$_SESSION["password"] = $password;
+				$_SESSION["dbc"] = $dbh;
+				$_SESSION["author"] = $author;
 				header("Location:home.php");
+			    }
+			    else{
+			    	?>
+			    	<p>You have entered the wrong login, please try again</p>
+			    	<a href="logout.php">Try Again</a>
+			    	<?php
+			    }
+
 			}
 			?>
     </main>

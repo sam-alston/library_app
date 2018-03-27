@@ -33,12 +33,12 @@
     
     <main>
     <?php
-        /*if (!array_key_exists("username", $_SESSION)){
+        if (!array_key_exists("username", $_SESSION)){
             ?>
             <p class="invalid-login"> Please first <a href="index.php">login</a> before accessing the app</p>
             <?php
         } 
-        else{*/
+        else{
              ?>
             <nav>
                 <p class="nav"><a href="home.php">Home</a></p>
@@ -65,10 +65,10 @@
                     <button type="button" id="sub_layout">Submit </button>
                 </fieldset>
             </form>
-            <span id="text">_____</span>
+            <span id="text"><?= $_SESSION['author']?></span>
             <div id="mapid"></div>
             <?php
-        /*}*/
+        }
     ?>
     <footer class="footd">
         <p>Designed by Web App team</p>
@@ -87,6 +87,9 @@
         mymap.fitBounds(bounds);
 
         submit.onclick = function(){
+
+            //Test using layout in localhost with .PDO connection ect.
+
             if( mymap.hasLayer(image)){
                 mymap.removeLayer(image);
             }

@@ -113,6 +113,12 @@ footer{
 	height: 5%;
 }
 
+.insert{
+	margin-left: 1em;
+	text-decoration: bold;
+	padding: .25em;
+}
+
 .footd{
 	position: relative;
 	width: 100%;
