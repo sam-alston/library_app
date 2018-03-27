@@ -27,6 +27,8 @@
 				Partion <input type="radio" name="wb" value="partion"/> <br />
 				 
 				Writing <input type="radio" name="wb" value="writing"/> <br />
+				
+				Other <input type="radio" name="wb" value="other"/> <br />
 			</label>
 		</div>
 	</div>
@@ -46,9 +48,13 @@ var furniture = {
 	
 var actions = ['occupied', 'study', 'social', 'tech'];
 
+//Used to keep track of if the seat being added is a default seat or a seat that was added on
+//Needed so we can automatically check the checkbox when adding seats
+var isDefualtSeat = false;
 
 for (i = 0; i < furniture.num_seats; i++)
 {
+	isDefualtSeat = true;
 	plus();
 }
 
@@ -79,6 +85,10 @@ function plus()
 	cb.id = "checkbox"+ length;
 	cb.name = "seat";
 	cb.value = "occupied";
+	if (!isDefualtSeat)
+	{
+		cb.checked = true;
+	}
 	
 //creates a button for a drop down menu for each seat
 	var dd_button = document.createElement('button');
@@ -120,7 +130,8 @@ function plus()
            			div.style.display = "block";
         		}
     		});
-	
+    		
+    isDefualtSeat = false;
 }
 
 function minus(){
@@ -157,32 +168,31 @@ function minus(){
 function div_content(dd_div)
 {
 	var length = furniture.seat_places.length;
-	
-	for (var i = 0; i < actions.length; i++)
+	var tempseat = furniture.seat_places[i]
+	for (var property in tempseat)
 	{
-		if(actions[i] != 'occupied')
+		if(tempseat.hasOwnProperty(property))
 		{
-			//creates the action label pulled from action array
-			var action_name = actions[i];
-			var label = document.createElement('label');
-			label.id = action_name + i;
-			label.appendChild(document.createTextNode(action_name + length));
-			
-			//creates the checkbox for the action
-			var input = document.createElement('input');
-			input.type = "checkbox";
-			input.id = "cb"+i;
-			input.name = action_name;
-			
-			dd_div.appendChild(label);
-			dd_div.appendChild(input);
-			
-			if(i != (actions.length-1))
+			if(property != 'occupied')
 			{
+				property = titleCase(property);
+				var label = document.createElement('label');
+				label.id = property+i;
+				label.appendChild(document.createTextNode(property));
+			
+				//creates the checkbox for the action
+				var input = document.createElement('input');
+				input.type = "checkbox";
+				input.id = "cb"+i;
+				input.name = property;
+			
+				dd_div.appendChild(label);
+				dd_div.appendChild(input);
+				
 				var br = document.createElement('br');
-				br.id = "br"+action_name;
-			 	dd_div.appendChild(br);
-			} 
+				br.id = "br"+property;
+			 	dd_div.appendChild(br); 
+			}
 		}
 	}
 }
@@ -199,6 +209,13 @@ function wb_drop()
     {
         div.style.display = "block";
     }
+}
+
+function titleCase(str)
+{
+	
+	str = str.charAt(0).toUpperCase() + str.substr(1).toLowerCase();
+	return str;
 }
 
 </script>
