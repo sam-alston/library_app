@@ -11,7 +11,7 @@
     <meta charset="utf-8" />
     <meat name="viewpoint" content="width=device-width, intial-scale=1"/>
 
-	<link href="test.css" type="text/css" rel="stylesheet"/>
+	<link href="main.css" type="text/css" rel="stylesheet"/>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
    		integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
@@ -25,12 +25,6 @@
 <body>
 	<h1> Leaflet Test </h1>
 	<div id="mapid"></div>
-	
-	<form>
-		<label> 
-			TEST <input type="checkbox" name="check" value="test"/>
-		</label>
-	</form>
 
   <script>
 
@@ -43,26 +37,23 @@
   	var image = L.imageOverlay('Floor1.png', bounds).addTo(mymap);
     	
     mymap.fitBounds(bounds);
-    	
-    var circle = L.circle([504, 371], {
+    
+    //This creates the popups content
+    var popup = '<iframe id="iframe" src="./popup.html"/>';
+    
+    //This is the dimensions for the popup
+    var popupDim = 
+    {
+    	'maxWidth': '5000',
+    	'maxHeight': '5000'
+    }
+    
+    //creates the circle(table) for the map
+    L.circle([504, 371], {
     	color: 'red',
     	fillColor: '#f03',
     	fillOpacity: 0.5,
-    	radius: 15}).addTo(mymap);
-    var popup = L.popup();
-
-/*mymap.on('click', function(e) {
-    alert("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng)
-});*/
-
-function onMapClick(e) {
-    popup
-        .setLatLng(e.latlng)
-        .setContent('<iframe id="iframe" src="./popup.html"></iframe>')
-        .openOn(mymap);
-}
-
-circle.on('click', onMapClick);
+    	radius: 40}).bindPopup(popup, popupDim).addTo(mymap);
 
 
   </script>

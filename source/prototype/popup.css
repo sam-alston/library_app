@@ -1,0 +1,83 @@
+#minus
+{
+	border-radius: 10px;
+	position: fixed;
+	bottom: 5px;
+	right: 10px;
+	padding: 14px;
+	margin: 10px;
+	font-size: 20px;
+	text-align: center;
+	outline: none;
+    cursor: pointer;
+}
+
+#plus
+{
+	border-radius: 10px;
+	position: fixed;
+	bottom: 65px;
+	right: 10px;
+	padding: 12px;
+	margin: 10px;
+	font-size: 20px;
+	text-align: center;
+	outline: none;
+    cursor: pointer;
+}
+
+.div
+{
+    padding: 0 18px;
+    display: none;
+    background-color: white;
+    overflow: hidden;
+}
+
+.action_label
+{
+	padding: 16px;
+	margin: 0px;
+	font-size: 15px;
+}
+
+.dropbutton, .wb
+{
+	border-radius: 10px;
+    position: relative; 
+    width: 175px;
+    height: 60px;
+    padding: 10px;
+    margin: 8px;
+    margin-right: 15px;
+    outline: none;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.wb
+{
+	margin-left: none;
+}
+
+.dropbutton:after, .wb:after
+{
+    content: "";
+    width: 0;
+    height: 0;
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    margin-top: -6px;
+    border-width: 6px 0 6px 6px;
+    border-style: solid;
+    border-color: transparent #000;    
+}
+
+.dropbutton.active:after, .wb.active:after
+{
+	position: absolute;
+    border-color: #000 transparent;
+    border-width: 6px 6px 0 6px ;
+    margin-top: -3px;
+}
