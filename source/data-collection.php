@@ -20,12 +20,25 @@
    <script src="./floor1.js"></script>
    <script src="./floor2.js"></script>
    <script src="./floor3.js"></script>
+   <script type="text/javascript">
+    $(function() {
+        $("#nav_toggle").click(function(){
+            $("nav").toggleClass("hidden");
+            $("header").toggleClass("hidden");
+            $("main").toggleClass("to-top");
+            $("footer").toggleClass("hidden");
+            $(".hide_nav").toggleClass("nav_open");
+        })
+    });
+    </script>
 </head>
 <body>
-    <header>
+    <button class="hide_nav" id="nav_toggle">&plus;</button>
+    <header class="hidden">
         <img class="logo" src="images/hsu-wm.svg">
-        <h1>Library Data Collector</h1>
-    </header>
+        <h1>Library Data Collector</h1>   
+    
+    
     <?php
         if (array_key_exists("username", $_SESSION)){
             ?>
@@ -33,8 +46,7 @@
             <?php
         }
     ?>
-    
-    <main>
+    </header>
     <?php
         if (!array_key_exists("username", $_SESSION)){
             ?>
@@ -43,7 +55,7 @@
         } 
         else{
              ?>
-            <nav>
+            <nav class="hidden">
                 <p class="nav"><a href="home.php">Home</a></p>
                 <p class="nav selected"><a href="data-collection.php">Data Collection</a></p>
                 <p class="nav"><a href="query-report.php">Query Report</a></p>
@@ -57,37 +69,34 @@
                 /*statment for after layout is selected*/
                 $stmt2 = $dbh->query("SELECT layout_image FROM layout where layout_id = /*Selected Layout*/");
             ?>
-
-            <form class="layout-selector" id="lay-select">
-                <fieldset>
-                    <!-- Set up a Query here to add options for each layout based on what floors are available in the databse-->
-                    <select name="floor-select">
-                        <option value="default">Choose a Floor</option>
-                        <option value="floor1.svg">Floor 1</option>
-                        <option value="floor2.svg">Floor 2</option>
-                        <option value="floor3.svg">Floor 3</option>
-                    </select>
-                    <select name="layout-select">
-                        <!-- Populate these options with those from the database-->
-                        <option value="default">Choose a Layout</option>
-                        <option value="lay-1">Layout 1</option>
-                        <option value="lay-2">Layout 2</option>
-                    </select>
-                    <button type="button" id="sub_layout">Submit </button>
-                </fieldset>
-            </form>
-            <span id="text"><?= $_SESSION['author']?></span>
-            <div id="mapid"></div>
-            <?php
-        }
-    ?>
-    <footer class="footd">
-        <p>Designed by Web App team</p>
-        <p> &copy; Humboldt State University</p>
-    </footer>
-    </main>
+            <main class="to-top">
+                <form class="layout-selector" id="lay-select">
+                    <fieldset>
+                        <!-- Set up a Query here to add options for each layout based on what floors are available in the databse-->
+                        <select name="floor-select">
+                            <option value="default">Choose a Floor</option>
+                            <option value="floor1.svg">Floor 1</option>
+                            <option value="floor2.svg">Floor 2</option>
+                            <option value="floor3.svg">Floor 3</option>
+                        </select>
+                        <select name="layout-select">
+                            <!-- Populate these options with those from the database-->
+                            <option value="default">Choose a Layout</option>
+                            <option value="lay-1">Layout 1</option>
+                            <option value="lay-2">Layout 2</option>
+                        </select>
+                        <button type="button" id="sub_layout">Submit</button>
+                    </fieldset>
+                </form>
+                <div id="mapid"></div>
+                    <?php
+                }
+            ?>
+                <footer class="footd hidden">
+                    <p>Designed by HSU Library Web App team. &copy; Humboldt State University</p>
+                </footer>
+            </main>
     <script>
-        
         //generates a map location
         var submit = document.getElementById("sub_layout");
         var floor_image = "local";
@@ -102,10 +111,10 @@
                 mymap.removeLayer(image);
             }
             var form_info = document.getElementById("lay-select");
-            var test =  document.getElementById("text");
-            floor_image = form_info.elements["floor-select"].value;
+            //var test =  document.getElementById("text");
+            floor_image = form_info.elements.namedItem("floor-select").value;
             s_layout = form_info.elements["layout-select"].value;
-            test.innerHTML = floor_image;
+            //test.innerHTML = floor_image;
 			floorIMGstr = String(floor_image);
             image = L.imageOverlay('./images/' + floorIMGstr, bounds).addTo(mymap);
             //pdo file must be read and processed here
