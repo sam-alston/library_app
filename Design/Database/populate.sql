@@ -1,26 +1,22 @@
 INSERT INTO `hsu_library`.`furniture_type`
 (`furniture_name`, `number_of_seats`)
-VALUES (`table_four`, 4);
+VALUES ('table_four', 4);
 
 INSERT INTO `hsu_library`.`furniture_type`
 (`furniture_name`, `number_of_seats`)
-VALUES (`chair`, 1);
-
-INSERT INTO `hsu_library`.``
-()
-VALUES ();
+VALUES ('chair', 1);
 
 INSERT INTO `hsu_library`.`room`
 (`facilities_id`, `name`)
-VALUES (`LIB 100`, `100`);
+VALUES ('LIB 100', '100');
 
-INSERT INTO 'hsu_library'.'layout'
+INSERT INTO `hsu_library`.`layout`
 (author,floor, date_created)
 VALUES ('SRA', 1, NOW());
 
 INSERT INTO `hsu_library`.`area`
 (`name`, `facilities_id`)
-VALUES (`Main Lobby`, `LIB 100`);
+VALUES ('Main Lobby', 'LIB 100');
 
 INSERT INTO `hsu_library`.`area_in_layout`
 (`area_id`, `layout_id`)
