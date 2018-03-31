@@ -1,5 +1,8 @@
+DROP SCHEMA `hsu_library` ;
+CREATE SCHEMA `hsu_library` ;
+
 CREATE TABLE `hsu_library`.`furniture_type` (
-  `furniture_type_id` INT NOT NULL,
+  `furniture_type_id` INT NOT NULL AUTO_INCREMENT,
   `furniture_name` VARCHAR(45) NOT NULL,
   `number_of_seats` INT NULL,
   PRIMARY KEY (`furniture_type_id`),
@@ -7,13 +10,13 @@ CREATE TABLE `hsu_library`.`furniture_type` (
 COMMENT = 'Contains the types of furniture such as tables and chairs, also stores their max number of seats.';
 
 CREATE TABLE `hsu_library`.`room` (
-  `maintenance_id` VARCHAR(10) NOT NULL,
+  `facilities_id` VARCHAR(10) NOT NULL,
   `name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`maintenance_id`))
-COMMENT = 'Rooms are identified by a maintenance id which is unique to the campus, and the also have a human readable name.';
+  PRIMARY KEY (`facilities_id`))
+COMMENT = 'Rooms are identified by a facilities id which is unique to the campus, and the also have a human readable name.';
 
 CREATE TABLE `hsu_library`.`layout` (
-  `layout_id` INT NOT NULL,
+  `layout_id` INT NOT NULL AUTO_INCREMENT,
   `author` VARCHAR(45) NOT NULL,
   `floor` INT NOT NULL,
   `date_created` DATETIME NULL,
@@ -21,27 +24,37 @@ CREATE TABLE `hsu_library`.`layout` (
 COMMENT = 'Layouts are the entities that unify which objects are on a certain floor, they also record the author and date of creation.';
 
 CREATE TABLE `hsu_library`.`area` (
-  `area_id` INT NOT NULL,
+  `area_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
-  `maintenance_id` VARCHAR(10) NOT NULL,
-  `layout` INT NOT NULL,
+  `facilities_id` VARCHAR(10) NOT NULL,
   PRIMARY KEY (`area_id`),
-  INDEX `room_id_idx` (`maintenance_id` ASC),
-  INDEX `layout_fk_idx` (`layout` ASC),
+  INDEX `room_id_idx` (`facilities_id` ASC),
   CONSTRAINT `room_id_fk`
-    FOREIGN KEY (`maintenance_id`)
-    REFERENCES `hsu_library`.`room` (`maintenance_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `layout_fk`
-    FOREIGN KEY (`layout`)
-    REFERENCES `hsu_library`.`layout` (`layout_id`)
+    FOREIGN KEY (`facilities_id`)
+    REFERENCES `hsu_library`.`room` (`facilities_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 COMMENT = 'All the spaces on a layout are made up of areas. They have an ID, a human name that defaults to a room name if there is no sub area, the room id, and a layout.';
 
+CREATE TABLE `hsu_library`.`area_in_layout` (
+  `area_id` INT NOT NULL,
+  `layout_id` INT NULL,
+  PRIMARY KEY (`area_id`),
+  INDEX `layout_AL_fk_idx` (`layout_id` ASC),
+  CONSTRAINT `area_AL_fk`
+    FOREIGN KEY (`area_id`)
+    REFERENCES `hsu_library`.`area` (`area_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `layout_AL_fk`
+    FOREIGN KEY (`layout_id`)
+    REFERENCES `hsu_library`.`layout` (`layout_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+COMMENT = 'Areas might not change with each new layout, so areas and layouts are a many-to-many relationship.';
+
 CREATE TABLE `hsu_library`.`furniture` (
-  `furniture_id` INT NOT NULL,
+  `furniture_id` INT NOT NULL AUTO_INCREMENT,
   `x_location` FLOAT NOT NULL,
   `y_location` FLOAT NOT NULL,
   `layout_id` INT NOT NULL,
@@ -69,7 +82,7 @@ CREATE TABLE `hsu_library`.`furniture` (
 COMMENT = 'Furniture refers to non seat items that are given a layout x and y coordinate, a type of furniture, and contain the default seat type.';
 
 CREATE TABLE `hsu_library`.`area_vertices` (
-  `area_id` INT NOT NULL,
+  `area_id` INT NOT NULL AUTO_INCREMENT,
   `v_x` FLOAT NOT NULL,
   `v_y` FLOAT NOT NULL,
   PRIMARY KEY (`area_id`, `v_x`, `v_y`),
@@ -81,14 +94,14 @@ CREATE TABLE `hsu_library`.`area_vertices` (
 COMMENT = 'Areas are able to be complex geometric shapes, so there are a minimum but no maximum number of vertice pairs for each area.';
 
 CREATE TABLE `hsu_library`.`activity` (
-  `activity_id` INT NOT NULL,
+  `activity_id` INT NOT NULL AUTO_INCREMENT,
   `activity_description` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`activity_id`))
 COMMENT = 'An activity is anything that should be tracked by a seat, so there is an ID and a descriptive label.';
 
 
 CREATE TABLE `hsu_library`.`survey_record` (
-  `survey_id` INT NOT NULL,
+  `survey_id` INT NOT NULL AUTO_INCREMENT,
   `activity_id` INT NOT NULL,
   `surveyed_by` VARCHAR(45) NOT NULL,
   `layout_id` INT NOT NULL,
@@ -147,7 +160,7 @@ CREATE TABLE `hsu_library`.`whiteboard` (
 COMMENT = 'Whiteboards are used for writing on or partitioning space. They are used by a piece of furniture, and are only entered on a per survey, per use instance.';
 
 CREATE TABLE `hsu_library`.`modified_furniture` (
-  `modified_furn_id` INT NOT NULL,
+  `modified_furn_id` INT NOT NULL AUTO_INCREMENT,
   `furniture_id` INT NOT NULL,
   `new_x` FLOAT NOT NULL,
   `new_y` FLOAT NOT NULL,
@@ -169,7 +182,7 @@ COMMENT = 'If a piece of furniture is temporarily moved, a survey can record whe
 
 
 CREATE TABLE `hsu_library`.`seat` (
-  `seat_id` INT NOT NULL,
+  `seat_id` INT NOT NULL AUTO_INCREMENT,
   `furniture_id` INT NOT NULL,
   `occupied` TINYINT NOT NULL COMMENT 'Boolean field, 0 is false, all others are true.',
   `seat_position` INT NULL,
