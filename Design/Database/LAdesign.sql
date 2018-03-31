@@ -105,7 +105,7 @@ CREATE TABLE `hsu_library`.`survey_record` (
   `surveyed_by` VARCHAR(45) NOT NULL,
   `layout_id` INT NOT NULL,
   `survey_date` DATETIME NOT NULL,
-  PRIMARY KEY (`survey_id`, `activity_id`),
+  PRIMARY KEY (`survey_id`),
   INDEX `layout_id_fk_idx` (`layout_id` ASC),
   CONSTRAINT `layout_id_fk`
     FOREIGN KEY (`layout_id`)
