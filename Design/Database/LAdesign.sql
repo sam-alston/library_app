@@ -102,7 +102,6 @@ COMMENT = 'An activity is anything that should be tracked by a seat, so there is
 
 CREATE TABLE `hsu_library`.`survey_record` (
   `survey_id` INT NOT NULL AUTO_INCREMENT,
-  `activity_id` INT NOT NULL,
   `surveyed_by` VARCHAR(45) NOT NULL,
   `layout_id` INT NOT NULL,
   `survey_date` DATETIME NOT NULL,
