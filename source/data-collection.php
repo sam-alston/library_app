@@ -26,7 +26,7 @@
             $("nav").toggleClass("hidden");
             $("header").toggleClass("hidden");
             $("main").toggleClass("to-top");
-            $("footer").toggleClass("hidden");
+            $("footer").toggleClass("foot_hide");
             $(".hide_nav").toggleClass("nav_open");
         })
     });
@@ -82,8 +82,15 @@
                         <select name="layout-select">
                             <!-- Populate these options with those from the database-->
                             <option value="default">Choose a Layout</option>
-                            <option value="lay-1">Layout 1</option>
-                            <option value="lay-2">Layout 2</option>
+                            <?php
+                                $dbh = new PDO('mysql:host=localhost;dbname=hsu_library;charset=utf8mb4', 'root', '');
+                                $i = 1;
+                                //Will replace hardcoded floor with ajax statement to get floor when floor changes
+                                foreach($dbh->query('SELECT * FROM layout WHERE floor = "1"') as $row){
+                                    ?> <option value="<?= $row['layout_id'] ?>">Layout <?= $i ?> for Layout ID: <?= $row['layout_id'] ?> </option><?php
+                                    $i++;
+                                }
+                            ?>
                         </select>
                         <button type="button" id="sub_layout">Submit</button>
                     </fieldset>
@@ -92,7 +99,7 @@
                     <?php
                 }
             ?>
-                <footer class="footd hidden">
+                <footer class="footd foot_hide">
                     <p>Designed by HSU Library Web App team. &copy; Humboldt State University</p>
                 </footer>
             </main>
@@ -103,27 +110,16 @@
         var s_layout = "local";
         var mymap = L.map('mapid', {crs: L.CRS.Simple});
         var bounds = [[0,0], [360,550]];
-        var image;
         mymap.fitBounds(bounds);
-        submit.onclick = function(){
-            //Test using layout in localhost with .PDO connection ect.
-            if( mymap.hasLayer(image)){
-                mymap.removeLayer(image);
-            }
-            var form_info = document.getElementById("lay-select");
-            //var test =  document.getElementById("text");
-            floor_image = form_info.elements.namedItem("floor-select").value;
-            s_layout = form_info.elements["layout-select"].value;
-            //test.innerHTML = floor_image;
-			floorIMGstr = String(floor_image);
-            image = L.imageOverlay('./images/' + floorIMGstr, bounds).addTo(mymap);
-            //pdo file must be read and processed here
-            //define our object here
+        var image;
+
+        var furnMap = new Map();
+        //define our object here
             function Seat(seatnum, stype){
-                this.occupied = null;
                 this.seatPos = seatnum;
                 this.type = stype;
                 this.activity;
+                this.occupied = null;
             }
             function Furniture(fid, nseats, x, y, ftype, stype){
                 this.furn_id = fid;
@@ -132,25 +128,108 @@
                 this.y_corr = y;
                 this.furn_type = ftype;
                 this.seat_type = stype;
-                this.seat_places;
+                this.seat_places = [];
                 this.whiteboard = null;
             }
+
+        $(function(){
+            $('#lay-select').on("change", function(){
+                var form_info = document.getElementById("lay-select");
+                s_layout = form_info.elements["layout-select"].value;
+                $.ajax({
+                    url: './data-collection.php',
+                    type: 'POST',
+                    data:{ L_id: s_layout },
+                    success: function(data){
+                        console.log("success, ajax ran");
+                        console.log(s_layout);
+                    }
+                });
+            });
+        });
+
+        submit.onclick = function(){
+            //Test using layout in localhost with .PDO connection ect.
+            if( mymap.hasLayer(image)){
+                mymap.removeLayer(image);
+            }
+            var form_info = document.getElementById("lay-select");
+            floor_image = form_info.elements.namedItem("floor-select").value;
+            s_layout = form_info.elements["layout-select"].value;
+			floorIMGstr = String(floor_image);
+            image = L.imageOverlay('./images/' + floorIMGstr, bounds).addTo(mymap);
+
+            
             /* MUST DEFINE A PIECE OF FURNITURE BEFORE CONSTRUCTING A SEAT */
             //Lets make our map
-            var furnMap = new Map();
-			
+            
+			console.log('ready to make furniture objects');
             //number of furniture to add to our map generated form our .pdo
-            var furnNum = 100;
-            for(i = 0; i < furnNum; i++){
-                var keyString = "furnid1" //Replace this with a string generated from each row
-                //will replace insertfurnhere with a string literal for each furniture type
-                var insertfurnhere =  new Furniture("fid", "nseats", 1, 0, "ftype", "stype");
-                //iterate through the number of seats here and populate the seat_places array with the new funcitons
-                for(j = 0; j < insertfurnhere.num_seats; j++){
-                    insertfurnhere.seat_places[j] = new Seat(insertfurnhere.num_seats, insertfurnhere.seat_type);
+            //pdo file must be read and processed here
+            <?php
+                $getfurn = $dbh->prepare('SELECT * FROM furniture WHERE layout_id = 1');
+
+                /*$test_var = $_POST['L_id'];
+
+                $getfurn->bindParam(':set_layout', $test_var, PDO::PARAM_INT);*/
+
+                $getfurn->execute();
+                ?>
+                console.log('Prepared Select stament and executed statement');
+                <?php
+
+                foreach ($getfurn as $row) {
+                    //seperate query to get num seats based on furniture
+                    ?>
+                    console.log('Entered foreach statment and queried the number of seats associated with furn idea');
+                    <?php
+
+                    $numSeatsQuery = $dbh->prepare('SELECT number_of_seats
+                                                    FROM furniture_type
+                                                    WHERE furniture_type_id = :infurnid');
+
+                    $numSeatsQuery->bindParam(':infurnid', $row['furniture_type'], PDO::PARAM_INT);
+                    $numSeatsQuery->execute();
+
+                    $numSeatResult = $numSeatsQuery->fetch(PDO::FETCH_ASSOC);
+
+                    ?>
+                    var keyString = "<?php echo $row['furniture_id'] ?>";
+                    var newFurniture = new Furniture( <?php echo $row['furniture_id'] ?>, 
+                                                      <?php echo $numSeatResult['number_of_seats'] ?>,
+                                                      <?php echo $row['x_location'] ?>,
+                                                      <?php echo $row['y_location'] ?>,
+                                                      <?php echo $row['furniture_type']?>,
+                                                      <?php echo $row['default_seat_type']?>
+                                                     );
+                    for(i = 0; i < newFurniture.num_seats; i++){
+                        newFurniture.seat_places[i] = new Seat(newFurniture.num_seats, newFurniture.seat_type);
+                    }
+
+                    furnMap.set(keyString, newFurniture);
+                    console.log('instantiated new Furniture Object');
+                    var length = furnMap.size;
+                    console.log('Length of furn map is: ' + length);
+
+                    
+                    <?php
                 }
-                furnMap.set(keyString, insertfurnhere);
+            ?>
+
+            //place a marker for each furniture item
+            var iterateMap = furnMap.values();
+            for(var i of furnMap){
+                console.log(i);
+                var cur_furn = iterateMap.next().value;
+                var x =  cur_furn.x_corr;
+                var y = cur_furn.y_corr;
+                var fid = cur_furn.furn_id;
+                var cur_mark = L.latLng([y, x]);
+                L.marker(cur_mark).addTo(mymap).bindPopup("Furn_id: " + fid);
+                console.log("Furn at: " + x + " : " + y);
+                console.log(cur_furn);
             }
+
             //add areas based on info from .pdo file from string literals
             //this is an example
 
@@ -162,10 +241,10 @@
 			
 			
 			function onMapClick(e) {
-    alert("You clicked the map at " + e.latlng);
-}
+                alert("You clicked the map at " + e.latlng);
+            }
 
-mymap.on('click', onMapClick);
+            mymap.on('click', onMapClick);
         };
     </script>
 </body>

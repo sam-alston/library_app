@@ -20,7 +20,7 @@ header{
 	border-radius: 50%;
 	background-color: black;
 	color: white;
-	transition: background-color .5s, color .5s;
+	transition: background-color .5s, color .5s, top .35s;
 }
 
 .hide_nav:hover{
@@ -93,6 +93,6 @@ footer{
 }
 
 footer > p{
-	
+
 	font-weight: bold;
 }
