@@ -1,4 +1,4 @@
-var RoundTableIcon = L.Icon.extend({
+var CircTableIcon = L.Icon.extend({
     options: {
 		iconUrl: './images/icons/circ_table.svg',
         iconSize:     [38, 38],
@@ -7,7 +7,7 @@ var RoundTableIcon = L.Icon.extend({
     }
 });
 
-var roundTable = new RoundTableIcon();
+var circTable = new CircTableIcon();
 
 var CouchThreeIcon = L.Icon.extend({
 	options: {
