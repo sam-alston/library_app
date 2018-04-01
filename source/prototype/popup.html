@@ -20,29 +20,26 @@
 	<!-- Cannot have the same class name as seat dropdown button because we add a
 		 event listener to the seat dropdown and search for it by class name-->
 		<button onclick="wb_drop()" id="wb_button" class="wb">
-			<label> 
-				Whiteboard
-			</label>
-		</button>
-		<input type="checkbox" name="wb"/>
+			<label>Whiteboard</label></button><input type="checkbox" name="wb" class="inuse_input"/>
 		
 		<div id="wb_div">
 			<div id="wb_label" class="div">
+			
+				<input type="radio" name="wb" value="partion" class="action_input"/> 
 				<label class="action_label">
-					Partion 
-				</label> <input type="radio" name="wb" value="partion"/> <br />
+					Partion </label> <br />
 				 
+				<input type="radio" name="wb" value="writing" class="action_input"/>
 				<label class="action_label">
-					Writing 
-				</label> <input type="radio" name="wb" value="writing"/> <br />
+					Writing </label> <br />
 				
+				<input type="radio" name="wb" value="other" class="action_input"/>
 				<label class="action_label">
-					Other 
-				</label> <input type="radio" name="wb" value="other"/> <br />
+					Other </label> <br />
 			</div>
 		</div>
 	</div>
-	<button onclick="minus()" id="minus"> - </button>
+	<button onclick="minus()" id="minus">-</button>
 	<button onclick="plus()" id="plus">+</button> 
 
 <script>
@@ -55,13 +52,16 @@ var furniture = {
 	whiteboard: 'false',
 	seat_places: []
 	};
-	
+
+//Used to keep track of the seat drop down that is open
+var open = "";
 var actions = ['occupied', 'study', 'social', 'tech'];
 
 //Used to keep track of if the seat being added is a default seat or a seat that was added on
 //Needed so we can automatically check the checkbox when adding seats
 var isDefualtSeat = false;
 
+//Walks though all of the seats at a specific table
 for (i = 0; i < furniture.num_seats; i++)
 {
 	isDefualtSeat = true;
@@ -87,18 +87,15 @@ function plus()
 	
 //used to make unique id's for each of the elements
 	var length = furniture.seat_places.length;
-
-//create the label for the checkbox, will be Seat + (seat #)
-	//var label = document.createElement('label');
-	//label.id = "label"+length;
-	//label.appendChild(document.createTextNode(' Seat ' + (length)));
-
+	
 //create the checkbox for the occupied input
 	var cb = document.createElement('input');
 	cb.type = "checkbox";
 	cb.id = "checkbox"+ length;
-	cb.name = "seat";
-	cb.value = "occupied";
+	cb.className = "inuse_input";
+	cb.name = "occupied"+length;
+	
+//If the user added a seat that was not a default seat, set the checkbox to checked
 	if (!isDefualtSeat)
 	{
 		cb.checked = true;
@@ -111,7 +108,7 @@ function plus()
 	dd_button.className = "dropbutton";
 
 //append the text for the seat to the button so we can change the arrow
-//makes it easier for the user to press
+//also makes it easier for the user to press
 	dd_button.appendChild(document.createTextNode(' Seat ' + (length)));
 	
 //creates a div the will be in the drop down menu with more options for each seat
@@ -125,8 +122,8 @@ function plus()
 	var br = document.createElement('br');
 	br.id = "br"+length;
 	
+//Append each element to the document
 	document.body.firstElementChild.appendChild(dd_button);
-	//document.body.firstElementChild.appendChild(label);
 	document.body.firstElementChild.appendChild(cb);
 	document.body.firstElementChild.appendChild(dd_div);
 	document.body.firstElementChild.appendChild(br);
@@ -134,9 +131,25 @@ function plus()
 //this is the variable for the drop down menu
 	var dd = document.getElementsByClassName("dropbutton");
 	
+//Adds a click listener to the drop down button to open the dropdown menu
 	dd[(dd.length - 1)].addEventListener("click",
     	function() 
     		{
+
+//Check to see if another dropdown is open, if it is close it
+    			if (this.id != open	&& open != "")
+    			{
+    				var div_close = document.getElementById(open);
+    				
+    			//Check to make sure we didn't remove the seat object that was open
+    				if(div_close != null)
+    				{
+    					div_close.className = div_close.className.replace(" active", "");
+    					div_close = div_close.nextElementSibling.nextElementSibling;
+    					div_close.style.display = "none";
+    				}
+    			}
+    			
         		var div = this.nextElementSibling.nextElementSibling;
        			if (div.style.display === "block") 
        			{
@@ -148,9 +161,11 @@ function plus()
         		{
            			div.style.display = "block";
            			this.className += " active";
+           			open = this.id;
         		}
     		});
     		
+//Reset the the bool check for a default seat
     isDefualtSeat = false;
 }
 
@@ -171,9 +186,6 @@ function minus(){
     	
     	var removeDD_div = document.getElementById("dd_div"+length);
     	removeDD_div.remove();
-		
-		//var removeLabel = document.getElementById("label"+length);
-    	//removeLabel.remove();
     	
     	var removeCB = document.getElementById("checkbox"+length);
     	removeCB.remove();
@@ -183,7 +195,8 @@ function minus(){
     	
     	furniture.seat_places.pop();
 	}
-	
+
+//If the user tries to delete a default seat prompt an error telling them they can't
 	else
 	{
 		alert("You can't remove default seats");
@@ -206,19 +219,19 @@ function div_content(dd_div)
 			{
 				property = titleCase(property);
 				var label = document.createElement('label');
-				label.id = property+i;
+				label.id = property+length;
 				label.className = "action_label";
 				label.appendChild(document.createTextNode(property));
 			
 				//creates the checkbox for the action
 				var input = document.createElement('input');
 				input.type = "checkbox";
-				input.id = "cb"+i;
+				input.id = "cb"+length;
 				input.className = "action_input";
-				input.name = property;
+				input.name = property+length;
 			
-				dd_div.appendChild(label);
 				dd_div.appendChild(input);
+				dd_div.appendChild(label);
 				
 				var br = document.createElement('br');
 				br.id = "br"+property;
@@ -228,6 +241,10 @@ function div_content(dd_div)
 	}
 }
 
+//Expects: Nothing
+//Returns: Nothing
+//Output: Used to show and hide the whiteboard dropdown when the button is clicked
+//		  also, sets class name to active when clicked, so we can change the arrow effect
 function wb_drop()
 {
     var div = document.getElementById('wb_label');
@@ -244,6 +261,9 @@ function wb_drop()
     }
 }
 
+//Expects: String
+//Returns: That string in titlecase
+//Output: Used to make all the seats and actions titlecase
 function titleCase(str)
 {
 	
