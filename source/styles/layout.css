@@ -8,7 +8,10 @@ header{
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 140px;
+	height: 196px;
+	z-index: 99;
+	transition: top .35s;
+	transition-timing-function: ease-out;
 }
 
 .logo{
@@ -41,11 +44,51 @@ p{
 }
 
 .log-state{
+	display: block;
 	position: absolute;
 	top: 0;
 	left: 0;
 	font-size: .75em;
 	padding-left: .5em;
+}
+
+.submit_survey{
+	position: absolute;
+	top: 24px;
+	right: 88px;
+	height: 40px;
+	width: 100px;
+	z-index: 100;
+}
+
+.hide_nav{
+	position: absolute;
+	top: 24px;
+	right: 24px;
+	width: 40px;
+	height: 40px;
+	z-index: 100;
+}
+
+#sub_layout{
+	height: 25px;
+	width: 50px;
+	margin-left: .25em;
+}
+
+
+.nav_open{
+	top: 220px;
+}
+
+nav{
+	z-index: 99;
+	position: absolute;
+	top: 140px;
+	right: 0;
+	left: 0;
+	transition: top .25s;
+	transition-timing-function: ease-out;
 }
 
 nav > p{
@@ -55,12 +98,26 @@ nav > p{
 
 }
 
+.hidden{
+	top: -300px;
+}
+
 main{
 	position: absolute;
-	top: 140px;
+	top: 196px;
 	left: 0;
 	right: 0;
 	bottom: 0;
+	transition: top .25s;
+	transition-timing-function: ease-in-out;
+}
+
+.to-top{
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
 }
 
 fieldset{
@@ -102,15 +159,17 @@ select{
 #mapid{
 	display: block;
 	width: 100%;
-	height: 85%;
+	height: 95%;
 }
 
 footer{
+	z-index: 109;
 	position: fixed;
 	bottom: 0;
 	left: 0;
 	width: 100%;
 	height: 5%;
+	transition: top .5s;
 }
 
 .insert{
@@ -120,12 +179,20 @@ footer{
 }
 
 .footd{
-	position: relative;
+	position: absolute;
 	width: 100%;
 	height: 5%;
+	transition: width .25s;
+}
+
+.foot_hide{
+	width: 0;
+	overflow: hidden;
 }
 
 footer > p{
+	margin-top: .25em;
 	text-align: center;
+
 }
 

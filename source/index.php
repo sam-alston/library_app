@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="normalize.css" type="text/css" >
     <link rel="stylesheet" href="styles/layout.css" type="text/css" >
     <link rel="stylesheet" href="styles/format.css" type="text/css" >
+    
 </head>
 <body>
     <header>
@@ -80,8 +81,7 @@
 			?>
     </main>
     <footer>
-        <p>Designed by Web App team</p>
-        <p>	&copy; Humboldt State University</p>
+        <p>Designed by HSU Library Web App team. &copy; Humboldt State University</p>
     </footer>
 </body>
 </html>

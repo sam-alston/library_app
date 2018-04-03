@@ -11,6 +11,29 @@ header{
 	background-color: #25551B;
 }
 
+button{
+	border: none;
+	text-decoration: bold;
+	background-color: black;
+	color: white;
+	transition: background-color .5s, color .5s, top .35s;
+}
+
+
+button:hover{
+	background-color: #87A625;
+	color: black;
+}
+
+button:active{
+	box-shadow: inset 0 0 10px #000000;
+}
+
+.hide_nav{
+	font-size: 2em;
+	border-radius: 50%;
+}
+
 h1, h3{
 	color: white;
 }
@@ -72,5 +95,6 @@ footer{
 }
 
 footer > p{
+
 	font-weight: bold;
 }
