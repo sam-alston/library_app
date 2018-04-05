@@ -36,7 +36,7 @@
 </head>
 <body>
     <button class="hide_nav" id="nav_toggle">&plus;</button>
-    <button class="submit_survey" id="submit_survey">Submit Survey</button>
+    <button class="submit_survey hidden" id="submit_survey" onclick="if(confirm('Are you sure you want to submit this survey?')) submitSurvey();">Submit Survey</button>
     <header class="hidden">
         <img class="logo" src="images/hsu-wm.svg">
         <h1>Library Data Collector</h1>   
@@ -86,7 +86,6 @@
                             <!-- Populate these options with those from the database-->
                             <option value="default">Choose a Layout</option>
                             <?php
-                                $dbh = new PDO('mysql:host=localhost;dbname=hsu_library;charset=utf8mb4', 'root', '');
                                 $i = 1;
                                 //Will replace hardcoded floor with ajax statement to get floor when floor changes
                                 foreach($dbh->query('SELECT * FROM layout WHERE floor = "1"') as $row){
@@ -163,6 +162,7 @@
             s_layout = form_info.elements["layout-select"].value;
 			floorIMGstr = String(floor_image);
             image = L.imageOverlay('./images/' + floorIMGstr, bounds).addTo(mymap);
+            $(".submit_survey").removeClass("hidden");
 
             
             /* MUST DEFINE A PIECE OF FURNITURE BEFORE CONSTRUCTING A SEAT */
@@ -223,15 +223,15 @@
             //place a marker for each furniture item
             var iterateMap = furnMap.values();
             for(var i of furnMap){
-                console.log(i);
                 var cur_furn = iterateMap.next().value;
                 var x =  cur_furn.x_corr;
                 var y = cur_furn.y_corr;
                 var fid = cur_furn.furn_id;
                 var cur_mark = L.latLng([y, x]);
-                L.marker(cur_mark).addTo(mymap).bindPopup("Furn_id: " + fid);
                 console.log("Furn at: " + x + " : " + y);
                 console.log(cur_furn);
+                L.marker(cur_mark).addTo(mymap).bindPopup("Furn_id: " + fid);
+                
             }
 
             //add areas based on info from .pdo file from string literals
@@ -243,13 +243,33 @@
 				case "floor3.svg": floorThreeAreas(mymap); break;
 			}
 			
-			
 			/*function onMapClick(e) {
                 alert("You clicked the map at " + e.latlng);
-            }*/
-
-            mymap.on('click', onMapClick);
+            }
+            mymap.on('click', onMapClick);*/
         };
+
+        $(document)
+
+        function submitSurvey(){
+            console.log("You are submitting the survey");
+            /* Insert statment for Survey ID*/
+
+            /* Query survey id of most recent survey*/
+
+            /* Run insert statment for each seat*/
+            var iterateMap = furnMap.values();
+            for(var i of furnMap){
+                var cur_furn = iterateMap.next().value;
+                for(var j = 0; j < cur_furn.num_seats; j++){
+                    <?php
+                    $insert_query = $dbh->prepare('INSERT INTO seat
+                                                   VALUES (:furniture_id, :occupied, :seat_pos, :seat_type, :survey_id)');
+                    ?>
+                }
+            }
+        };
+
     </script>
-</body>
+</body> 
 </html>
