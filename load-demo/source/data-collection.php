@@ -10,6 +10,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="styles/layout.css" type="text/css" >
     <link rel="stylesheet" href="styles/format.css" type="text/css" >
+	<link rel="stylesheet" href="styles/popup.css" type="text/css"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
    integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
    crossorigin=""/>
@@ -113,7 +114,7 @@
         var submit = document.getElementById("sub_layout");
         var floor_image = "local";
         var s_layout = "local";
-        var mymap = L.map('mapid', {crs: L.CRS.Simple});
+        var mymap = L.map('mapid', {crs: L.CRS.Simple, minZoom: 2, maxZoom: 5});
         var bounds = [[0,0], [360,550]];
         mymap.fitBounds(bounds);
         var image;
@@ -230,6 +231,7 @@
             for(var i of furnMap){
                 console.log(i);
                 var cur_furn = iterateMap.next().value;
+				var num_seats = cur_furn.num_seats;
                 var x =  cur_furn.x_corr;
                 var y = cur_furn.y_corr;
 				var offset = cur_furn.offset;
@@ -249,6 +251,7 @@
 					case 13: selectedIcon=couchThree ; break;
 					case 11: selectedIcon=couchCurved ; break;
 					case 15: selectedIcon=couchSix ; break;
+					case 14: selectedIcon=couchFour; break;
 					case 12: selectedIcon=couchTwo ; break;
 					case 5:
 					case 6: selectedIcon=counterCurved; break;
@@ -267,7 +270,18 @@
 					default: selectedIcon= computerStation; break;
 				}
                 var cur_mark = L.latLng([y, x]);
-                L.marker(cur_mark, {icon: selectedIcon}).addTo(mymap).setRotationAngle(offset).bindPopup("Furn_id: " + fid);
+				//This creates the popups content
+				var popup = '<iframe id="iframe" src="./popup.html"/>';
+				
+				//This is the dimensions for the popup
+				var popupDim = 
+				{
+					'maxWidth': '5000',
+					'maxHeight': '5000'
+				}
+				
+
+                L.marker(cur_mark, {icon: selectedIcon}).addTo(mymap).setRotationAngle(offset).bindPopup(popup, popupDim);
                 console.log("Furn at: " + x + " : " + y);
                 console.log(cur_furn);
             }
