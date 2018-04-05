@@ -8,7 +8,6 @@
     <title> Library Collect Data </title>
     <meta charset="utf-8" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="normalize.css" type="text/css" >
     <link rel="stylesheet" href="styles/layout.css" type="text/css" >
     <link rel="stylesheet" href="styles/format.css" type="text/css" >
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
@@ -21,6 +20,7 @@
    <script src="./js/floor2.js"></script>
    <script src="./js/floor3.js"></script>
    <script src="./js/icons.js"></script>
+   <script src="./js/layoutFunction.js"></script>
    <script src="./js/leaflet.rotatedMarker.js"></script>
    <script type="text/javascript">
     $(function() {
@@ -91,7 +91,29 @@
 							<!-- temporary layout editor tool -->
 							<option value="computerStation">Comp Station </option>
 							<option value="collaborationStation">Collab Station </option>
+							<option value="circTable">circTable</option>
+							<option value="couchThree">couchThree </option>
+							<option value="couchCurved">couchCurved </option>
+							<option value="couchSix">couchSix </option>
+							<option value="couchTwo">couchTwo </option>
+							<option value="counterCurved">counterCurved </option>
+							<option value="fitDeskEmpty">fitDeskEmpty </option>
+							<option value="medCornerEmpty">medCornerEmpty </option>
+							<option value="mfReaderEmpty">mfReaderEmpty </option>
+							<option value="rectTable">rectTable </option>
+							<option value="room">room </option>
+							<option value="seatOneSoft">seatOneSoft </option>
+							<option value="seatOne">seatOne </option>
+							<option value="studyFour">studyFour </option>
+							<option value="studyOne">studyOne </option>
+							<option value="studyThree">studyThree </option>
+							<option value="studyTwo">studyTwo </option>
+							<option value="vidViewerEmpty">vidViewerEmpty </option>
 						</select>
+						<div> Degree offset: <input name="degree-offset" id="degree-offset" type="number" value=0></input>
+						</div>
+						<div> Number of seats: <input name="numseats" id="numseats" type="number" value=0></input>
+						</div>
                         <button type="button" id="sub_layout">Submit</button>
                     </fieldset>
                 </form>
@@ -187,15 +209,35 @@
 		function onMapClick(e) {
 			var furniture = document.getElementById("lay-select").elements.namedItem("furniture-select").value;
 			var selectedIcon;
+			var degreeOffset = document.getElementById("degree-offset").value;
+			var numSeats = document.getElementById("numseats").value;
 			switch(furniture){
 				case "computerStation": selectedIcon=computerStation;break;
 				case "collaborationStation":selectedIcon=collabStation; break;
+				case "circTable":selectedIcon=circTable; break;
+				case "couchThree": selectedIcon=couchThree ; break;
+				case "couchCurved": selectedIcon=couchCurved ; break;
+				case "couchSix": selectedIcon=couchSix ; break;
+				case "couchTwo": selectedIcon=couchTwo ; break;
+				case "counterCurved": selectedIcon=counterCurved; break;
+				case "fitDeskEmpty": selectedIcon=fitDeskEmpty ; break;
+				case "medCornerEmpty": selectedIcon=medCornerEmpty ; break;
+				case "mfReaderEmpty": selectedIcon=mfReaderEmpty ; break;
+				case "rectTable": selectedIcon=rectTable ; break;
+				case "room": selectedIcon=roomIcon; break;
+				case "seatOneSoft": selectedIcon= seatOneSoft; break;
+				case "seatOne": selectedIcon= seatOne; break;
+				case "studyFour": selectedIcon= studyFour; break;
+				case "studyOne": selectedIcon= studyOne; break;
+				case "studyThree": selectedIcon= studyThree; break;
+				case "studyTwo": selectedIcon= studyTwo; break;
+				case "vidViewerEmpty": selectedIcon= vidViewerEmpty; break;
 				default: selectedIcon= computerStation; break;
 			}
 			latlng = e.latlng;
 			marker = L.marker(e.latlng, {
 					icon: selectedIcon,
-					rotationAngle: 45,
+					rotationAngle: degreeOffset,
 					draggable: true
 			}).addTo(furnitureLayer).bindPopup(e.latlng.toString()).openPopup();
 			//define drag events
@@ -207,12 +249,25 @@
 				mymap.off('click', onMapClick);
 			});
 			marker.on('dragend', function(e) {
-				var angle = prompt("What angle would you like to offset this by?");
+				//var angle = prompt("What angle would you like to offset this by?");
+				degreeOffset = document.getElementById("degree-offset").value;
+				//console log what's happening
 				console.log('marker dragend event');
 				console.log(marker.getLatLng());
+				//prep data for stringification
 				var changedPos = e.target.getLatLng();
-				this.bindPopup(changedPos.toString()).openPopup();
-				this.setRotationAngle(angle);
+				var lat=changedPos.lat;
+				var lng=changedPos.lng;
+				//get number of seats for furniture
+				numSeats = document.getElementById("numseats").value;
+				//set angle according to field input
+				this.setRotationAngle(degreeOffset);
+				//generate sql insert string for furniture
+				var insertString = getFurnitureString(lng,lat,degreeOffset, furniture+"_"+numSeats, "chair");
+				//change popup to insertString
+				this.bindPopup(insertString);
+				//output to console to check values
+				console.log(insertString);
 				setTimeout(function() {
 					mymap.on('click', onMapClick);
 				}, 10);
@@ -236,9 +291,10 @@
 			}
 			//alert(mymap.getZoom)());
 			var newzoom = '' + (markerSize) +'px';
+			var newLargeZoom = '' + (markerSize*2) +'px';
 			//marker = L.marker(e.latlng, {icon: couchFour }).addTo(furnitureLayer).bindPopup("I am a Computer Station.");
 			$('#mapid .furnitureIcon').css({'width':newzoom,'height':newzoom});
-			
+			$('#mapid .furnitureLargeIcon').css({'width':newLargeZoom,'height':newLargeZoom});			
 		});
     </script>
 </body>

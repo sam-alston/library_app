@@ -139,6 +139,11 @@ select{
 	height: '160px';
 }
 
+.furnitureLargeIcon{
+	width: '138px';
+	height: '160px';
+}
+
 #mapid{
 	display: block;
 	width: 100%;

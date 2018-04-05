@@ -57,6 +57,7 @@ CREATE TABLE `hsu_library`.`furniture` (
   `furniture_id` INT NOT NULL AUTO_INCREMENT,
   `x_location` FLOAT NOT NULL,
   `y_location` FLOAT NOT NULL,
+  `degree_offset` INT NOT NULL,
   `layout_id` INT NOT NULL,
   `furniture_type` INT NOT NULL,
   `default_seat_type` INT NULL,
