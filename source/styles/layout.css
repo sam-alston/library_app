@@ -72,8 +72,8 @@ p{
 
 #sub_layout{
 	height: 25px;
-	width: 50px;
 	margin-left: .25em;
+	display: inline;
 }
 
 
@@ -140,12 +140,14 @@ legend{
 	padding-bottom: 1em;
 }
 
-
 input{
 	display: block;
-	margin-top: .25em;
-	margin-bottom: 1em;
 	height: 20px;
+}
+
+input[type=text]{
+	margin-bottom: 1em;
+	margin-top: .25em;
 }
 
 select{

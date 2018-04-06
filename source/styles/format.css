@@ -19,6 +19,13 @@ button{
 	transition: background-color .5s, color .5s, top .35s;
 }
 
+#sub_layout{
+	border: none;
+	text-decoration: bold;
+	background-color: black;
+	color: white;
+	transition: background-color .5s, color .5s, top .35s;
+}
 
 button:hover{
 	background-color: #87A625;
