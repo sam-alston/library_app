@@ -1,3 +1,4 @@
+-- Test data for the hsu_library schema
 INSERT INTO `hsu_library`.`furniture_type`
 (`furniture_name`, `number_of_seats`)
 VALUES ('table_four', 4);
