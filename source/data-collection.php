@@ -63,14 +63,13 @@
         <?php
     } 
     else{
-        
         nav_form();
         $dbh = new PDO('mysql:host=localhost;dbname=hsu_library;charset=utf8mb4', 'root', '');
 
-        $stmt1 = $dbh->query("SELECT floor FROM layout where floor = /*insert floor selected here */");
+        //$stmt1 = $dbh->query("SELECT floor FROM layout where floor = /*insert floor selected here */");
         /*statment for after layout is selected*/
 
-        $stmt2 = $dbh->query("SELECT layout_image FROM layout where layout_id = /*Selected Layout*/");
+        //$stmt2 = $dbh->query("SELECT layout_image FROM layout where layout_id = /*Selected Layout*/");
 
         if(array_key_exists('floor-select', $_POST)){
             $_SESSION['cur_floor'] = $_POST['floor-select'];
@@ -83,20 +82,6 @@
                         <option value="1" selected="selected">Floor 1</option>
                         <option value="2">Floor 2</option>
                         <option value="3">Floor 3</option>
-                        <?php 
-                        /*for($i = 0; $i < 3; $i++){
-                            if($i = $_SESSION['cur_floor']){
-                                ?>
-                                <option value="<?= $i ?>" selected="selected"> Floor <?= $i ?> </option>
-                                <?php
-                            }
-                            else{
-                                ?>
-                                <option value="<?= $i ?>"> Floor <?= $i ?> </option>
-                                <?php
-                            }
-                        }*/
-                        ?> 
                     </select>
                     <select name="layout-select">
                         <!-- Populate these options with those from the database-->
@@ -159,7 +144,7 @@
             this.seatPos = seatnum;
             this.type = stype;
             this.activity;
-            this.occupied = null;
+            this.occupied = 0;
         }
         function Furniture(fid, nseats, x, y, offset, ftype, stype){
             this.furn_id = fid;
@@ -170,10 +155,10 @@
             this.furn_type = ftype;
             this.seat_type = stype;
             this.seat_places = [];
-            this.whiteboard = null;
+            this.whiteboard = 0;
         }
 
-        /*$(function(){
+        $(function(){
             $('#floor-select').change( function(){
                 var form_info = document.getElementById("floor-select");
                 var choose_floor = form_info.value;
@@ -188,7 +173,7 @@
                     }
                 });
             });
-        });*/
+        });
 
         $(document).ready(function(){
             //Test using layout in localhost with .PDO connection ect.
@@ -196,10 +181,29 @@
                 mymap.removeLayer(image);
             }
             var form_info = document.getElementById("lay-select");
-            floor_image = form_info.elements.namedItem("floor-select").value;
+            floor_image = "<?php echo $_SESSION['cur_floor'] ?>";
             s_layout = form_info.elements["layout-select"].value;
             floorIMGstr = String(floor_image);
-            image = L.imageOverlay('./images/' + floorIMGstr, bounds).addTo(mymap);
+            alert(floorIMGstr);
+            var FLOOR1 = "1";
+            var FLOOR2 = "2";
+            var FLOOR3 = "3";
+            var floor_name;
+
+            switch(floorIMGstr){
+                case FLOOR1:
+                    image = L.imageOverlay('images/floor1.svg', bounds).addTo(mymap);
+                    break;
+                case FLOOR2:
+                    image = L.imageOverlay('images/floor2.svg', bounds).addTo(mymap);
+                    break;
+                case FLOOR3: 
+                    image = L.imageOverlay('images/floor3.svg', bounds).addTo(mymap);
+                    break;
+            }
+            
+           
+
             $(".submit_survey").removeClass("hidden");
             /* MUST DEFINE A PIECE OF FURNITURE BEFORE CONSTRUCTING A SEAT */
             //Lets make our map
@@ -226,9 +230,6 @@
                 <?php
                 foreach ($getfurn as $row) {
                     //seperate query to get num seats based on furniture
-                    ?>
-                    console.log('Entered foreach statment and queried the number of seats associated with furn idea');
-                    <?php
 
                     $numSeatsQuery = $dbh->prepare('SELECT number_of_seats
                                                     FROM furniture_type
@@ -263,7 +264,6 @@
                 //place a marker for each furniture item
                 var iterateMap = furnMap.values();
                 for(var i of furnMap){
-                    console.log(i);
                     var cur_furn = iterateMap.next().value;
                     var num_seats = cur_furn.num_seats;
                     var x =  cur_furn.x_corr;
@@ -322,9 +322,9 @@
                 //this is an example
 
                 switch(floorIMGstr){
-                    case "floor1.svg": floorOneAreas(mymap); break;
-                    case "floor2.svg": floorTwoAreas(mymap); break;
-                    case "floor3.svg": floorThreeAreas(mymap); break;
+                    case "1": floorOneAreas(mymap); break;
+                    case "2": floorTwoAreas(mymap); break;
+                    case "3": floorThreeAreas(mymap); break;
                 }
                 <?php
             }
@@ -357,27 +357,52 @@
         });
 
         function submitSurvey(){
+            var cur_survey_id;
             console.log("You are submitting the survey");
             /* Insert statment for Survey ID */
-            <?php
-                $survey_r_query = $dbh->prepare('INSERT INTO survey_record (surveyed_by, layout_id, survey_date)
-                                                 VALUES (:username, :lay_id, :in_date)');
-            ?>
-
-            /* Query survey id of most recent survey*/
-                /*$query_curID =  $dbh->prepare(''); */
-
-            /* Run insert statment for each seat*/
-            var iterateMap = furnMap.values();
-            for(var i of furnMap){
-                var cur_furn = iterateMap.next().value;
-                for(var j = 0; j < cur_furn.num_seats; j++){
-                    <?php
-                    $insert_query = $dbh->prepare('INSERT INTO seat
-                                                   VALUES (:furniture_id, :occupied, :seat_pos, :seat_type, :survey_id)');
-                    ?>
+            var username = "<?php echo $_SESSION['username']?>";
+            var layout = "<?php echo $_POST['layout-select']?>";
+            $.ajax({
+                url: 'create_survey_record.php',
+                type: 'get',
+                data:{
+                    'username': username,
+                    'layout': layout,
+                    'survey_id': cur_survey_id
+                },
+                success: function(data){
+                    console.log("Inserted New Survey Record");
+                    /*Get that new Survey ID for insertion statements*/
+                    var json_object = JSON.parse(data);
+                    cur_survey_id = json_object.s_id;
+                    var iterateMap = furnMap.values();
+                    for(var i of furnMap){
+                        var cur_furn = iterateMap.next().value;
+                        for(var j = 0; j < cur_furn.num_seats; j++){
+                            var cur_seat = cur_furn.seat_places[j];
+                             /* Run insert statment for each seat*/
+                            $.ajax({
+                                url: 'insert-seat.php',
+                                type: 'post',
+                                data:{
+                                    'furn_id': cur_furn.furn_type,
+                                    'occupied': cur_seat.occupied,
+                                    'seat_pos': cur_seat.seatPos,
+                                    'seat_type': cur_seat.type,
+                                    'survey_id': cur_survey_id
+                                },
+                                success: function(data){
+                                    console.log("Seat was inserted ");
+                                }
+                            });
+                        }
+                    }
                 }
-            }
+            });
+
+           
+
+            
         };
 
     </script>

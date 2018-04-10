@@ -13,6 +13,4 @@ $stmt1->execute();
 
 $floor_result = $stmt1->fetch(PDO::FETCH_ASSOC);
 
-$_SESSION["cur_floor"] = $floor_result;
-
 print json_encode($floor_result);
