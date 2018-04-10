@@ -48,8 +48,6 @@ INSERT INTO ROOM
 VALUES
 ("LIB 121", "Computer Lab");
 
--- These scripts are designed to insert the room entities to the hsu_library schema
--- Updated 4/9/18 -->
 INSERT INTO ROOM
 (FACILITIES_ID, NAME)
 VALUES

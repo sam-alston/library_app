@@ -1,4 +1,13 @@
 @import url('https://fonts.googleapis.com/css?family=Lato');
+#popupTest
+{
+	margin: 10em;
+	overflow-y: scroll;
+	width:45em; 
+	height:40em;
+	display: none;
+}
+
 #iframe
 {
 	border: none;
