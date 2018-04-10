@@ -1,3 +1,5 @@
+-- These scripts implement the tables for hsu_library schema
+-- Last modified: 4/9/18
 DROP SCHEMA `hsu_library` ;
 CREATE SCHEMA `hsu_library` ;
 
@@ -86,6 +88,7 @@ CREATE TABLE `hsu_library`.`area_vertices` (
   `area_id` INT NOT NULL,
   `v_y` INT NOT NULL,
   `v_x` INT NOT NULL,
+  `load_order` int NOT NULL,
   PRIMARY KEY (`area_id`, `v_y`, `v_x`),
   CONSTRAINT `area_id_fk`
     FOREIGN KEY (`area_id`)
