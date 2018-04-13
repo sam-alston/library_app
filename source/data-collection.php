@@ -10,6 +10,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="styles/layout.css" type="text/css" >
     <link rel="stylesheet" href="styles/format.css" type="text/css" >
+    <link rel="stylesheet" href="styles/popup.css" type="text/css" >
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
    integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
    crossorigin=""/>
@@ -24,6 +25,8 @@
    <script src="./javascript/layoutFunction.js"></script>
    <script src="./javascript/leaflet.rotatedMarker.js"></script>
    <script src="./javascript/submit_survey.js"></script>
+   <script src="./javascript/make_popup.js"></script>
+
    <script type="text/javascript">
     /*Container for JS furniture objects*/
     
@@ -130,6 +133,32 @@
                 <?php
             }
         ?>
+        <div id="popupTest">
+            <div id="seat_div"></div>
+                <div id="wb_div">
+                <!-- Cannot have the same class name as seat dropdown button because we add a
+                    event listener to the seat dropdown and search for it by class name-->
+                <button onclick="drop_func()" id="wb_button" class="wb">
+                    <label>Whiteboard</label></button><input type="checkbox" name="wb" class="inuse_input"/>
+                    <div id="wb_div">
+                        <div id="wb_label" class="div">
+                            <input type="radio" name="wb" value="partion" class="action_input"/> 
+                            <label class="action_label">
+                                Partion </label> <br />
+                     
+                            <input type="radio" name="wb" value="writing" class="action_input"/>
+                            <label class="action_label">
+                                Writing </label> <br />
+                    
+                            <input type="radio" name="wb" value="other" class="action_input"/>
+                            <label class="action_label">
+                                Other </label> <br />
+                        </div>
+                    </div>
+                </div>
+                <button onclick="minusHelper()" id="minus">-</button>
+                <button onclick="plusHelper()" id="plus">+</button> 
+        </div>
             <footer class="footd foot_hide">
                 <p>Designed by HSU Library Web App team. &copy; Humboldt State University</p>
             </footer>
@@ -145,18 +174,35 @@
         var bounds = [[0,0], [360,550]];
         mymap.fitBounds(bounds);
         var image;
+        var selected_furn;
+        var seat_num;
         var furnMap = new Map();
+
+        var popup = document.getElementById("popupTest"); //This is the dimensions for the popup
         
 
+        function getFurnMap(){
+            return furnMap;
+        }
+        
+        function minusHelper(){
+            minus(selected_furn);
+        }
+
+        function plusHelper(){
+            plus(selected_furn.seat_places.length, selected_furn);
+        }
+
         //define our object here
-        function Seat(seatnum, stype){
+        function Seat(seatnum){
             this.seatPos = seatnum;
-            this.type = stype;
+            this.type = 0;
             this.activity;
             this.occupied = 0;
         }
-        function Furniture(fid){
+        function Furniture(fid, num_seats){
             this.furn_id = fid;
+            this.num_seats = 0;
             this.seat_places = [];
             this.whiteboard = 0;
         }
@@ -231,7 +277,8 @@
                     ?>
                     /*Creating furniture container*/
                     var keyString = "<?php echo $row['furniture_id'] ?>";
-                    var newFurniture = new Furniture( <?php echo $row['furniture_id'] ?>);
+                    var newFurniture = new Furniture( <?php echo $row['furniture_id'] ?>,
+                                                      <?php echo $numSeatResult['number_of_seats'] ?>);
 
                     x = <?php echo $row['x_location'] ?>;
                     y = <?php echo $row['y_location'] ?>;
@@ -274,6 +321,11 @@
                         default: selectedIcon= computerStation; break;
                     }
 
+                    var popupDim = 
+                    {
+                        'maxWidth': '5000',
+                        'maxHeight': '2500'
+                    };
                     /*Add erics code to get rid of bind and open popup*/
                     //place a marker for each furniture item
                     marker = L.marker(latlng, {
@@ -283,8 +335,10 @@
                         ftype: furniture_type,
                         numSeats: num_seats,
                         fid: keyString
-                    }).addTo(furnitureLayer).bindPopup(keyString);
+                    }).addTo(furnitureLayer).bindPopup(popup, {maxWidth: '5000',
+                        maxHeight: '2500'});
 
+                    marker.on('click', markerClick);
 
                     /*TODO: Seat's made on survey, not furniture creation*/
                     /*for(i = 0; i < newFurniture.num_seats; i++){
@@ -326,6 +380,7 @@
             $('#mapid .furnitureIcon').css({'width':newzoom,'height':newzoom});
             $('#mapid .furnitureLargeIcon').css({'width':newLargeZoom,'height':newLargeZoom});          
         });
+
         //On click of submission, Create's a Survey Record and Inserts each seat object into the database with that ID
         function submitSurveyHelper(){
             var username = "<?php echo $_SESSION['username']?>";

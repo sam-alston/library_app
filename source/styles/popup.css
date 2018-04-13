@@ -1,18 +1,27 @@
 @import url('https://fonts.googleapis.com/css?family=Lato');
+#popupTest
+{
+    margin: 10em;
+    overflow-y: scroll;
+    width:45em; 
+    height:40em;
+    display: none;
+}
+
 #iframe
 {
-	border: none;
-	width: 45em;
-	height: 40em;
+    border: none;
+    width: 45em;
+    height: 40em;
 }
 
 #minus
 {
-	bottom: 5px;
-	right: 10px;
-	border-radius: 100%;
-	position: fixed;
-	background-color: #87A825;
+    bottom: 5px;
+    right: 10px;
+    border-radius: 100%;
+    position: fixed;
+    background-color: #87A825;
     border: none;
     color: white;
     padding-right: 20.6666666px;
@@ -30,11 +39,11 @@
 
 #plus
 {
-	bottom: 65px;
-	right: 10px;
-	border-radius: 100%;
-	position: fixed;
-	background-color: #87A825;
+    bottom: 65px;
+    right: 10px;
+    border-radius: 100%;
+    position: fixed;
+    background-color: #87A825;
     border: none;
     color: white;
     padding-right: 19.2px;
@@ -60,17 +69,17 @@
 
 .action_label
 {
-	padding: 8px;
-	margin: 8px;
-	font-size: 20px;
-	font-family: 'Lato', sans-serif;
+    padding: 8px;
+    margin: 8px;
+    font-size: 20px;
+    font-family: 'Lato', sans-serif;
 }
 
 .dropbutton, .wb
 {
-	background-color: #5C8021;
-	border-radius: 10px;
-	border: none;
+    background-color: #5C8021;
+    border-radius: 10px;
+    border: none;
     position: relative; 
     width: 175px;
     height: 60px;
@@ -100,17 +109,18 @@
 
 .dropbutton.active:after, .wb.active:after
 {
-	position: absolute;
+    position: absolute;
     border-color: #000 transparent;
     border-width: 6px 6px 0 6px ;
     margin-top: -3px;
 }
 
 .inuse_input, .action_input{
+    display: initial;
     width:50px;
     height:50px;
     border-radius: 100%;
-  	vertical-align: middle;
-  	box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
+    vertical-align: middle;
+    box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
 }
 
