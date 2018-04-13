@@ -83,7 +83,7 @@ VALUES
 INSERT INTO ROOM
 (FACILITIES_ID, NAME)
 VALUES
-("LIB 307", "Special Collections");
+("LIB 303", "Special Collections");
 
 INSERT INTO ROOM
 (FACILITIES_ID, NAME)
