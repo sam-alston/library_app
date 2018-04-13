@@ -16,7 +16,7 @@
     <header>
         <img class="logo" src="images/hsu-wm.svg">
         <h1>Library Data Collector</h1>
-    </header>
+    
     <?php
         if (array_key_exists("username", $_SESSION)){
             ?>
@@ -25,7 +25,7 @@
         }
     ?>
     
-    <main>
+    
     <?php
         if (!array_key_exists("username", $_SESSION)){
             ?>
@@ -41,14 +41,15 @@
                 <p class="nav selected"><a href="editor.php">Create A Layout</a></p>
                 <p class="nav"><a href="logout.php">Logout</a></p>
             </nav>
+    </header>
+    <main>
             <h2><?= $_SESSION["username"]?> this is a placeholder for the layout editor </h2>
             <?php
         }
     ?>
     </main>
     <footer>
-        <p>Designed by Web App team</p>
-        <p> &copy; Humboldt State University</p>
+        <p>Designed by HSU Library Web App team. &copy; Humboldt State University</p>
     </footer>
 </body>
 </html>

@@ -16,7 +16,7 @@
     <header>
         <img class="logo" src="images/hsu-wm.svg">
         <h1>Library Data Collector</h1>
-    </header>
+    
     <?php
         if (array_key_exists("username", $_SESSION)){
             ?>
@@ -24,7 +24,7 @@
             <?php
         }
     ?>
-    <main>
+    
         <?php
             if (!array_key_exists("username", $_SESSION)){
                 ?>
@@ -40,25 +40,18 @@
                     <p class="nav"><a href="editor.php">Create A Layout</a></p>
                     <p class="nav"><a href="logout.php">Logout</a></p>
                 </nav>
+    </header>
+    <main>  
                 <h2> Welcome <?= $_SESSION["username"]?> what shall we survey today? </h2>
                 
 
-                <?php
-                    $dbh = new PDO('mysql:host=localhost;dbname=toysdb;charset=utf8mb4', 'root', '');
-                ?>
-                <p>This is where the print statement should go</p>
-                <?php
-
-
-                foreach ($dbh ->query('SELECT * FROM colors') as $row) {
-                     ?> <p class="insert"> <?= $row['Color'] ?> </p> <?php
-                 } 
-            }
-        ?>
+                
     </main>
+                <?php
+                }
+            ?>
     <footer>
-        <p>Designed by Web App team</p>
-        <p> &copy; Humboldt State University</p>
+        <p>Designed by HSU Library Web App team. &copy; Humboldt State University</p>
     </footer>
 </body>
 </html>
