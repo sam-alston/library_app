@@ -1,3 +1,15 @@
+//extend the marker class to add furniture data
+var marker = L.Marker.extend({
+	options: {
+		fid: 0,
+		ftype: "default ftype",
+		degreeOffset: 0,
+		numSeats: 0,
+		defaultSeat: "default seat"
+	}
+});
+
+//extend Icon for each different furniture icon
 var CircTableIcon = L.Icon.extend({
     options: {
 		className: 'furnitureLargeIcon',

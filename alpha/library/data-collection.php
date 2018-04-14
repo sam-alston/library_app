@@ -115,6 +115,7 @@
 						<div> Number of seats: <input name="numseats" id="numseats" type="number" value=0></input>
 						</div>
                         <button type="button" id="sub_layout">Submit</button>
+						<button type="button" id="printfurn">Print Furn</button>
                     </fieldset>
                 </form>
                 <div id="mapid"></div>
@@ -129,6 +130,7 @@
 	
         //generates a map location
         var submit = document.getElementById("sub_layout");
+		var print = document.getElementById("printfurn");
         var floor_image = "local";
         var s_layout = "local";
         var mymap = L.map('mapid', {crs: L.CRS.Simple, minZoom: 0, maxZoom: 4});
@@ -137,6 +139,7 @@
         var bounds = [[0,0], [360,550]];
         var image;
         mymap.fitBounds(bounds);
+		
         submit.onclick = function(){
             //Test using layout in localhost with .PDO connection ect.
             if( mymap.hasLayer(image)){
@@ -183,28 +186,20 @@
                 }
                 furnMap.set(keyString, insertfurnhere);
             }
-			/*
-            //add areas based on info from .pdo file from string literals
-            //this is an example
-			var drawnItems = new L.FeatureGroup();
-			mymap.addLayer(drawnItems);
 
-			var polyLayers = floorOnePolys();
-    // Add the layers to the drawnItems feature group 
-    for(layer of polyLayers) {
-        drawnItems.addLayer(layer); 
-    }*/
-	
-			switch(floorIMGstr){
-				case "floor1.svg": addFloorOneAreasTo(mymap, drawnItems); break;
-				case "floor2.svg": addFloorTwoAreasTo(mymap, drawnItems); break;
-				case "floor3.svg": addFloorThreeAreasTo(mymap, drawnItems); break;
-			}			
-			
 		}
 		
-		var marker;
-		var latlng;
+		//testing loop through each layer object
+		print.onclick = function(){
+			mymap.eachLayer(function (layer) { 
+				if (layer.options.fid !== 0) {
+					//console.log(layer.options.ftype);
+					console.log(layer.toString());
+				} 
+			});
+		}
+
+		
 		//place a draggable marker onClick!
 		function onMapClick(e) {
 			var furniture = document.getElementById("lay-select").elements.namedItem("furniture-select").value;
@@ -234,11 +229,19 @@
 				case "vidViewerEmpty": selectedIcon= vidViewerEmpty; break;
 				default: selectedIcon= computerStation; break;
 			}
-			latlng = e.latlng;
+			
+			var latlng = e.latlng;
+			var furniture = document.getElementById("lay-select").elements.namedItem("furniture-select").value;
+			
+
 			marker = L.marker(e.latlng, {
 					icon: selectedIcon,
 					rotationAngle: degreeOffset,
-					draggable: true
+					draggable: true,
+					ftype: furniture,
+					numSeats: numSeats,
+					degreeOffset: degreeOffset,
+					fid: 1
 			}).addTo(furnitureLayer).bindPopup(e.latlng.toString()).openPopup();
 			//define drag events
 			marker.on('drag', function(e) {
@@ -249,25 +252,34 @@
 				mymap.off('click', onMapClick);
 			});
 			marker.on('dragend', function(e) {
-				//var angle = prompt("What angle would you like to offset this by?");
+				//update the offset angle of a furniture object
 				degreeOffset = document.getElementById("degree-offset").value;
-				//console log what's happening
-				console.log('marker dragend event');
-				console.log(marker.getLatLng());
-				//prep data for stringification
+				this.options.degreeOffset = degreeOffset;
+				//set angle according to field input
+				this.setRotationAngle(degreeOffset);
+				
+				//update latlng for insert string
 				var changedPos = e.target.getLatLng();
 				var lat=changedPos.lat;
 				var lng=changedPos.lng;
-				//get number of seats for furniture
+				
+				//update number of seats for furniture
 				numSeats = document.getElementById("numseats").value;
-				//set angle according to field input
-				this.setRotationAngle(degreeOffset);
+				this.options.numSeats = numSeats;
+				
 				//generate sql insert string for furniture
 				var insertString = getFurnitureString(lng,lat,degreeOffset, furniture+"_"+numSeats, "chair");
 				//change popup to insertString
 				this.bindPopup(insertString);
+				
 				//output to console to check values
+				console.log('marker dragend event');
+				console.log(marker.getLatLng());
 				console.log(insertString);
+				console.log("ftype:"+this.options.ftype);
+				console.log("numSeats:"+this.options.numSeats);
+				console.log("degreeOffset:"+this.options.degreeOffset);
+				
 				setTimeout(function() {
 					mymap.on('click', onMapClick);
 				}, 10);

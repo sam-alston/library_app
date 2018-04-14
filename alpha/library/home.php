@@ -43,18 +43,7 @@
     </header>
     <main>  
                 <h2> Welcome <?= $_SESSION["username"]?> what shall we survey today? </h2>
-                
 
-                <?php
-                    $dbh = new PDO('mysql:host=localhost;dbname=hsu_library;charset=utf8mb4', 'root', '');
-                ?>
-                <p>This is where the print statement should go</p>
-                <?php
-                foreach ($dbh ->query('SELECT * FROM layout') as $row) {
-                     ?> <p class="insert"> <?= $row['layout_id'] ?> </p> <?php
-                 } 
-            }
-        ?>
     </main>
     <footer>
         <p>Designed by HSU Library Web App team. &copy; Humboldt State University</p>
