@@ -35,7 +35,7 @@ function submitSurvey(username, layout, furnMap){
                         },
                         success: function(data){
                             console.log("Seat was inserted ");
-
+=
                         }
                     });
                 }

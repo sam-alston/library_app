@@ -196,7 +196,6 @@
         }
 
         function plusHelper(){
-			
 			selected_furn.seat_places.push(new Seat(selected_furn.seat_places.seat_num));
             plus(selected_furn, selected_furn.seat_places.length);
 			checkAll(selected_furn);
