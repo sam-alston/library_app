@@ -92,7 +92,7 @@ INSERT INTO furniture_type( furniture_name, number_of_seats)
 VALUES('vid_viewer', 1);
 
 INSERT INTO furniture_type( furniture_name, number_of_seats)
-VALUES('rectangular_table_6', 6);
+VALUES('chair', 1);
 
 INSERT INTO furniture_type( furniture_name, number_of_seats)
-VALUES('chair', 1);
+VALUES('rectangular_table_6', 6);
