@@ -11,9 +11,6 @@ INSERT INTO furniture_type( furniture_name, number_of_seats)
 VALUES('rectangular_table_4', 4);
 
 INSERT INTO furniture_type( furniture_name, number_of_seats)
-VALUES('rectangular_table_6', 6);
-
-INSERT INTO furniture_type( furniture_name, number_of_seats)
 VALUES('counter_curved_2', 2);
 
 INSERT INTO furniture_type( furniture_name, number_of_seats)
@@ -96,3 +93,6 @@ VALUES('vid_viewer', 1);
 
 INSERT INTO furniture_type( furniture_name, number_of_seats)
 VALUES('chair', 1);
+
+INSERT INTO furniture_type( furniture_name, number_of_seats)
+VALUES('rectangular_table_6', 6);
