@@ -196,7 +196,8 @@
         }
 
         function plusHelper(){
-            plus(selected_furn.seat_places.length, selected_furn);
+			selected_furn.seat_places.push(new Seat(selected_furn.seat_places.seat_num));
+            plus(selected_furn, selected_furn.seat_places.length);
         }
 
         //define our object here
@@ -208,7 +209,7 @@
         }
         function Furniture(fid, num_seats){
             this.furn_id = fid;
-            this.num_seats = 0;
+            this.num_seats = num_seats;
             this.seat_places = [];
             this.whiteboard = 0;
         }

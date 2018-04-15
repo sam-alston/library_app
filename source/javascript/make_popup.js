@@ -14,10 +14,25 @@ function markerClick(e){
 
 			selected_furn = furnMap.get(this.options.fid);
 
-			for (seat_num = 0; seat_num < this.options.numSeats; seat_num++)
+			//If the JS object seat_places array is as big as default number of seats, it has been surveyed
+			//otherwise make the new seats and push onto array.
+			//the current number of seats in the object is the default size, or the size of the array.
+			var cur_num_seats;
+			if(selected_furn.seat_places.length >= this.options.numSeats){
+				cur_num_seats = selected_furn.seat_places.length;
+			} else {
+				//this is the first time the cur_furn is surveyed, so we push on the initial furniture pieces.
+				cur_num_seats = this.options.numSeats;
+				for (i=0; i< cur_num_seats; i++){
+					//If the user added a seat that was not a default seat, set the checkbox to checked
+					selected_furn.seat_places.push(new Seat(selected_furn.seat_places.seat_num));
+				}
+				
+			}
+			
+			for (seat_num = 0; seat_num < cur_num_seats; seat_num++)
 			{
-				seat_array_length = selected_furn.seat_places.length;
-				plus(seat_array_length, selected_furn);
+				plus(selected_furn, seat_num+1);
 			}
 			added_seats = true;
 		}
@@ -39,46 +54,46 @@ function checkAll(cur_furn){
 		default_seat.checked = true;
 	}
 }
-//Expects: nothing
+//Expects: the current furniture to add seat to, and the seat number to add
 //Returns: nothing
 //Outputs: this will create all the default seat objects for the table, will also add a new 
 //		   seat if the user push the plus button
-function plus(seat_array_length, cur_furn)
+function plus( cur_furn, seat_num)
 {
 	//var furniture = cur_furn;
 	//used to make unique id's for each of the elements
-	var length = seat_array_length + 1;
+	//var length = selected_furn.seat_places.length  + 1;
 
+	
 	//create the checkbox for the occupied input
 	var cb = document.createElement('input');
 	cb.type = "checkbox";
-	cb.id = "checkbox"+ length;
+	cb.id = "checkbox"+ seat_num;
 	cb.className = "inuse_input";
-	cb.name = "occupied"+length;
+	cb.name = "occupied"+seat_num;
 
-	//If the user added a seat that was not a default seat, set the checkbox to checked
-	cur_furn.seat_places.push(new Seat(cur_furn.seat_places.length));
+	
 
 	//creates a button for a drop down menu for each seat
 	var dd_button = document.createElement('button');
 	dd_button.name = "dropdown";
-	dd_button.id = "dd_button"+length;
+	dd_button.id = "dd_button"+seat_num;
 	dd_button.className = "dropbutton";
 
 	//append the text for the seat to the button so we can change the arrow
 	//also makes it easier for the user to press
-	dd_button.appendChild(document.createTextNode(' Seat ' + (length)));
+	dd_button.appendChild(document.createTextNode(' Seat ' + (seat_num)));
 
 	//creates a div the will be in the drop down menu with more options for each seat
 	var dd_div = document.createElement('div');
 	dd_div.name = "div";
-	dd_div.id = "dd_div" + length;
+	dd_div.id = "dd_div" + seat_num;
 	dd_div.className = "div";
 	div_content(dd_div, cur_furn);
 
 	//adds a new line for each seat
 	var br = document.createElement('br');
-	br.id = "br" + length;
+	br.id = "br" + seat_num;
 
 	//Append each element to the document
 	if(document.getElementById("seat_div_child") != null)
