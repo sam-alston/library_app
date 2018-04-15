@@ -46,11 +46,14 @@ function markerClick(e){
 	}
 }
 
-/*TODO: To be fixed because we do not have the number of seats in the furniture object*/
+/*sets all seats of the selected furniture to occupied*/
 function checkAll(cur_furn){
-	for(var i = 1; i <= cur_furn.num_seats; i++)
+	
+	for(var i = 1; i <= cur_furn.seat_places.length; i++)
 	{
+		//elements are named after seat place, 1 indexed, seat_places array is 0 indexed
 		var default_seat = document.getElementById("checkbox"+i);
+		cur_furn.seat_places[i-1].occupied = true;
 		default_seat.checked = true;
 	}
 }
@@ -60,17 +63,23 @@ function checkAll(cur_furn){
 //		   seat if the user push the plus button
 function plus( cur_furn, seat_num)
 {
-	//var furniture = cur_furn;
-	//used to make unique id's for each of the elements
-	//var length = selected_furn.seat_places.length  + 1;
-
-	
+	//get the current seat from seat_places
+	var cur_seat = cur_furn.seat_places[seat_num-1];
 	//create the checkbox for the occupied input
 	var cb = document.createElement('input');
 	cb.type = "checkbox";
 	cb.id = "checkbox"+ seat_num;
 	cb.className = "inuse_input";
 	cb.name = "occupied"+seat_num;
+	cb.checked = cur_seat.occupied;
+	//onchange listener sets occupied state
+	cb.onchange = function(){
+		if(cb.checked === true){
+			cur_seat.occupied = true;
+		} else {
+			cur_seat.occupied = false;
+		}
+	};
 
 	
 

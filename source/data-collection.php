@@ -196,8 +196,10 @@
         }
 
         function plusHelper(){
+			
 			selected_furn.seat_places.push(new Seat(selected_furn.seat_places.seat_num));
             plus(selected_furn, selected_furn.seat_places.length);
+			checkAll(selected_furn);
         }
 
         //define our object here
@@ -205,7 +207,7 @@
             this.seatPos = seatnum;
             this.type = 0;
             this.activity;
-            this.occupied = 0;
+            this.occupied = false;
         }
         function Furniture(fid, num_seats){
             this.furn_id = fid;
