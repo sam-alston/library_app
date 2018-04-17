@@ -221,15 +221,15 @@
         }
 
         function plusHelper(){
-			selected_furn.seat_places.push(new Seat(selected_furn.seat_places.seat_num));
+			selected_furn.seat_places.push(new Seat(selected_furn.seat_places.length));
             plus(selected_furn, selected_furn.seat_places.length);
 			checkAll(selected_furn);
         }
 
         //define our object here
-        function Seat(seatnum){
-            this.seatPos = seatnum;
-            this.type = 0;
+        function Seat(seatPos){
+            this.seatPos = seatPos;
+            //this.type = type;
             this.activity;
             this.occupied = false;
         }
@@ -237,6 +237,7 @@
             this.furn_id = fid;
             this.num_seats = num_seats;
             this.seat_places = [];
+			this.seat_type = 32;
             this.whiteboard = 0;
         }
 
