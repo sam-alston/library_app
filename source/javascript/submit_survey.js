@@ -22,20 +22,24 @@ function submitSurvey(username, layout, furnMap){
                 var cur_furn = iterateMap.next().value;
                 for(var j = 0; j < cur_furn.seat_places.length; j++){
                     var cur_seat = cur_furn.seat_places[j];
+					//make an int to pass to DB since they don't have boolean type
+					var seatOccupied=0;
+					if(cur_seat.occupied){
+						seatOccupied = 1;
+					}
                      /* Run insert statment for each seat*/
                     $.ajax({
                         url: 'phpcalls/insert-seat.php',
                         type: 'post',
                         data:{
                             'furn_id': cur_furn.furn_id,
-                            'occupied': cur_seat.occupied,
+                            'occupied': seatOccupied,
                             'seat_pos': cur_seat.seatPos,
-                            'seat_type': cur_seat.type,
+                            'seat_type': cur_furn.seat_type,
                             'survey_id': cur_survey_id
                         },
                         success: function(data){
                             console.log("Seat was inserted ");
-
                         }
                     });
                 }
