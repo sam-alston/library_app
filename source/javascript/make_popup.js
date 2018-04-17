@@ -2,7 +2,8 @@
 function markerClick(e){
 	//bool check to test if we are in a different popup
 	var added_seats = false;
-	//document.getElementById("popupTest").style.margin = "0em";
+	document.getElementById("lock").style.display = "inline";
+	document.getElementById("lock").innerText = "Unlock";
 	furnMap = getFurnMap();
 	while(added_seats == false)
 	{

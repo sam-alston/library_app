@@ -156,6 +156,10 @@
                         </div>
                     </div>
                 </div>
+                <button onClick="saveHelper()" id="save">Save and Exit</button>
+                <button onClick="lockHelper()" id="lock">Unlock</button>
+                <button onClick="checkAllHelper()" id="checkall">Check All</button>
+                <label id="seat_operator"> Add or Subtract a Seat</label>
                 <button onclick="minusHelper()" id="minus">-</button>
                 <button onclick="plusHelper()" id="plus">+</button> 
         </div>
@@ -180,8 +184,7 @@
 
         var popup = document.getElementById("popupTest"); 
         
-        var popupDim = 
-        {
+        var popupDim = {
             'maxWidth': '5000',
             'maxHeight': '5000'
         };//This is the dimensions for the popup
@@ -189,6 +192,28 @@
 
         function getFurnMap(){
             return furnMap;
+        }
+        
+        function checkAllHelper(){
+        	checkAll(selected_furn);
+        }
+        
+        function saveHelper(){
+        	mymap.closePopup();
+        }
+        
+        function lockHelper(){
+        	var lockButton = document.getElementById("lock");
+        	
+        	if(lockButton.innerText == "Unlock")
+        	{
+        		lockButton.innerText = "Lock";
+        	}
+        	
+        	else
+        	{
+        		lockButton.innerText = "Unlock";
+        	}
         }
         
         function minusHelper(){
