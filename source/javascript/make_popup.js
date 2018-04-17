@@ -25,7 +25,7 @@ function markerClick(e){
 				cur_num_seats = this.options.numSeats;
 				for (i=0; i< cur_num_seats; i++){
 					//If the user added a seat that was not a default seat, set the checkbox to checked
-					selected_furn.seat_places.push(new Seat(selected_furn.seat_places.seat_num));
+					selected_furn.seat_places.push(new Seat(i));
 				}
 				
 			}
