@@ -181,6 +181,10 @@ insert into `hsu_library`.`area_vertices`
 values
 (4, 170, 56, 10);
 
+INSERT INTO LAYOUT
+(AUTHOR, FLOOR, DATE_CREATED)
+VALUES
+('SRA', 2, NOW());
 
 -- This is the Quiet Study Area (Area 5, Floor 2)
 insert into `hsu_library`.`area`
@@ -191,7 +195,7 @@ values
 insert into `hsu_library`.`area_in_layout`
 (`area_id`, `layout_id`)
 values
-(5, 1);
+(5, 2);
 
 insert into `hsu_library`.`area_vertices`
 (`area_id`, `v_x`, `v_y`, `load_order`)
@@ -343,7 +347,7 @@ values
 insert into `hsu_library`.`area_in_layout`
 (`area_id`, `layout_id`)
 values
-(6, 1);
+(6, 2);
 
 insert into `hsu_library`.`area_vertices`
 (`area_id`, `v_x`, `v_y`, `load_order`)
@@ -395,7 +399,7 @@ values
 insert into `hsu_library`.`area_in_layout`
 (`area_id`, `layout_id`)
 values
-(7, 1);
+(7, 2);
 
 insert into `hsu_library`.`area_vertices`
 (`area_id`, `v_x`, `v_y`, `load_order`)
@@ -427,7 +431,7 @@ values
 insert into `hsu_library`.`area_in_layout`
 (`area_id`, `layout_id`)
 values
-(8, 1);
+(8, 2);
 
 insert into `hsu_library`.`area_vertices`
 (`area_id`, `v_x`, `v_y`, `load_order`)
@@ -459,7 +463,7 @@ values
 insert into `hsu_library`.`area_in_layout`
 (`area_id`, `layout_id`)
 values
-(9, 1);
+(9, 2);
 
 insert into `hsu_library`.`area_vertices`
 (`area_id`, `v_x`, `v_y`, `load_order`)
@@ -491,7 +495,7 @@ values
 insert into `hsu_library`.`area_in_layout`
 (`area_id`, `layout_id`)
 values
-(10, 1);
+(10, 2);
 
 insert into `hsu_library`.`area_vertices`
 (`area_id`, `v_x`, `v_y`, `load_order`)
@@ -563,7 +567,7 @@ values
 insert into `hsu_library`.`area_in_layout`
 (`area_id`, `layout_id`)
 values
-(11, 1);
+(11, 2);
 
 insert into `hsu_library`.`area_vertices`
 (`area_id`, `v_x`, `v_y`, `load_order`)
@@ -600,7 +604,7 @@ values
 insert into `hsu_library`.`area_in_layout`
 (`area_id`, `layout_id`)
 values
-(12, 1);
+(12, 2);
 
 insert into `hsu_library`.`area_vertices`
 (`area_id`, `v_x`, `v_y`, `load_order`)
@@ -637,6 +641,11 @@ insert into `hsu_library`.`area_vertices`
 values
 (12, 96, 461, 7);
 
+INSERT INTO LAYOUT
+(AUTHOR, FLOOR, DATE_CREATED)
+VALUES
+('SRA', 3, NOW());
+
 
 -- This is the Quiet Area (Area 13, Floor 3)
 insert into `hsu_library`.`area`
@@ -647,7 +656,7 @@ values
 insert into `hsu_library`.`area_in_layout`
 (`area_id`, `layout_id`)
 values
-(13, 1);
+(13, 3);
 
 insert into `hsu_library`.`area_vertices`
 (`area_id`, `v_x`, `v_y`, `load_order`)
@@ -699,7 +708,7 @@ values
 insert into `hsu_library`.`area_in_layout`
 (`area_id`, `layout_id`)
 values
-(14, 1);
+(14, 3);
 
 insert into `hsu_library`.`area_vertices`
 (`area_id`, `v_x`, `v_y`, `load_order`)
@@ -751,7 +760,7 @@ values
 insert into `hsu_library`.`area_in_layout`
 (`area_id`, `layout_id`)
 values
-(15, 1);
+(15, 3);
 
 insert into `hsu_library`.`area_vertices`
 (`area_id`, `v_x`, `v_y`, `load_order`)
@@ -783,7 +792,7 @@ values
 insert into `hsu_library`.`area_in_layout`
 (`area_id`, `layout_id`)
 values
-(16, 1);
+(16, 3);
 
 insert into `hsu_library`.`area_vertices`
 (`area_id`, `v_x`, `v_y`, `load_order`)
@@ -825,7 +834,7 @@ values
 insert into `hsu_library`.`area_in_layout`
 (`area_id`, `layout_id`)
 values
-(17, 1);
+(17, 3);
 
 insert into `hsu_library`.`area_vertices`
 (`area_id`, `v_x`, `v_y`, `load_order`)
