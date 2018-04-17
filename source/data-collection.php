@@ -178,7 +178,13 @@
         var seat_num;
         var furnMap = new Map();
 
-        var popup = document.getElementById("popupTest"); //This is the dimensions for the popup
+        var popup = document.getElementById("popupTest"); 
+        
+        var popupDim = 
+        {
+            'maxWidth': '5000',
+            'maxHeight': '5000'
+        };//This is the dimensions for the popup
         
 
         function getFurnMap(){
@@ -190,20 +196,23 @@
         }
 
         function plusHelper(){
-            plus(selected_furn.seat_places.length, selected_furn);
+			selected_furn.seat_places.push(new Seat(selected_furn.seat_places.length));
+            plus(selected_furn, selected_furn.seat_places.length);
+			checkAll(selected_furn);
         }
 
         //define our object here
-        function Seat(seatnum){
-            this.seatPos = seatnum;
-            this.type = 0;
+        function Seat(seatPos){
+            this.seatPos = seatPos;
+            //this.type = type;
             this.activity;
-            this.occupied = 0;
+            this.occupied = false;
         }
         function Furniture(fid, num_seats){
             this.furn_id = fid;
-            this.num_seats = 0;
+            this.num_seats = num_seats;
             this.seat_places = [];
+			this.seat_type = 32;
             this.whiteboard = 0;
         }
 
@@ -321,11 +330,6 @@
                         default: selectedIcon= computerStation; break;
                     }
 
-                    var popupDim = 
-                    {
-                        'maxWidth': '5000',
-                        'maxHeight': '2500'
-                    };
                     /*Add erics code to get rid of bind and open popup*/
                     //place a marker for each furniture item
                     marker = L.marker(latlng, {
@@ -335,8 +339,7 @@
                         ftype: furniture_type,
                         numSeats: num_seats,
                         fid: keyString
-                    }).addTo(furnitureLayer).bindPopup(popup, {maxWidth: '5000',
-                        maxHeight: '2500'});
+                    }).addTo(furnitureLayer).bindPopup(popup, popupDim);
 
                     marker.on('click', markerClick);
 
