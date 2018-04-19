@@ -6,6 +6,7 @@ In order to get the load-demo working, load the scripts to local DB in this orde
 2. area_populate.sql
 3. furniture_type_populate.sql
 4. furniture_L1.sql
+5. activity_populate.sql
 
 (1) ROOM_POPULATE.SQL
   Contains the insert statments for room.
@@ -18,3 +19,6 @@ In order to get the load-demo working, load the scripts to local DB in this orde
 
 (4) FURNITURE_L1.SQL
   Contains the insert statements for furniture in floor 1 layout 1.
+  
+(5) ACTIVITY_POPULATE.SQL
+  Contains the insert statements for activities.

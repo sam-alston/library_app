@@ -78,140 +78,166 @@
         $dbh = new PDO('mysql:host=localhost;dbname=hsu_library;charset=utf8mb4', 'root', '');
 
         /*Checks to see if you have selected a form, in order to build the proper layout select, if you have selected a floor, this if statement fires*/
-        if(array_key_exists('floor-select', $_POST)){
-            /*********To Be Replaced with form function*********/
-            $_SESSION['cur_floor'] = $_POST['floor-select'];
-            ?>
-            <main class="to-top">
+        /*********To Be Replaced with form function*********/
+        $_SESSION['cur_floor'] = $_POST['floor-select'];
+        ?>
+        <main class="to-top">
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" class="layout-selector" id="lay-select">
                 <fieldset>
                     <select name="floor-select" id="floor-select">
-                        <option value="0">Choose a Floor</option>
-                        <option value="1" selected="selected">Floor 1</option>
+                        <option value="0" selected="selected">Choose a Floor</option>
+                        <option value="1" >Floor 1</option>
                         <option value="2">Floor 2</option>
                         <option value="3">Floor 3</option>
                     </select>
-                    <select name="layout-select">
-                        <!-- Populate these options with those from the database-->
+                    <select name="layout-select" id="current_layouts">
                         <option value="default">Choose a Layout</option>
-                        <?php
-                            //Will replace hardcoded floor with ajax statement to get floor when floor changes
-                            $i = 1;
-                            foreach($dbh->query('SELECT * FROM layout WHERE floor = '.$_SESSION['cur_floor']) as $row){
-                                ?> <option value="<?= $row['layout_id'] ?>">Layout <?= $i ?> for Layout ID: <?= $row['layout_id'] ?> </option><?php
-                                $i++;
-                            }
-                        ?>
                     </select>
                     <input type="submit" id="sub_layout" value="Load Layout"/>
                 </fieldset>
             </form>
-            <?php
-            /*******End of Replace select with form function********/
-        }
-        /*Builds only floor select if no floor is stored*/
-        else{
-            ?>
-            <main class="to-top">
-            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" class="layout-selector" id="lay-select">
-                <fieldset>
-                    <!-- Set up a Query here to add options for each layout based on what floors are available in the databse-->
-                    <select name="floor-select" id="floor-select">
-                        <option value="0">Choose a Floor</option>
-                        <option value="1">Floor 1</option>
-                        <option value="2">Floor 2</option>
-                        <option value="3">Floor 3</option>
-                    </select>
-                    <input type="submit" id="sub_layout" value="Load Floor"/>
-                </fieldset>
-            </form>
-            <?php
-        }
-        /*Create the div container for the map*/
-        ?>
+       
             <div id="mapid"></div>
-                <?php
-            }
-        ?>
-        <div id="popupTest">
-            <div id="seat_div"></div>
-                <div id="wb_div">
-                <!-- Cannot have the same class name as seat dropdown button because we add a
-                    event listener to the seat dropdown and search for it by class name-->
-                <button onclick="drop_func()" id="wb_button" class="wb">
-                    <label>Whiteboard</label></button><input type="checkbox" name="wb" class="inuse_input"/>
+            <div id="popupTest">
+                <div id="seat_div"></div>
                     <div id="wb_div">
-                        <div id="wb_label" class="div">
-                            <input type="radio" name="wb" value="partion" class="action_input"/> 
-                            <label class="action_label">
-                                Partion </label> <br />
-                     
-                            <input type="radio" name="wb" value="writing" class="action_input"/>
-                            <label class="action_label">
-                                Writing </label> <br />
-                    
-                            <input type="radio" name="wb" value="other" class="action_input"/>
-                            <label class="action_label">
-                                Other </label> <br />
+                    <!-- Cannot have the same class name as seat dropdown button because we add a
+                        event listener to the seat dropdown and search for it by class name-->
+                    <button onclick="drop_func()" id="wb_button" class="wb">
+                        <label>Whiteboard</label></button><input type="checkbox" name="wb" class="inuse_input"/>
+                        <div id="wb_div">
+                            <div id="wb_label" class="div">
+                                <input type="radio" name="wb" value="partion" class="action_input"/> 
+                                <label class="action_label">
+                                    Partion </label> <br />
+                         
+                                <input type="radio" name="wb" value="writing" class="action_input"/>
+                                <label class="action_label">
+                                    Writing </label> <br />
+                        
+                                <input type="radio" name="wb" value="other" class="action_input"/>
+                                <label class="action_label">
+                                    Other </label> <br />
+                            </div>
                         </div>
                     </div>
+                    <button onClick="saveHelper()" id="save" style="display:none">Save and Exit</button>
+                    <button onClick="lockHelper()" id="lock">Unlock</button>
+                    <button onClick="checkAllHelper()" id="checkall" style="display:none">Check All</button>
+                    <label id="seat_operator"></label>
+                    <button onclick="minusHelper()" id="minus" style="display:none">-</button>
+                    <button onclick="plusHelper()" id="plus" style="display:none">+</button>
                 </div>
-                <button onClick="saveHelper()" id="save">Save and Exit</button>
-                <button onClick="lockHelper()" id="lock">Unlock</button>
-                <button onClick="checkAllHelper()" id="checkall">Check All</button>
-                <label id="seat_operator"> Add or Subtract a Seat</label>
-                <button onclick="minusHelper()" id="minus">-</button>
-                <button onclick="plusHelper()" id="plus">+</button> 
-        </div>
+        			
             <footer class="footd foot_hide">
                 <p>Designed by HSU Library Web App team. &copy; Humboldt State University</p>
             </footer>
         </main>
+        <?php 
+        }
+        ?>
     </body>
     <script>
         //generates a map location
         var submit = document.getElementById("sub_layout");
         var floor_image = "local";
         var s_layout = "local";
+        var layout ="default";
+
         var mymap = L.map('mapid', {crs: L.CRS.Simple});
         var furnitureLayer = L.layerGroup().addTo(mymap);
         var bounds = [[0,0], [360,550]];
         mymap.fitBounds(bounds);
         var image;
         var selected_furn;
+		var selected_marker;
         var seat_num;
+		//to store the seat_places array to be saved
+		var temp_seat_places = [];
         var furnMap = new Map();
+		var activityMap = new Map();
 
         var popup = document.getElementById("popupTest"); 
         
-        var popupDim = {
+        var popupDim = 
+        {
             'maxWidth': '5000',
             'maxHeight': '5000'
         };//This is the dimensions for the popup
-        
+
+        //This function gets all the layouts for the florr and populates the dropdown
+        $(function(){
+            $('#floor-select').on("change", function(){
+                var form_info = document.getElementById("lay-select");
+                floor_ID = form_info.elements["floor-select"].value;
+
+                //Get rid previous select options before repopulating 
+                var select = document.getElementById('current_layouts');
+                var length = select.options.length;
+                if(length > 1){
+                    for(i = 0; i < length; i++){
+                        select.remove(1);
+                    }
+                }
+                $.ajax({
+                    url: 'phpcalls/floor-select.php',
+                    type: 'get',
+                    data:{ 'floor_ID': floor_ID },
+                    success: function(data){
+                        /*need to replace with ajax call getting actual layout id's*/
+
+                        console.log("got number of layouts");
+                        var json_object = JSON.parse(data);
+                        var lay_select = document.getElementById('current_layouts');
+
+                        for(var i = 0; i < json_object.length; i++){
+                            var obj = json_object[i];
+                            lay_id = obj['layout_id'];
+                            var option = document.createElement('option');
+                            option.value = lay_id;
+                            option.innerHTML = "Layout " + lay_id +" for Floor";
+                            lay_select.appendChild(option);
+                        }
+                    }
+                });
+            });
+        });
+
+        $(function(){
+            $('#current_layouts').on("change", function(){
+                var form_info = document.getElementById("lay-select");
+                layout = form_info.elements["layout-select"].value;
+            });
+        });
 
         function getFurnMap(){
             return furnMap;
         }
-        
-        function checkAllHelper(){
+		        function checkAllHelper(){
         	checkAll(selected_furn);
         }
         
         function saveHelper(){
+			var occupants = document.getElementById("occupantInput");
+			if(occupants){
+				selected_furn.totalOccupants = occupants.value;
+			}
+			selected_marker.setOpacity(1);
+			selected_furn.seat_places = temp_seat_places;
         	mymap.closePopup();
         }
         
         function lockHelper(){
         	var lockButton = document.getElementById("lock");
         	
-        	if(lockButton.innerText == "Unlock")
+        	if(lockButton.innerText === "Unlock")
         	{
+				selected_marker.dragging.enable();
         		lockButton.innerText = "Lock";
-        	}
-        	
+        	}        	
         	else
         	{
+				selected_marker.dragging.disable();
         		lockButton.innerText = "Unlock";
         	}
         }
@@ -221,8 +247,11 @@
         }
 
         function plusHelper(){
-			selected_furn.seat_places.push(new Seat(selected_furn.seat_places.length));
-            plus(selected_furn, selected_furn.seat_places.length);
+			//selected_furn.seat_places.push(new Seat(selected_furn.seat_places.length));
+            temp_seat_places.push(new Seat(temp_seat_places.length));
+			//plus(selected_furn, selected_furn.seat_places.length);
+			//pass true for occupied because we are adding another seat to the default
+			plus(temp_seat_places, temp_seat_places.length, true);
 			checkAll(selected_furn);
         }
 
@@ -230,15 +259,17 @@
         function Seat(seatPos){
             this.seatPos = seatPos;
             //this.type = type;
-            this.activity;
+            this.activity = [];
             this.occupied = false;
         }
+
         function Furniture(fid, num_seats){
             this.furn_id = fid;
             this.num_seats = num_seats;
             this.seat_places = [];
 			this.seat_type = 32;
             this.whiteboard = 0;
+			this.totalOccupants = 0;
         }
 
         //checks the constant state of the Layout and Builds out the view
@@ -280,8 +311,23 @@
             <?php
             /*TODO: CLEAR POST SO THAT ON RELOAD, LAYOUT ISN'T BUILT*/
             if(array_key_exists("layout-select", $_POST)){
+                ?>
+                layout = "<?php echo $_POST['layout-select']?>";
+                <?php
+
                 $_SESSION['cur_layout'] = $_POST['layout-select'];
 
+				
+								//get activities and populat activityMap
+				$getActivities = $dbh->prepare('SELECT * FROM activity');
+
+                $getActivities->execute();
+				
+				/*foreach ($getActivities as $row) {
+					console.log("Getting Activities");
+					activityMap.set($row['activity_id'], $row['activity_description']);
+				}*/
+				
                 $getfurn = $dbh->prepare('SELECT * FROM furniture WHERE layout_id = :set_layout');
 
                 $layout = $_POST["layout-select"];
@@ -367,15 +413,32 @@
                     }).addTo(furnitureLayer).bindPopup(popup, popupDim);
 
                     marker.on('click', markerClick);
+					marker.setOpacity(.3);
+					
+					//update marker coords in marker map on dragend, set to modified
+					marker.on("dragend", function(e){
+						selected_furn.modified = true;
+						selected_furn.in_area = 1;
+						selected_furn.latlng = e.target.getLatLng();
+					});
 
                     /*TODO: Seat's made on survey, not furniture creation*/
                     /*for(i = 0; i < newFurniture.num_seats; i++){
                         newFurniture.seat_places[i] = new Seat(i, newFurniture.seat_type);
                     }*/
 
+                    document.getElementById("plus").style.display = "block";
+                    document.getElementById("minus").style.display = "block";
+                    document.getElementById("checkall").style.display = "block";
+                    document.getElementById("save").style.display = "block";
+                    document.getElementById("wb_div").style.display = "block";
+
                     furnMap.set(keyString, newFurniture);
                     <?php
                 }
+				
+
+				
                 ?>
                 //add areas based on info from .pdo file from string literals
                 //this is an example
@@ -404,7 +467,6 @@
             //alert(mymap.getZoom)());
             var newzoom = '' + (markerSize) +'px';
             var newLargeZoom = '' + (markerSize*2) +'px';
-            //marker = L.marker(e.latlng, {icon: couchFour }).addTo(furnitureLayer).bindPopup("I am a Computer Station.");
             $('#mapid .furnitureIcon').css({'width':newzoom,'height':newzoom});
             $('#mapid .furnitureLargeIcon').css({'width':newLargeZoom,'height':newLargeZoom});          
         });
@@ -412,9 +474,9 @@
         //On click of submission, Create's a Survey Record and Inserts each seat object into the database with that ID
         function submitSurveyHelper(){
             var username = "<?php echo $_SESSION['username']?>";
-            var layout = "<?php echo $_POST['layout-select']?>";
 
             submitSurvey(username, layout, furnMap);
         }
+
     </script>
 </html>

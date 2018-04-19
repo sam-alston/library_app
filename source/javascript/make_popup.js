@@ -2,9 +2,17 @@
 function markerClick(e){
 	//bool check to test if we are in a different popup
 	var added_seats = false;
+	//document.getElementById("popupTest").style.margin = "0em";
+	furnMap = getFurnMap();
 	document.getElementById("lock").style.display = "inline";
 	document.getElementById("lock").innerText = "Unlock";
-	furnMap = getFurnMap();
+	
+	selected_furn = furnMap.get(this.options.fid);
+	selected_marker = this;
+	selected_marker.dragging.disable();
+	
+	temp_seat_places = [];
+
 	while(added_seats == false)
 	{
 		if(document.getElementById("seat_div_child") == null)
@@ -13,27 +21,46 @@ function markerClick(e){
 			seat_div_child.id = "seat_div_child";
 			document.getElementById("seat_div").appendChild(seat_div_child);
 
-			selected_furn = furnMap.get(this.options.fid);
-
 			//If the JS object seat_places array is as big as default number of seats, it has been surveyed
 			//otherwise make the new seats and push onto array.
 			//the current number of seats in the object is the default size, or the size of the array.
 			var cur_num_seats;
+			var surveyExists = true;
+			//check if it has been surveyed it will have seats in the array
 			if(selected_furn.seat_places.length >= this.options.numSeats){
 				cur_num_seats = selected_furn.seat_places.length;
 			} else {
+				surveyExists = false;
 				//this is the first time the cur_furn is surveyed, so we push on the initial furniture pieces.
 				cur_num_seats = this.options.numSeats;
-				for (i=0; i< cur_num_seats; i++){
-					//If the user added a seat that was not a default seat, set the checkbox to checked
-					selected_furn.seat_places.push(new Seat(i));
-				}
-				
 			}
+			
 			
 			for (seat_num = 0; seat_num < cur_num_seats; seat_num++)
 			{
-				plus(selected_furn, seat_num+1);
+				temp_seat_places.push(new Seat(seat_num));
+				var occupiedBool = false;
+				if(surveyExists){
+					occupiedBool = selected_furn.seat_places[seat_num].occupied;
+				}
+				plus(temp_seat_places, seat_num+1, occupiedBool);
+			}
+			
+			//find +/- buttons to st onclick
+			plusbutton = document.getElementById("plus");
+			minusbutton = document.getElementById("minus");
+			
+			if(this.options.numSeats === 0){
+				//add room input
+				
+				addRoomInput(selected_furn.totalOccupants);
+				minusbutton.disabled = true;
+				plusbutton.disabled = true;
+				
+			} else {
+				//not a room, reattach +/- buttons to plusHelper/minusHelper
+				minusbutton.disabled = false;
+				plusbutton.disabled = false;
 			}
 			added_seats = true;
 		}
@@ -47,32 +74,58 @@ function markerClick(e){
 	}
 }
 
+function roomPlus(){
+	var occupantInput = document.getElementById("occupantInput");
+	value = occupantInput.value;
+}
+
+function roomMinus(){
+	var occupantInput = document.getElementById("occupantInput");
+	value = occupantInput.value;
+	alert(value);
+}
+
 /*sets all seats of the selected furniture to occupied*/
 function checkAll(cur_furn){
 	
-	for(var i = 1; i <= cur_furn.seat_places.length; i++)
+	//for(var i = 1; i <= cur_furn.seat_places.length; i++)
+	for( var i = 1; i <= temp_seat_places.length; i++)
 	{
 		//elements are named after seat place, 1 indexed, seat_places array is 0 indexed
 		var default_seat = document.getElementById("checkbox"+i);
-		cur_furn.seat_places[i-1].occupied = true;
+		//cur_furn.seat_places[i-1].occupied = true;
+		temp_seat_places[i-1].occupied = true;
 		default_seat.checked = true;
 	}
+}
+
+function addRoomInput(currentOccupants){
+	var occupantsInput = document.createElement('input');
+	occupantsInput.type = "number";
+	occupantsInput.id = "occupantInput";
+	occupantsInput.min = 0;
+	document.getElementById("seat_div_child").appendChild(occupantsInput);
+	occ = document.getElementById("occupantInput");
+	occ.value = currentOccupants;
+	
 }
 //Expects: the current furniture to add seat to, and the seat number to add
 //Returns: nothing
 //Outputs: this will create all the default seat objects for the table, will also add a new 
 //		   seat if the user push the plus button
-function plus( cur_furn, seat_num)
+function plus( temp_seat_places, seat_num, occupiedBool)
 {
 	//get the current seat from seat_places
-	var cur_seat = cur_furn.seat_places[seat_num-1];
+	//var cur_seat = cur_furn.seat_places[seat_num-1];
+	var cur_seat = temp_seat_places[seat_num-1];
 	//create the checkbox for the occupied input
 	var cb = document.createElement('input');
 	cb.type = "checkbox";
 	cb.id = "checkbox"+ seat_num;
 	cb.className = "inuse_input";
 	cb.name = "occupied"+seat_num;
-	cb.checked = cur_seat.occupied;
+	cb.checked = occupiedBool;
+	cur_seat.occupied = occupiedBool;
 	//onchange listener sets occupied state
 	cb.onchange = function(){
 		if(cb.checked === true){
@@ -99,7 +152,7 @@ function plus( cur_furn, seat_num)
 	dd_div.name = "div";
 	dd_div.id = "dd_div" + seat_num;
 	dd_div.className = "div";
-	div_content(dd_div, cur_furn);
+	div_content(dd_div);
 
 	//adds a new line for each seat
 	var br = document.createElement('br');
@@ -158,10 +211,12 @@ function plus( cur_furn, seat_num)
 //		   this does not delete the default seats and will alert the user of that
 function minus(cur_furn)
 {
-	var length = cur_furn.seat_places.length;
-
+	//var length = cur_furn.seat_places.length;
+	var length = temp_seat_places.length;
+	
 	//used to make sure the user doesn't delete the default seats
-	if(cur_furn.seat_places.length > cur_furn.num_seats)
+	//if(cur_furn.seat_places.length > cur_furn.num_seats)
+	if(temp_seat_places.length > cur_furn.num_seats)	
 	{
 		//removing each of the element in the the popup
 		var removeDD = document.getElementById("dd_button"+length);
@@ -176,7 +231,8 @@ function minus(cur_furn)
 		var removeBR = document.getElementById("br"+length);
 		removeBR.remove();
 
-		cur_furn.seat_places.pop();
+		//cur_furn.seat_places.pop();
+		temp_seat_places.pop();
 		seat_num--;
 	}
 	//If the user tries to delete a default seat prompt an error telling them they can't
@@ -190,11 +246,12 @@ function minus(cur_furn)
 //Expects: The div wrapper for the drop down
 //Returns: nothing
 //Outputs: All the actions of the seat object as elements with a checkbox 
-function div_content(dd_div, cur_furn)
+function div_content(dd_div)
 {
 	var length = seat_num;
-	
-	var tempseat = cur_furn.seat_places[length];
+	//temp_seat_places = [];
+	//var tempseat = cur_furn.seat_places[length];
+	var tempseat = temp_seat_places[length];
 	for (var property in tempseat)
 	{
 		if(tempseat.hasOwnProperty(property))
