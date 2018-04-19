@@ -1,6 +1,6 @@
 -- These scripts are intended to insert area, areas_in_layout and area_vertices entities into hsu_library schema
 -- This is the Main lobby (Area 1, Floor 1)
-INSERT INTO LAYOUT
+INSERT INTO `hsu_library`.`layout`
 (AUTHOR, FLOOR, DATE_CREATED)
 VALUES
 ('SRA', 1, NOW());
@@ -181,7 +181,7 @@ insert into `hsu_library`.`area_vertices`
 values
 (4, 170, 56, 10);
 
-INSERT INTO LAYOUT
+INSERT INTO `hsu_library`.`layout`
 (AUTHOR, FLOOR, DATE_CREATED)
 VALUES
 ('SRA', 2, NOW());
@@ -641,7 +641,7 @@ insert into `hsu_library`.`area_vertices`
 values
 (12, 96, 461, 7);
 
-INSERT INTO LAYOUT
+INSERT INTO `hsu_library`.`layout`
 (AUTHOR, FLOOR, DATE_CREATED)
 VALUES
 ('SRA', 3, NOW());

@@ -63,10 +63,12 @@ CREATE TABLE `hsu_library`.`furniture` (
   `layout_id` INT NOT NULL,
   `furniture_type` INT NOT NULL,
   `default_seat_type` INT NULL,
+  `in_area` INT NOT NULL,
   PRIMARY KEY (`furniture_id`),
   INDEX `layout_fk_idx` (`layout_id` ASC),
   INDEX `furniture_type_fk_idx` (`furniture_type` ASC),
   INDEX `default_seat_type_fk_idx` (`default_seat_type` ASC),
+  INDEX `furniture_in_area_fk` (`in_area` ASC),
   CONSTRAINT `furniture_layout_fk`
     FOREIGN KEY (`layout_id`)
     REFERENCES `hsu_library`.`layout` (`layout_id`)
@@ -81,7 +83,12 @@ CREATE TABLE `hsu_library`.`furniture` (
     FOREIGN KEY (`default_seat_type`)
     REFERENCES `hsu_library`.`furniture_type` (`furniture_type_id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION,
+  CONSTRAINT `furniture_in_area_fk`
+	FOREIGN KEY (`in_area`)
+	REFERENCES `hsu_library`.`area` (`area_id`)
+	ON DELETE NO ACTION
+	ON UPDATE NO ACTION)
 COMMENT = 'Furniture refers to non seat items that are given a layout x and y coordinate, a type of furniture, and contain the default seat type.';
 
 CREATE TABLE `hsu_library`.`area_vertices` (
@@ -168,9 +175,11 @@ CREATE TABLE `hsu_library`.`modified_furniture` (
   `new_x` FLOAT NOT NULL,
   `new_y` FLOAT NOT NULL,
   `survey_id` INT NOT NULL,
+  `in_area` INT NOT NULL,
   PRIMARY KEY (`modified_furn_id`),
   INDEX `overwriting_furn_fk_idx` (`furniture_id` ASC),
   INDEX `survey_fk_idx` (`survey_id` ASC),
+  INDEX `mfurniture_in_area_fk` (`in_area` ASC),
   CONSTRAINT `overwriting_furn_fk`
     FOREIGN KEY (`furniture_id`)
     REFERENCES `hsu_library`.`furniture` (`furniture_id`)
@@ -180,7 +189,12 @@ CREATE TABLE `hsu_library`.`modified_furniture` (
     FOREIGN KEY (`survey_id`)
     REFERENCES `hsu_library`.`survey_record` (`survey_id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION,
+  CONSTRAINT `mfurniture_in_area_fk`
+	FOREIGN KEY (`in_area`)
+	REFERENCES `hsu_library`.`area` (`area_id`)
+	ON DELETE NO ACTION
+	ON UPDATE NO ACTION)
 COMMENT = 'If a piece of furniture is temporarily moved, a survey can record where that piece was moved to without changing the layout.';
 
 

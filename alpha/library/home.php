@@ -50,3 +50,6 @@
     </footer>
 </body>
 </html>
+<?php
+			}
+			?>
