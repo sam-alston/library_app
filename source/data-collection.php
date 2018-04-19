@@ -230,7 +230,7 @@
         function lockHelper(){
         	var lockButton = document.getElementById("lock");
         	
-        	if(!selected_marker.options.draggable)
+        	if(lockButton.innerText === "Unlock")
         	{
 				selected_marker.dragging.enable();
         		lockButton.innerText = "Lock";
