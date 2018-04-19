@@ -78,97 +78,67 @@
         $dbh = new PDO('mysql:host=localhost;dbname=hsu_library;charset=utf8mb4', 'root', '');
 
         /*Checks to see if you have selected a form, in order to build the proper layout select, if you have selected a floor, this if statement fires*/
-        if(array_key_exists('floor-select', $_POST)){
-            /*********To Be Replaced with form function*********/
-            $_SESSION['cur_floor'] = $_POST['floor-select'];
-            ?>
-            <main class="to-top">
+        /*********To Be Replaced with form function*********/
+        $_SESSION['cur_floor'] = $_POST['floor-select'];
+        ?>
+        <main class="to-top">
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" class="layout-selector" id="lay-select">
                 <fieldset>
                     <select name="floor-select" id="floor-select">
-                        <option value="0">Choose a Floor</option>
-                        <option value="1" selected="selected">Floor 1</option>
+                        <option value="0" selected="selected">Choose a Floor</option>
+                        <option value="1" >Floor 1</option>
                         <option value="2">Floor 2</option>
                         <option value="3">Floor 3</option>
                     </select>
-                    <select name="layout-select">
-                        <!-- Populate these options with those from the database-->
+                    <select name="layout-select" id="current_layouts">
                         <option value="default">Choose a Layout</option>
-                        <?php
-                            //Will replace hardcoded floor with ajax statement to get floor when floor changes
-                            $i = 1;
-                            foreach($dbh->query('SELECT * FROM layout WHERE floor = '.$_SESSION['cur_floor']) as $row){
-                                ?> <option value="<?= $row['layout_id'] ?>">Layout <?= $i ?> for Layout ID: <?= $row['layout_id'] ?> </option><?php
-                                $i++;
-                            }
-                        ?>
                     </select>
                     <input type="submit" id="sub_layout" value="Load Layout"/>
                 </fieldset>
             </form>
-            <?php
-            /*******End of Replace select with form function********/
-        }
-        /*Builds only floor select if no floor is stored*/
-        else{
-            ?>
-            <main class="to-top">
-            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" class="layout-selector" id="lay-select">
-                <fieldset>
-                    <!-- Set up a Query here to add options for each layout based on what floors are available in the databse-->
-                    <select name="floor-select" id="floor-select">
-                        <option value="0">Choose a Floor</option>
-                        <option value="1">Floor 1</option>
-                        <option value="2">Floor 2</option>
-                        <option value="3">Floor 3</option>
-                    </select>
-                    <input type="submit" id="sub_layout" value="Load Floor"/>
-                </fieldset>
-            </form>
-            <?php
-        }
-        /*Create the div container for the map*/
-        ?>
+       
             <div id="mapid"></div>
-                <?php
-            }
-        ?>
-        <div id="popupTest">
-            <div id="seat_div"></div>
-                <div id="wb_div">
-                <!-- Cannot have the same class name as seat dropdown button because we add a
-                    event listener to the seat dropdown and search for it by class name-->
-                <button onclick="drop_func()" id="wb_button" class="wb">
-                    <label>Whiteboard</label></button><input type="checkbox" name="wb" class="inuse_input"/>
+            <div id="popupTest">
+                <div id="seat_div"></div>
                     <div id="wb_div">
-                        <div id="wb_label" class="div">
-                            <input type="radio" name="wb" value="partion" class="action_input"/> 
-                            <label class="action_label">
-                                Partion </label> <br />
-                     
-                            <input type="radio" name="wb" value="writing" class="action_input"/>
-                            <label class="action_label">
-                                Writing </label> <br />
-                    
-                            <input type="radio" name="wb" value="other" class="action_input"/>
-                            <label class="action_label">
-                                Other </label> <br />
+                    <!-- Cannot have the same class name as seat dropdown button because we add a
+                        event listener to the seat dropdown and search for it by class name-->
+                    <button onclick="drop_func()" id="wb_button" class="wb">
+                        <label>Whiteboard</label></button><input type="checkbox" name="wb" class="inuse_input"/>
+                        <div id="wb_div">
+                            <div id="wb_label" class="div">
+                                <input type="radio" name="wb" value="partion" class="action_input"/> 
+                                <label class="action_label">
+                                    Partion </label> <br />
+                         
+                                <input type="radio" name="wb" value="writing" class="action_input"/>
+                                <label class="action_label">
+                                    Writing </label> <br />
+                        
+                                <input type="radio" name="wb" value="other" class="action_input"/>
+                                <label class="action_label">
+                                    Other </label> <br />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <button onclick="minusHelper()" id="minus">-</button>
-                <button onclick="plusHelper()" id="plus">+</button> 
-        </div>
+                    <button onclick="minusHelper()" id="minus">-</button>
+                    <button onclick="plusHelper()" id="plus">+</button> 
+            </div>
             <footer class="footd foot_hide">
                 <p>Designed by HSU Library Web App team. &copy; Humboldt State University</p>
             </footer>
         </main>
+        <?php 
+        }
+        ?>
     </body>
     <script>
         //generates a map location
         var submit = document.getElementById("sub_layout");
         var floor_image = "local";
         var s_layout = "local";
+        var layout ="default";
+
         var mymap = L.map('mapid', {crs: L.CRS.Simple});
         var furnitureLayer = L.layerGroup().addTo(mymap);
         var bounds = [[0,0], [360,550]];
@@ -185,7 +155,51 @@
             'maxWidth': '5000',
             'maxHeight': '5000'
         };//This is the dimensions for the popup
-        
+
+        //This function gets all the layouts for the florr and populates the dropdown
+        $(function(){
+            $('#floor-select').on("change", function(){
+                var form_info = document.getElementById("lay-select");
+                floor_ID = form_info.elements["floor-select"].value;
+
+                //Get rid previous select options before repopulating 
+                var select = document.getElementById('current_layouts');
+                var length = select.options.length;
+                if(length > 1){
+                    for(i = 0; i < length; i++){
+                        select.remove(1);
+                    }
+                }
+                $.ajax({
+                    url: 'phpcalls/floor-select.php',
+                    type: 'get',
+                    data:{ 'floor_ID': floor_ID },
+                    success: function(data){
+                        /*need to replace with ajax call getting actual layout id's*/
+
+                        console.log("got number of layouts");
+                        var json_object = JSON.parse(data);
+                        var lay_select = document.getElementById('current_layouts');
+
+                        for(var i = 0; i < json_object.length; i++){
+                            var obj = json_object[i];
+                            lay_id = obj['layout_id'];
+                            var option = document.createElement('option');
+                            option.value = lay_id;
+                            option.innerHTML = "Layout " + lay_id +" for Floor";
+                            lay_select.appendChild(option);
+                        }
+                    }
+                });
+            });
+        });
+
+        $(function(){
+            $('#current_layouts').on("change", function(){
+                var form_info = document.getElementById("lay-select");
+                layout = form_info.elements["layout-select"].value;
+            });
+        });
 
         function getFurnMap(){
             return furnMap;
@@ -208,6 +222,7 @@
             this.activity;
             this.occupied = false;
         }
+
         function Furniture(fid, num_seats){
             this.furn_id = fid;
             this.num_seats = num_seats;
@@ -255,6 +270,10 @@
             <?php
             /*TODO: CLEAR POST SO THAT ON RELOAD, LAYOUT ISN'T BUILT*/
             if(array_key_exists("layout-select", $_POST)){
+                ?>
+                layout = "<?php echo $_POST['layout-select']?>";
+                <?php
+
                 $_SESSION['cur_layout'] = $_POST['layout-select'];
 
                 $getfurn = $dbh->prepare('SELECT * FROM furniture WHERE layout_id = :set_layout');
@@ -379,7 +398,6 @@
             //alert(mymap.getZoom)());
             var newzoom = '' + (markerSize) +'px';
             var newLargeZoom = '' + (markerSize*2) +'px';
-            //marker = L.marker(e.latlng, {icon: couchFour }).addTo(furnitureLayer).bindPopup("I am a Computer Station.");
             $('#mapid .furnitureIcon').css({'width':newzoom,'height':newzoom});
             $('#mapid .furnitureLargeIcon').css({'width':newLargeZoom,'height':newLargeZoom});          
         });
@@ -387,9 +405,9 @@
         //On click of submission, Create's a Survey Record and Inserts each seat object into the database with that ID
         function submitSurveyHelper(){
             var username = "<?php echo $_SESSION['username']?>";
-            var layout = "<?php echo $_POST['layout-select']?>";
 
             submitSurvey(username, layout, furnMap);
         }
+
     </script>
 </html>
