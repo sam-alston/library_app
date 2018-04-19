@@ -247,11 +247,19 @@ COMMENT = 'Multiple activities may be associated with a seat, track which seat w
 CREATE TABLE `hsu_library`.`surveyed_room` (
   `furniture_id` INT NOT NULL,
   `total_occupants` INT NOT NULL,
-  PRIMARY KEY (`furniture_id`),
+  `survey_id` INT NOT NULL,
+  PRIMARY KEY (`furniture_id`, `survey_id`),
+  INDEX `room_furn_id_fk_idx` (`furniture_id` ASC),
+  INDEX `survey_id_fk_idx` (`survey_id` ASC),
   CONSTRAINT `furn_room_id_fk`
     FOREIGN KEY (`furniture_id`)
     REFERENCES `hsu_library`.`furniture` (`furniture_id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION,
+  CONSTRAINT `room_survey_id_fk`
+	FOREIGN KEY (`survey_id`)
+	REFERENCES `hsu_library`.`survey_record` (`survey_id`)
+	ON DELETE NO ACTION
+	ON UPDATE NO ACTION)
 COMMENT = 'The furniture room doesn\'t hold seat items, it holds a total number of people in the room.';
 

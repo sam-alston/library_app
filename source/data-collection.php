@@ -156,6 +156,10 @@
                         </div>
                     </div>
                 </div>
+				<button onClick="saveHelper()" id="save">Save and Exit</button>
+                <button onClick="lockHelper()" id="lock">Unlock</button>
+                <button onClick="checkAllHelper()" id="checkall">Check All</button>
+                <label id="seat_operator"></label>
                 <button onclick="minusHelper()" id="minus">-</button>
                 <button onclick="plusHelper()" id="plus">+</button> 
         </div>
@@ -176,6 +180,8 @@
         var image;
         var selected_furn;
         var seat_num;
+		//to store the seat_places array to be saved
+		var temp_seat_places;
         var furnMap = new Map();
 
         var popup = document.getElementById("popupTest"); 
@@ -189,6 +195,32 @@
 
         function getFurnMap(){
             return furnMap;
+        }
+		        function checkAllHelper(){
+        	checkAll(selected_furn);
+        }
+        
+        function saveHelper(){
+			var occupants = document.getElementById("occupantInput");
+			if(occupants){
+				selected_furn.totalOccupants = occupants.value;
+			}
+			
+        	mymap.closePopup();
+        }
+        
+        function lockHelper(){
+        	var lockButton = document.getElementById("lock");
+        	
+        	if(lockButton.innerText == "Unlock")
+        	{
+        		lockButton.innerText = "Lock";
+        	}
+        	
+        	else
+        	{
+        		lockButton.innerText = "Unlock";
+        	}
         }
         
         function minusHelper(){
@@ -214,6 +246,7 @@
             this.seat_places = [];
 			this.seat_type = 32;
             this.whiteboard = 0;
+			this.totalOccupants = 0;
         }
 
         //checks the constant state of the Layout and Builds out the view

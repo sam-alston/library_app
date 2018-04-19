@@ -4,6 +4,11 @@ function markerClick(e){
 	var added_seats = false;
 	//document.getElementById("popupTest").style.margin = "0em";
 	furnMap = getFurnMap();
+	document.getElementById("lock").style.display = "inline";
+	document.getElementById("lock").innerText = "Unlock";
+	
+	selected_furn = furnMap.get(this.options.fid);
+
 	while(added_seats == false)
 	{
 		if(document.getElementById("seat_div_child") == null)
@@ -12,7 +17,7 @@ function markerClick(e){
 			seat_div_child.id = "seat_div_child";
 			document.getElementById("seat_div").appendChild(seat_div_child);
 
-			selected_furn = furnMap.get(this.options.fid);
+			
 
 			//If the JS object seat_places array is as big as default number of seats, it has been surveyed
 			//otherwise make the new seats and push onto array.
@@ -34,6 +39,23 @@ function markerClick(e){
 			{
 				plus(selected_furn, seat_num+1);
 			}
+			
+			//find +/- buttons to st onclick
+			plusbutton = document.getElementById("plus");
+			minusbutton = document.getElementById("minus");
+			
+			if(this.options.numSeats === 0){
+				//add room input
+				
+				addRoomInput(selected_furn.totalOccupants);
+				minusbutton.disabled = true;
+				plusbutton.disabled = true;
+				
+			} else {
+				//not a room, reattach +/- buttons to plusHelper/minusHelper
+				minusbutton.disabled = false;
+				plusbutton.disabled = false;
+			}
 			added_seats = true;
 		}
 	
@@ -46,6 +68,17 @@ function markerClick(e){
 	}
 }
 
+function roomPlus(){
+	var occupantInput = document.getElementById("occupantInput");
+	value = occupantInput.value;
+}
+
+function roomMinus(){
+	var occupantInput = document.getElementById("occupantInput");
+	value = occupantInput.value;
+	alert(value);
+}
+
 /*sets all seats of the selected furniture to occupied*/
 function checkAll(cur_furn){
 	
@@ -56,6 +89,17 @@ function checkAll(cur_furn){
 		cur_furn.seat_places[i-1].occupied = true;
 		default_seat.checked = true;
 	}
+}
+
+function addRoomInput(currentOccupants){
+	var occupantsInput = document.createElement('input');
+	occupantsInput.type = "number";
+	occupantsInput.id = "occupantInput";
+	occupantsInput.min = 0;
+	document.getElementById("seat_div_child").appendChild(occupantsInput);
+	occ = document.getElementById("occupantInput");
+	occ.value = currentOccupants;
+	
 }
 //Expects: the current furniture to add seat to, and the seat number to add
 //Returns: nothing
