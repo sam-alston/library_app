@@ -3,7 +3,6 @@
 $username = $_REQUEST['username'];
 $layout_id = $_REQUEST['layout'];
 $survey_date = date("Y-m-d h:i:sa");
-
 $dbh = new PDO('mysql:host=localhost;dbname=hsu_library;charset=utf8mb4', 'root', '');
 $dbh->beginTransaction();
 $survey_r_query = $dbh->prepare('INSERT INTO survey_record (surveyed_by, layout_id, survey_date)
