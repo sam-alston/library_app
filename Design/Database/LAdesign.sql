@@ -243,3 +243,15 @@ CREATE TABLE `hsu_library`.`seat_has_activity` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 COMMENT = 'Multiple activities may be associated with a seat, track which seat was performing which activities.';
+
+CREATE TABLE `hsu_library`.`surveyed_room` (
+  `furniture_id` INT NOT NULL,
+  `total_occupants` INT NOT NULL,
+  PRIMARY KEY (`furniture_id`),
+  CONSTRAINT `furn_room_id_fk`
+    FOREIGN KEY (`furniture_id`)
+    REFERENCES `hsu_library`.`furniture` (`furniture_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+COMMENT = 'The furniture room doesn\'t hold seat items, it holds a total number of people in the room.';
+
