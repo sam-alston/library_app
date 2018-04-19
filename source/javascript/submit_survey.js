@@ -9,7 +9,8 @@ function submitSurvey(username, layout, furnMap){
         type: 'get',
         data:{
             'username': username,
-            'layout': layout
+            'layout': layout,
+            'survey_id': cur_survey_id
         },
         success: function(data){
             console.log("Inserted New Survey Record");
