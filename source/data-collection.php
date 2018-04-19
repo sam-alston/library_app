@@ -121,14 +121,14 @@
                             </div>
                         </div>
                     </div>
+                    <button onClick="saveHelper()" id="save">Save and Exit</button>
+                    <button onClick="lockHelper()" id="lock">Unlock</button>
+                    <button onClick="checkAllHelper()" id="checkall">Check All</button>
+                    <label id="seat_operator"></label>
+                    <button onclick="minusHelper()" id="minus">-</button>
+                    <button onclick="plusHelper()" id="plus">+</button>
                 </div>
-				<button onClick="saveHelper()" id="save">Save and Exit</button>
-                <button onClick="lockHelper()" id="lock">Unlock</button>
-                <button onClick="checkAllHelper()" id="checkall">Check All</button>
-                <label id="seat_operator"></label>
-                <button onclick="minusHelper()" id="minus">-</button>
-                <button onclick="plusHelper()" id="plus">+</button> 
-        </div>
+        			
             <footer class="footd foot_hide">
                 <p>Designed by HSU Library Web App team. &copy; Humboldt State University</p>
             </footer>
