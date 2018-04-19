@@ -427,6 +427,12 @@
                         newFurniture.seat_places[i] = new Seat(i, newFurniture.seat_type);
                     }*/
 
+                    document.getElementById("plus").style.display = "block";
+                    document.getElementById("minus").style.display = "block";
+                    document.getElementById("checkall").style.display = "block";
+                    document.getElementById("save").style.display = "block";
+                    document.getElementById("wb_div").style.display = "block";
+
                     furnMap.set(keyString, newFurniture);
                     <?php
                 }
