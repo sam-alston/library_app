@@ -20,6 +20,10 @@ function submitSurvey(username, layout, furnMap){
             var iterateMap = furnMap.values();
             for(var i of furnMap){
                 var cur_furn = iterateMap.next().value;
+				//see if the furniture has been modified, if so insert
+				if(cur_furn.modified){
+					submitModified(cur_furn, cur_survey_id);
+				}
 				//check if the default number of seats is 0, then it's a room, else add seats
 				if(cur_furn.num_seats === 0){
 					$.ajax({
@@ -66,3 +70,20 @@ function submitSurvey(username, layout, furnMap){
         }
     });  
 };
+
+function submitModified(cur_furn, survey_id) {
+	$.ajax({
+		url: 'phpcalls/insert-modified.php',
+		type: 'post',
+		data:{
+			'furn_id': cur_furn.furn_id,
+			'new_x': cur_furn.latlng.lng,
+			'new_y': cur_furn.latlng.lat,
+			'survey_id': survey_id,
+			'in_area': cur_furn.in_area
+		},
+		success: function(data){
+			console.log("Modified Furniture inserted");
+		}
+	});
+}

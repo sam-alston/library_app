@@ -179,9 +179,10 @@
         mymap.fitBounds(bounds);
         var image;
         var selected_furn;
+		var selected_marker;
         var seat_num;
 		//to store the seat_places array to be saved
-		var temp_seat_places;
+		var temp_seat_places = [];
         var furnMap = new Map();
 
         var popup = document.getElementById("popupTest"); 
@@ -205,20 +206,22 @@
 			if(occupants){
 				selected_furn.totalOccupants = occupants.value;
 			}
-			
+			selected_marker.setOpacity(1);
+			selected_furn.seat_places = temp_seat_places;
         	mymap.closePopup();
         }
         
         function lockHelper(){
         	var lockButton = document.getElementById("lock");
         	
-        	if(lockButton.innerText == "Unlock")
+        	if(!selected_marker.options.draggable)
         	{
+				selected_marker.dragging.enable();
         		lockButton.innerText = "Lock";
-        	}
-        	
+        	}        	
         	else
         	{
+				selected_marker.dragging.disable();
         		lockButton.innerText = "Unlock";
         	}
         }
@@ -228,8 +231,11 @@
         }
 
         function plusHelper(){
-			selected_furn.seat_places.push(new Seat(selected_furn.seat_places.length));
-            plus(selected_furn, selected_furn.seat_places.length);
+			//selected_furn.seat_places.push(new Seat(selected_furn.seat_places.length));
+            temp_seat_places.push(new Seat(temp_seat_places.length));
+			//plus(selected_furn, selected_furn.seat_places.length);
+			//pass true for occupied because we are adding another seat to the default
+			plus(temp_seat_places, temp_seat_places.length, true);
 			checkAll(selected_furn);
         }
 
@@ -375,6 +381,14 @@
                     }).addTo(furnitureLayer).bindPopup(popup, popupDim);
 
                     marker.on('click', markerClick);
+					marker.setOpacity(.3);
+					
+					//update marker coords in marker map on dragend, set to modified
+					marker.on("dragend", function(e){
+						selected_furn.modified = true;
+						selected_furn.in_area = 1;
+						selected_furn.latlng = e.target.getLatLng();
+					});
 
                     /*TODO: Seat's made on survey, not furniture creation*/
                     /*for(i = 0; i < newFurniture.num_seats; i++){
