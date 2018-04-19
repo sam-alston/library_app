@@ -121,9 +121,14 @@
                             </div>
                         </div>
                     </div>
-                    <button onclick="minusHelper()" id="minus">-</button>
-                    <button onclick="plusHelper()" id="plus">+</button> 
-            </div>
+                </div>
+				<button onClick="saveHelper()" id="save">Save and Exit</button>
+                <button onClick="lockHelper()" id="lock">Unlock</button>
+                <button onClick="checkAllHelper()" id="checkall">Check All</button>
+                <label id="seat_operator"></label>
+                <button onclick="minusHelper()" id="minus">-</button>
+                <button onclick="plusHelper()" id="plus">+</button> 
+        </div>
             <footer class="footd foot_hide">
                 <p>Designed by HSU Library Web App team. &copy; Humboldt State University</p>
             </footer>
@@ -145,8 +150,12 @@
         mymap.fitBounds(bounds);
         var image;
         var selected_furn;
+		var selected_marker;
         var seat_num;
+		//to store the seat_places array to be saved
+		var temp_seat_places = [];
         var furnMap = new Map();
+		var activityMap = new Map();
 
         var popup = document.getElementById("popupTest"); 
         
@@ -204,14 +213,45 @@
         function getFurnMap(){
             return furnMap;
         }
+		        function checkAllHelper(){
+        	checkAll(selected_furn);
+        }
+        
+        function saveHelper(){
+			var occupants = document.getElementById("occupantInput");
+			if(occupants){
+				selected_furn.totalOccupants = occupants.value;
+			}
+			selected_marker.setOpacity(1);
+			selected_furn.seat_places = temp_seat_places;
+        	mymap.closePopup();
+        }
+        
+        function lockHelper(){
+        	var lockButton = document.getElementById("lock");
+        	
+        	if(!selected_marker.options.draggable)
+        	{
+				selected_marker.dragging.enable();
+        		lockButton.innerText = "Lock";
+        	}        	
+        	else
+        	{
+				selected_marker.dragging.disable();
+        		lockButton.innerText = "Unlock";
+        	}
+        }
         
         function minusHelper(){
             minus(selected_furn);
         }
 
         function plusHelper(){
-			selected_furn.seat_places.push(new Seat(selected_furn.seat_places.length));
-            plus(selected_furn, selected_furn.seat_places.length);
+			//selected_furn.seat_places.push(new Seat(selected_furn.seat_places.length));
+            temp_seat_places.push(new Seat(temp_seat_places.length));
+			//plus(selected_furn, selected_furn.seat_places.length);
+			//pass true for occupied because we are adding another seat to the default
+			plus(temp_seat_places, temp_seat_places.length, true);
 			checkAll(selected_furn);
         }
 
@@ -219,7 +259,7 @@
         function Seat(seatPos){
             this.seatPos = seatPos;
             //this.type = type;
-            this.activity;
+            this.activity = [];
             this.occupied = false;
         }
 
@@ -229,6 +269,7 @@
             this.seat_places = [];
 			this.seat_type = 32;
             this.whiteboard = 0;
+			this.totalOccupants = 0;
         }
 
         //checks the constant state of the Layout and Builds out the view
@@ -276,6 +317,17 @@
 
                 $_SESSION['cur_layout'] = $_POST['layout-select'];
 
+				
+								//get activities and populat activityMap
+				$getActivities = $dbh->prepare('SELECT * FROM activity');
+
+                $getActivities->execute();
+				
+				/*foreach ($getActivities as $row) {
+					console.log("Getting Activities");
+					activityMap.set($row['activity_id'], $row['activity_description']);
+				}*/
+				
                 $getfurn = $dbh->prepare('SELECT * FROM furniture WHERE layout_id = :set_layout');
 
                 $layout = $_POST["layout-select"];
@@ -361,6 +413,14 @@
                     }).addTo(furnitureLayer).bindPopup(popup, popupDim);
 
                     marker.on('click', markerClick);
+					marker.setOpacity(.3);
+					
+					//update marker coords in marker map on dragend, set to modified
+					marker.on("dragend", function(e){
+						selected_furn.modified = true;
+						selected_furn.in_area = 1;
+						selected_furn.latlng = e.target.getLatLng();
+					});
 
                     /*TODO: Seat's made on survey, not furniture creation*/
                     /*for(i = 0; i < newFurniture.num_seats; i++){
@@ -370,6 +430,9 @@
                     furnMap.set(keyString, newFurniture);
                     <?php
                 }
+				
+
+				
                 ?>
                 //add areas based on info from .pdo file from string literals
                 //this is an example
