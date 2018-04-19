@@ -184,6 +184,7 @@
 		//to store the seat_places array to be saved
 		var temp_seat_places = [];
         var furnMap = new Map();
+		var activityMap = new Map();
 
         var popup = document.getElementById("popupTest"); 
         
@@ -243,7 +244,7 @@
         function Seat(seatPos){
             this.seatPos = seatPos;
             //this.type = type;
-            this.activity;
+            this.activity = [];
             this.occupied = false;
         }
         function Furniture(fid, num_seats){
@@ -296,6 +297,17 @@
             if(array_key_exists("layout-select", $_POST)){
                 $_SESSION['cur_layout'] = $_POST['layout-select'];
 
+				
+								//get activities and populat activityMap
+				$getActivities = $dbh->prepare('SELECT * FROM activity');
+
+                $getActivities->execute();
+				
+				/*foreach ($getActivities as $row) {
+					console.log("Getting Activities");
+					activityMap.set($row['activity_id'], $row['activity_description']);
+				}*/
+				
                 $getfurn = $dbh->prepare('SELECT * FROM furniture WHERE layout_id = :set_layout');
 
                 $layout = $_POST["layout-select"];
@@ -398,6 +410,9 @@
                     furnMap.set(keyString, newFurniture);
                     <?php
                 }
+				
+
+				
                 ?>
                 //add areas based on info from .pdo file from string literals
                 //this is an example

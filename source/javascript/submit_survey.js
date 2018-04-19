@@ -39,6 +39,12 @@ function submitSurvey(username, layout, furnMap){
 						}
 					})
 				} else {
+					if(cur_furn.seat_places.length === 0){
+						//add the empty seats
+						for( var k = 0; k < cur_furn.num_seats; k++){
+							cur_furn.seat_places.push(new Seat(k));
+						}
+					}
 					for(var j = 0; j < cur_furn.seat_places.length; j++){
 						var cur_seat = cur_furn.seat_places[j];
 						//make an int to pass to DB since they don't have boolean type
