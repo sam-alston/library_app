@@ -156,12 +156,12 @@
                         </div>
                     </div>
                 </div>
-				<button onClick="saveHelper()" id="save">Save and Exit</button>
+				<button onClick="saveHelper()" id="save" style="display:none">Save and Exit</button>
                 <button onClick="lockHelper()" id="lock">Unlock</button>
-                <button onClick="checkAllHelper()" id="checkall">Check All</button>
+                <button onClick="checkAllHelper()" id="checkall" style="display:none">Check All</button>
                 <label id="seat_operator"></label>
-                <button onclick="minusHelper()" id="minus">-</button>
-                <button onclick="plusHelper()" id="plus">+</button> 
+                <button onclick="minusHelper()" id="minus" style="display:none">-</button>
+                <button onclick="plusHelper()" id="plus" style="display:none">+</button> 
         </div>
             <footer class="footd foot_hide">
                 <p>Designed by HSU Library Web App team. &copy; Humboldt State University</p>
@@ -407,6 +407,14 @@
                         newFurniture.seat_places[i] = new Seat(i, newFurniture.seat_type);
                     }*/
 
+					
+					//make buttons visible
+					document.getElementById("plus").style.display = "block";
+					document.getElementById("minus").style.display = "block";
+					document.getElementById("checkall").style.display = "block";
+					document.getElementById("save").style.display = "block";
+					document.getElementById("wb_div").style.display = "block";
+					
                     furnMap.set(keyString, newFurniture);
                     <?php
                 }
