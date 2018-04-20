@@ -156,6 +156,7 @@
 		var temp_seat_places = [];
         var furnMap = new Map();
 		var activityMap = new Map();
+		var areaMap = new Map();
 
         var popup = document.getElementById("popupTest"); 
         
@@ -191,12 +192,10 @@
                         var json_object = JSON.parse(data);
 						console.log(data);
                         var lay_select = document.getElementById('current_layouts');
-
-						alert("json_object.length: "+json_object.length);
+						
                         for(var i = 0; i < json_object.length; i++){
                             var obj = json_object[i];
                             lay_id = obj['layout_id'];
-							alert(lay_id);
                             var option = document.createElement('option');
                             option.value = lay_id;
                             option.innerHTML = "Layout " + lay_id +" for Floor";
@@ -211,13 +210,50 @@
             $('#current_layouts').on("change", function(){
                 var form_info = document.getElementById("lay-select");
                 layout = form_info.elements["layout-select"].value;
+				
+				$.ajax({
+                    url: 'phpcalls/area-select.php',
+                    type: 'get',
+                    data:{ 'layout_ID': layout },
+                    success: function(data){
+						console.log("got area_IDs");
+                        var json_object = JSON.parse(data);
+						
+                        for(var i = 0; i < json_object.length; i++){
+                            var obj = json_object[i];
+                            area_id = obj['area_id'];
+							area_name = obj['name'];
+							//create area object, set to areaMap
+							cur_area = new Area(area_id, area_name);
+							areaMap.set(area_id, cur_area);
+
+							$.ajax({
+								url: 'phpcalls/area-vertices-select.php',
+								type: 'get',
+								data:{ 'area_ID': area_id },
+								success: function(data){
+									var vert_json_object = JSON.parse(data);
+									
+									for(var j = 0; j < vert_json_object.length; j++){
+										var v_obj = vert_json_object[j];
+										v_x = v_obj['v_x'];
+										v_y = v_obj['v_y'];
+										var cur_vert = new AreaVertices(v_x, v_y);
+										cur_area.area_vertices.push(cur_vert);
+									}
+								}
+							})
+                        }
+                    }
+                });
             });
         });
 
         function getFurnMap(){
             return furnMap;
         }
-		        function checkAllHelper(){
+		
+		function checkAllHelper(){
         	checkAll(selected_furn);
         }
         
@@ -276,7 +312,17 @@
 			this.totalOccupants = 0;
         }
 
-        //checks the constant state of the Layout and Builds out the view
+		function Area(area_id, area_name){
+			this.area_id = area_id;
+			this.area_name = area_name;
+			area_vertices = [];
+		}
+        
+		function AreaVertices(x,y){
+			this.x = x;
+			this.y = y;
+		}
+		//checks the constant state of the Layout and Builds out the view
         $(document).ready(function(){
             /*To be placed in seperate javascript function, when php is removed*/
             //Test using layout in localhost with .PDO connection ect.
