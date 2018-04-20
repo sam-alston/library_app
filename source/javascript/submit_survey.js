@@ -17,6 +17,9 @@ function submitSurvey(username, layout, furnMap){
             var json_object = JSON.parse(data);
             cur_survey_id = json_object.s_id;
             var iterateMap = furnMap.values();
+            //global pending ajax, increment before call decrement after success,
+            //set timeout (javascript function) function and pulls number,
+            //when pend = 0 continue with function and navigate to new page
             for(var i of furnMap){
                 var cur_furn = iterateMap.next().value;
 				//see if the furniture has been modified, if so insert
@@ -72,8 +75,10 @@ function submitSurvey(username, layout, furnMap){
             }
             /*Send user to success page AFTER all ajax calls are completed*/
             /*WAIT FOR ALL AJAX CALLS TO COMPLETE*/
+            
+            //set timeout here
         }
-    });  
+    });
 };
 
 function submitModified(cur_furn, survey_id) {
