@@ -189,9 +189,10 @@
 
                         console.log("got number of layouts");
                         var json_object = JSON.parse(data);
+						console.log(data);
                         var lay_select = document.getElementById('current_layouts');
 
-						alert(json_object.length);
+						alert("json_object.length: "+json_object.length);
                         for(var i = 0; i < json_object.length; i++){
                             var obj = json_object[i];
                             lay_id = obj['layout_id'];

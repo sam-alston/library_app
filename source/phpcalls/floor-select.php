@@ -15,4 +15,5 @@ $stmt1->execute();
 $floor_result = $stmt1->fetchAll();
 $dbh= null;
 
+
 print json_encode($floor_result);
