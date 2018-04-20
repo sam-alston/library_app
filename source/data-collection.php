@@ -1,5 +1,6 @@
 <?php
     session_start();
+	require_once('./config.php');
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -75,7 +76,6 @@
     /******All contents in this if else statement inside this else to be replaced with AJAX calls, leading to dynamic creation of layout select******/
     else{
         nav_form();
-        $dbh = new PDO('mysql:host=localhost;dbname=hsu_library;charset=utf8mb4', 'root', '');
 
         /*Checks to see if you have selected a form, in order to build the proper layout select, if you have selected a floor, this if statement fires*/
         /*********To Be Replaced with form function*********/
@@ -184,15 +184,18 @@
                     type: 'get',
                     data:{ 'floor_ID': floor_ID },
                     success: function(data){
+						
                         /*need to replace with ajax call getting actual layout id's*/
 
                         console.log("got number of layouts");
                         var json_object = JSON.parse(data);
                         var lay_select = document.getElementById('current_layouts');
 
+						alert(json_object.length);
                         for(var i = 0; i < json_object.length; i++){
                             var obj = json_object[i];
                             lay_id = obj['layout_id'];
+							alert(lay_id);
                             var option = document.createElement('option');
                             option.value = lay_id;
                             option.innerHTML = "Layout " + lay_id +" for Floor";
@@ -317,7 +320,7 @@
 
                 $_SESSION['cur_layout'] = $_POST['layout-select'];
 
-				
+				$dbh = new PDO($dbhost, $dbh_select_user, $dbh_select_pw);
 								//get activities and populat activityMap
 				$getActivities = $dbh->prepare('SELECT * FROM activity');
 

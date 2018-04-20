@@ -182,6 +182,13 @@
     font-family: 'Lato', sans-serif;
 }
 
+#occupantInput
+{
+	width: 1.5em;
+	height: 2em;
+	font-size: 5em;
+}
+
 .dropbutton:after, .wb:after
 {
     content: "";
