@@ -1,10 +1,11 @@
 <?php
+require_once('./../config.php');
 
 $username = $_REQUEST['username'];
 $layout_id = $_REQUEST['layout'];
 $survey_date = date("Y-m-d h:i:sa");
 
-$dbh = new PDO('mysql:host=localhost;dbname=hsu_library;charset=utf8mb4', 'root', '');
+$dbh = new PDO($dbhost, $dbh_insert_user, $dbh_insert_pw);
 $dbh->beginTransaction();
 $survey_r_query = $dbh->prepare('INSERT INTO survey_record (surveyed_by, layout_id, survey_date)
                                  VALUES (:username, :lay_id, :in_date)');

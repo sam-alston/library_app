@@ -18,15 +18,13 @@
     <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
    integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
    crossorigin=""></script>
-   <script src="./scripts/floor1.js"></script>
-   <script src="./scripts/floor2.js"></script>
-   <script src="./scripts/floor3.js"></script>
    <script src="./javascript/get_layouts.js"></script>
    <script src="./javascript/icons.js"></script>
    <script src="./javascript/layoutFunction.js"></script>
    <script src="./javascript/leaflet.rotatedMarker.js"></script>
    <script src="./javascript/submit_survey.js"></script>
    <script src="./javascript/make_popup.js"></script>
+   <script src="./javascript/markerInPoly.js"></script>
 
    <script type="text/javascript">
     /*Container for JS furniture objects*/
@@ -103,6 +101,8 @@
                     <div id="wb_div">
                     <!-- Cannot have the same class name as seat dropdown button because we add a
                         event listener to the seat dropdown and search for it by class name-->
+					<!--the following button is a dev tool to calculate the insert statements for each furniture object with the area they are in.
+					<button onclick="markerInPolyHelper()" id="miph" class="wb"><label>What area am i in?</label></button>-->
                     <button onclick="drop_func()" id="wb_button" class="wb">
                         <label>Whiteboard</label></button><input type="checkbox" name="wb" class="inuse_input"/>
                         <div id="wb_div">
@@ -145,6 +145,7 @@
         var layout ="default";
 
         var mymap = L.map('mapid', {crs: L.CRS.Simple});
+
         var furnitureLayer = L.layerGroup().addTo(mymap);
 		var areaLayer = L.layerGroup().addTo(mymap);
         var bounds = [[0,0], [360,550]];
@@ -167,6 +168,29 @@
             'maxHeight': '5000'
         };//This is the dimensions for the popup
 
+		
+		function markerInPolyHelper(){
+			var out = "";
+			
+			furnMap.forEach(function(item, key, mapObj){
+				area_id="TBD";
+				y = item.y;
+				x = item.x;
+				areaMap.forEach(function(jtem, key, mapObj){
+					
+					if(isMarkerInsidePolygon(y,x, jtem.polyArea)){
+						area_id = jtem.area_id;
+					}
+				});
+
+				degree = item.degreeOffset;
+				ftype = item.ftype;
+				defseat = 32;
+				out+= getFurnitureString(x,y,degree, ftype, defseat, area_id)+"\n";
+			});
+			console.log(out);
+		}
+		
         //This function gets all the layouts for the florr and populates the dropdown
         $(function(){
             $('#floor-select').on("change", function(){
@@ -229,7 +253,7 @@
 		
 		function addAreas(){
 			//draw the areas
-			areaMap.forEach( function(item, key, mapObj){
+			areaMap.forEach(function(item, key, mapObj){
 				var polyArea = drawArea(item);
 				polyArea.addTo(areaLayer);
 			});
@@ -295,13 +319,19 @@
             this.seat_places = [];
 			this.seat_type = 32;
             this.whiteboard = 0;
+			this.marker;
 			this.totalOccupants = 0;
+			this.x;
+			this.y;
+			this.degreeOffset;
+			this.ftype;
         }
 
 		function Area(area_id, area_name){
 			this.area_id = area_id;
 			this.area_name = area_name;
 			this.area_vertices = [];
+			this.polyArea;
 		}
         
 		function AreaVertices(x,y){
@@ -409,6 +439,7 @@
 									}
 									//draw area poly
 									var polyArea = drawArea(item);
+									item.polyArea = polyArea;
 									polyArea.addTo(areaLayer);
 								}
 							});	
@@ -490,11 +521,34 @@
                     marker.on('click', markerClick);
 					marker.setOpacity(.3);
 					
+					//place the marker in the furniture object
+					newFurniture.x = x;
+					newFurniture.y = y;
+					newFurniture.degreeOffset = degreeOffset;
+					newFurniture.ftype = furniture_type;
+					
 					//update marker coords in marker map on dragend, set to modified
 					marker.on("dragend", function(e){
+						latlng =  e.target.getLatLng();
+						
 						selected_furn.modified = true;
-						selected_furn.in_area = 1;
-						selected_furn.latlng = e.target.getLatLng();
+						selected_furn.latlng = latlng;
+						y = latlng.lat;
+						x = latlng.lng;
+						area_id="TBD";
+						selected_furn.y = y;
+						selected_furn.x = x;
+						areaMap.forEach(function(jtem, key, mapObj){
+							
+							if(isMarkerInsidePolygon(y,x, jtem.polyArea)){
+								area_id = jtem.area_id;
+							}
+						});
+						if(area_id !== "TBD"){
+							selected_furn.in_area = area_id;
+						}
+						console.log("area_id: "+area_id);
+						console.log("x: "+x+"\ny: "+y);
 					});
 
                     /*TODO: Seat's made on survey, not furniture creation*/

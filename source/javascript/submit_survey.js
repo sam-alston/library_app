@@ -84,6 +84,7 @@ function submitModified(cur_furn, survey_id) {
 			'furn_id': cur_furn.furn_id,
 			'new_x': cur_furn.latlng.lng,
 			'new_y': cur_furn.latlng.lat,
+			'degree_offset': cur_furn.degreeOffset,
 			'survey_id': survey_id,
 			'in_area': cur_furn.in_area
 		},
