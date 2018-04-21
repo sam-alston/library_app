@@ -146,6 +146,7 @@
 
         var mymap = L.map('mapid', {crs: L.CRS.Simple});
         var furnitureLayer = L.layerGroup().addTo(mymap);
+		var areaLayer = L.layerGroup().addTo(mymap);
         var bounds = [[0,0], [360,550]];
         mymap.fitBounds(bounds);
         var image;
@@ -210,45 +211,30 @@
             $('#current_layouts').on("change", function(){
                 var form_info = document.getElementById("lay-select");
                 layout = form_info.elements["layout-select"].value;
-				
-				$.ajax({
-                    url: 'phpcalls/area-select.php',
-                    type: 'get',
-                    data:{ 'layout_ID': layout },
-                    success: function(data){
-						console.log("got area_IDs");
-                        var json_object = JSON.parse(data);
-						
-                        for(var i = 0; i < json_object.length; i++){
-                            var obj = json_object[i];
-                            area_id = obj['area_id'];
-							area_name = obj['name'];
-							//create area object, set to areaMap
-							cur_area = new Area(area_id, area_name);
-							areaMap.set(area_id, cur_area);
-
-							$.ajax({
-								url: 'phpcalls/area-vertices-select.php',
-								type: 'get',
-								data:{ 'area_ID': area_id },
-								success: function(data){
-									var vert_json_object = JSON.parse(data);
-									
-									for(var j = 0; j < vert_json_object.length; j++){
-										var v_obj = vert_json_object[j];
-										v_x = v_obj['v_x'];
-										v_y = v_obj['v_y'];
-										var cur_vert = new AreaVertices(v_x, v_y);
-										cur_area.area_vertices.push(cur_vert);
-									}
-								}
-							})
-                        }
-                    }
-                });
             });
         });
-
+		
+		function drawArea(area){
+			var verts = [];
+			
+			for(var i=0; i < area.area_vertices.length; i++){
+				area_verts = area.area_vertices[i];
+				verts.push([area_verts.x,area_verts.y]);
+			}
+			var poly = L.polygon(verts);
+			poly.bindPopup(area.area_name);
+			
+			return poly;
+		}
+		
+		function addAreas(){
+			//draw the areas
+			areaMap.forEach( function(item, key, mapObj){
+				var polyArea = drawArea(item);
+				polyArea.addTo(areaLayer);
+			});
+		}
+		
         function getFurnMap(){
             return furnMap;
         }
@@ -315,7 +301,7 @@
 		function Area(area_id, area_name){
 			this.area_id = area_id;
 			this.area_name = area_name;
-			area_vertices = [];
+			this.area_vertices = [];
 		}
         
 		function AreaVertices(x,y){
@@ -389,7 +375,46 @@
                 ?>
 
                 console.log('Prepared Select stament and executed statement');
-
+				//populate areaMap
+				$.ajax({
+                    url: 'phpcalls/area-select.php',
+                    type: 'get',
+                    data:{ 'layout_ID': layout },
+                    success: function(data){
+						console.log("got area_IDs");
+                        var json_object = JSON.parse(data);
+						
+                        for(var i = 0; i < json_object.length; i++){
+                            var obj = json_object[i];
+                            area_id = obj['area_id'];
+							area_name = obj['name'];
+							//create area object, set to areaMap
+							cur_area = new Area(area_id, area_name);
+							areaMap.set(i, cur_area);
+                        }
+						areaMap.forEach( function(item, key, mapObj){
+							$.ajax({
+								url: 'phpcalls/area-vertices-select.php',
+								type: 'get',
+								data:{ 'area_ID': item.area_id },
+								success: function(data){
+									var vert_json_object = JSON.parse(data);
+									
+									for(var j = 0; j < vert_json_object.length; j++){
+										var v_obj = vert_json_object[j];
+										v_x = v_obj['v_x'];
+										v_y = v_obj['v_y'];
+										var cur_vert = new AreaVertices(v_x, v_y);
+										item.area_vertices.push(cur_vert);
+									}
+									//draw area poly
+									var polyArea = drawArea(item);
+									polyArea.addTo(areaLayer);
+								}
+							});	
+						});						
+                    }
+                });
                 <?php
                 foreach ($getfurn as $row) {
                     //seperate query to get num seats based on furniture
@@ -490,17 +515,21 @@
 
 				
                 ?>
+				
                 //add areas based on info from .pdo file from string literals
                 //this is an example
-                switch(floorIMGstr){
+                /*switch(floorIMGstr){
                     case "1": floorOneAreas(mymap); break;
                     case "2": floorTwoAreas(mymap); break;
                     case "3": floorThreeAreas(mymap); break;
-                }
+                }*/
                 <?php
             }
+			//after furniture is added, add areas.
+			
             ?>
         });
+		
 
         //On zoomend, resize the marker icons
         mymap.on('zoomend', function() {
@@ -521,6 +550,8 @@
             $('#mapid .furnitureLargeIcon').css({'width':newLargeZoom,'height':newLargeZoom});          
         });
 
+		
+		
         //On click of submission, Create's a Survey Record and Inserts each seat object into the database with that ID
         function submitSurveyHelper(){
             var username = "<?php echo $_SESSION['username']?>";
