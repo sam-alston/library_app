@@ -97,33 +97,35 @@
             <div id="mapid"></div>
             <div id="popupTest">
                 <div id="seat_div"></div>
+                <div id="wb_div">
+                <!-- Cannot have the same class name as seat dropdown button because we add a
+                    event listener to the seat dropdown and search for it by class name-->
+                <button onclick="drop_func()" id="wb_button" class="wb">
+                    <label>Whiteboard</label></button><input type="checkbox" name="wb" class="inuse_input"/>
                     <div id="wb_div">
-                    <!-- Cannot have the same class name as seat dropdown button because we add a
-                        event listener to the seat dropdown and search for it by class name-->
-                    <button onclick="drop_func()" id="wb_button" class="wb">
-                        <label>Whiteboard</label></button><input type="checkbox" name="wb" class="inuse_input"/>
-                        <div id="wb_div">
-                            <div id="wb_label" class="div">
-                                <input type="radio" name="wb" value="partion" class="action_input"/> 
-                                <label class="action_label">
-                                    Partion </label> <br />
-                                <input type="radio" name="wb" value="writing" class="action_input"/>
-                                <label class="action_label">
-                                    Writing </label> <br />
-                                <input type="radio" name="wb" value="other" class="action_input"/>
-                                <label class="action_label">
-                                    Other </label> <br />
-                            </div>
+                        <div id="wb_label" class="div">
+                            <input type="radio" name="wb" value="partion" class="action_input"/> 
+                            <label class="action_label">
+                                Partion </label> <br />
+                            <input type="radio" name="wb" value="writing" class="action_input"/>
+                            <label class="action_label">
+                                Writing </label> <br />
+                            <input type="radio" name="wb" value="other" class="action_input"/>
+                            <label class="action_label">
+                                Other </label> <br />
                         </div>
                     </div>
-                    <button onClick="saveHelper()" id="save" style="display:none">Save and Exit</button>
-                    <button onClick="lockHelper()" id="lock">Unlock</button>
-                    <button onClick="checkAllHelper()" id="checkall" style="display:none">Check All</button>
-                    <label id="seat_operator"></label>
-                    <button onclick="minusHelper()" id="minus" style="display:none">-</button>
-                    <button onclick="plusHelper()" id="plus" style="display:none">+</button>
                 </div>
-        			
+                <button onClick="saveHelper()" id="save" style="display:none">Save and Exit</button>
+                <button onClick="lockHelper()" id="lock">Unlock</button>
+                <button onClick="checkAllHelper()" id="checkall" style="display:none">Check All</button>
+                <label id="seat_operator"></label>
+                <button onclick="minusHelper()" id="minus" style="display:none">-</button>
+                <button onclick="plusHelper()" id="plus" style="display:none">+</button>
+            </div>
+            <div class="loading">
+                <img src="images/loadwheel.svg" id="load-image">
+            </div>
             <footer class="footd foot_hide">
                 <p>Designed by HSU Library Web App team. &copy; Humboldt State University</p>
             </footer>
@@ -466,11 +468,6 @@
         function submitSurveyHelper(){
             var username = "<?php echo $_SESSION['username']?>";
             submitSurvey(username, layout, furnMap);
-            /*
-            $.when(submitSurvey()).done(function(){
-                //window.location.href = 'survey-success.php';
-                console.log("All ajax calls complete");
-            });*/
         };
 
     </script>

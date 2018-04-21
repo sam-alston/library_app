@@ -211,3 +211,48 @@ footer > p{
 	height: 100em; 
 }
 
+#load-image{
+	width: 100px;
+	height: 100px;
+}
+
+.loading{
+	display: none;
+}
+
+.loadingapply{
+	display: block;
+	width: 100px;
+	height: 100px;
+	position: fixed;
+	z-index: 2000;
+	top: 47.5%;
+	left: 47.5%;
+	background-color: black;
+	border-radius: 25%;
+}
+
+.imagerotate{
+	-webkit-animation: rotating .75s linear infinite;
+	-moz-animation: rotating .75s linear infinite;
+	-ms-animation: rotating .75s linear infinite;
+	-o-animation: rotating .75s linear infinite;
+	animation: rotating .75s linear infinite;
+}
+
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(-360deg);
+    -moz-transform: rotate(-360deg);
+    -webkit-transform: rotate(-360deg);
+    -o-transform: rotate(-360deg);
+    transform: rotate(-360deg);
+  }
+}
