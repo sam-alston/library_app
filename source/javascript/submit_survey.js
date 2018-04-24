@@ -4,10 +4,6 @@ function submitSurvey(username, layout, furnMap){
     var cur_survey_id;
     console.log("You are submitting the survey");
     /* Insert statment for Survey ID */
-
-    $(".loading").addClass("loadingapply");
-    $("#load-image").addClass("imagerotate");
-
     $.ajax({
         url: 'phpcalls/create_survey_record.php',
         type: 'get',
@@ -22,39 +18,62 @@ function submitSurvey(username, layout, furnMap){
             cur_survey_id = json_object.s_id;
             var iterateMap = furnMap.values();
             for(var i of furnMap){
-            	var cur_furn = iterateMap.next().value;
-
-            	if(cur_furn.modified){
+                var cur_furn = iterateMap.next().value;
+				//see if the furniture has been modified, if so insert
+				if(cur_furn.modified){
 					submitModified(cur_furn, cur_survey_id);
 				}
-
-            	if(cur_furn.seat_places.length === 0 && cur_furn.num_seats != 0){
-					//add the empty seats
-					for( var k = 0; k < cur_furn.num_seats; k++){
-						cur_furn.seat_places.push(new Seat(k));
+				//check if the default number of seats is 0, then it's a room, else add seats
+				if(cur_furn.num_seats === 0){
+					$.ajax({
+						url: 'phpcalls/insert-room.php',
+						type: 'post',
+						data:{
+							'furn_id': cur_furn.furn_id,
+							'occupants': cur_furn.totalOccupants,
+							'survey_id': cur_survey_id
+						},
+						success: function(data){
+							console.log("Room occupants inserted");
+						}
+					})
+				} else {
+					if(cur_furn.seat_places.length === 0){
+						//add the empty seats
+						for( var k = 0; k < cur_furn.num_seats; k++){
+							cur_furn.seat_places.push(new Seat(k));
+						}
+					}
+					for(var j = 0; j < cur_furn.seat_places.length; j++){
+						var cur_seat = cur_furn.seat_places[j];
+						//make an int to pass to DB since they don't have boolean type
+						var seatOccupied=0;
+						if(cur_seat.occupied){
+							seatOccupied = 1;
+						}
+						 /* Run insert statment for each seat*/
+						$.ajax({
+							url: 'phpcalls/insert-seat.php',
+							type: 'post',
+							data:{
+								'furn_id': cur_furn.furn_id,
+								'occupied': seatOccupied,
+								'seat_pos': cur_seat.seatPos,
+								'seat_type': cur_furn.seat_type,
+								'survey_id': cur_survey_id
+							},
+							success: function(data){
+								console.log("Seat was inserted ");
+							}
+						});
 					}
 				}
+                
             }
-
-            var objmap = mapToObj(furnMap);
-            var json_string = JSON.stringify(objmap);
-            $.ajax({
-				url: 'phpcalls/insert-survey-data.php',
-				type: 'post',
-				data:{
-					'survey_id': cur_survey_id,
-					'to_json': json_string
-				},
-				success: function(data){
-					console.log("Modified Furniture inserted");
-					var used_json = data;
-					console.log(used_json);
-					console.log("All ajax calls complete");
-					window.location.href = 'survey-success.php';
-				}
-			});
+            /*Send user to success page AFTER all ajax calls are completed*/
+            /*WAIT FOR ALL AJAX CALLS TO COMPLETE*/
         }
-    });
+    });  
 };
 
 function submitModified(cur_furn, survey_id) {
@@ -73,14 +92,3 @@ function submitModified(cur_furn, survey_id) {
 		}
 	});
 }
-
-function mapToObj(inputMap) {
-    var obj = {};
-
-    inputMap.forEach(function(value, key){
-        obj[key] = value
-    });
-
-    return obj;
-}
-

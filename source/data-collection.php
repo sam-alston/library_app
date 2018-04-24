@@ -26,9 +26,10 @@
    <script src="./javascript/leaflet.rotatedMarker.js"></script>
    <script src="./javascript/submit_survey.js"></script>
    <script src="./javascript/make_popup.js"></script>
-   <script src="./javascript/pop-activities.js"></script>
+
    <script type="text/javascript">
     /*Container for JS furniture objects*/
+    
     /*This functions to manipulate the view of the navigation, header, and footer with the click of a button*/
     $(function() {
         $("#nav_toggle").click(function(){
@@ -51,7 +52,9 @@
     <button class="submit_survey hidden" id="submit_survey" onclick="if(confirm('Are you sure you want to submit this survey?')) submitSurveyHelper();">Submit Survey</button>
     <header class="hidden">
         <img class="logo" src="images/hsu-wm.svg">
-        <h1>Library Data Collector</h1>
+        <h1>Library Data Collector</h1>   
+    
+    
     <?php
         if (array_key_exists("username", $_SESSION)){
             ?>
@@ -97,35 +100,36 @@
             <div id="mapid"></div>
             <div id="popupTest">
                 <div id="seat_div"></div>
-                <div id="wb_div">
-                <!-- Cannot have the same class name as seat dropdown button because we add a
-                    event listener to the seat dropdown and search for it by class name-->
-                <button onclick="drop_func()" id="wb_button" class="wb">
-                    <label>Whiteboard</label></button><input type="checkbox" name="wb" class="inuse_input"/>
                     <div id="wb_div">
-                        <div id="wb_label" class="div">
-                            <input type="radio" name="wb" value="partion" class="action_input"/> 
-                            <label class="action_label">
-                                Partion </label> <br />
-                            <input type="radio" name="wb" value="writing" class="action_input"/>
-                            <label class="action_label">
-                                Writing </label> <br />
-                            <input type="radio" name="wb" value="other" class="action_input"/>
-                            <label class="action_label">
-                                Other </label> <br />
+                    <!-- Cannot have the same class name as seat dropdown button because we add a
+                        event listener to the seat dropdown and search for it by class name-->
+                    <button onclick="drop_func()" id="wb_button" class="wb">
+                        <label>Whiteboard</label></button><input type="checkbox" name="wb" class="inuse_input"/>
+                        <div id="wb_div">
+                            <div id="wb_label" class="div">
+                                <input type="radio" name="wb" value="partion" class="action_input"/> 
+                                <label class="action_label">
+                                    Partion </label> <br />
+                         
+                                <input type="radio" name="wb" value="writing" class="action_input"/>
+                                <label class="action_label">
+                                    Writing </label> <br />
+                        
+                                <input type="radio" name="wb" value="other" class="action_input"/>
+                                <label class="action_label">
+                                    Other </label> <br />
+                            </div>
                         </div>
                     </div>
+                    <button onClick="saveHelper()" id="save" style="display:none">Save and Exit</button>
+                    <button onClick="lockHelper()" id="lock">Unlock</button>
+                    <button onClick="rotateHelper()" id="rotate">Rotate</button>
+                    <button onClick="checkAllHelper()" id="checkall" style="display:none">Check All</button>
+                    <label id="seat_operator"></label>
+                    <button onclick="minusHelper()" id="minus" style="display:none">-</button>
+                    <button onclick="plusHelper()" id="plus" style="display:none">+</button>
                 </div>
-                <button onClick="saveHelper()" id="save" style="display:none">Save and Exit</button>
-                <button onClick="lockHelper()" id="lock">Unlock</button>
-                <button onClick="checkAllHelper()" id="checkall" style="display:none">Check All</button>
-                <label id="seat_operator"></label>
-                <button onclick="minusHelper()" id="minus" style="display:none">-</button>
-                <button onclick="plusHelper()" id="plus" style="display:none">+</button>
-            </div>
-            <div class="loading">
-                <img src="images/loadwheel.svg" id="load-image">
-            </div>
+        			
             <footer class="footd foot_hide">
                 <p>Designed by HSU Library Web App team. &copy; Humboldt State University</p>
             </footer>
@@ -210,12 +214,7 @@
         function getFurnMap(){
             return furnMap;
         }
-
-        function getActivityMap(){
-            return activityMap;
-        }
-
-        function checkAllHelper(){
+		        function checkAllHelper(){
         	checkAll(selected_furn);
         }
         
@@ -232,7 +231,7 @@
         function lockHelper(){
         	var lockButton = document.getElementById("lock");
         	
-        	if(lockButton.innerText === "Unlock")
+        	if(lockButton.innerText == "Unlock")
         	{
 				selected_marker.dragging.enable();
         		lockButton.innerText = "Lock";
@@ -243,6 +242,44 @@
         		lockButton.innerText = "Unlock";
         	}
         }
+        
+        function rotateHelper()
+        {
+        	if(document.getElementById("rotateSlider") == null)
+        	{
+        		var rotateSlider = document.createElement("input");
+        		rotateSlider.type = "range";
+        		rotateSlider.min = "-180";
+        		rotateSlider.max = "180";
+        		rotateSlider.value = "0";
+        		rotateSlider.step = "10";
+        		rotateSlider.id = "rotateSlider";
+        		
+        		var sliderValue = document.createElement("p");
+        		sliderValue.id = "sliderValue";
+        		sliderValue.innerText = "Value: 0";
+        		
+        		document.getElementById("seat_div_child").appendChild(sliderValue);
+        		document.getElementById("seat_div_child").appendChild(rotateSlider);
+        	
+        			
+        		rotateSlider.oninput = function()
+        		{
+        			selected_marker.setRotationOrigin("center");
+        			selected_marker.options.degreeOffset = rotateSlider.value;
+        			selected_marker.setRotationAngle(rotateSlider.value);
+        			sliderValue.innerText = "Value: " + rotateSlider.value;
+        		}
+        	}
+        	
+        	else
+        	{
+        		document.getElementById("rotateSlider").remove();
+        		document.getElementById("sliderValue").remove();
+        	}
+        
+        }
+        
         
         function minusHelper(){
             minus(selected_furn);
@@ -320,7 +357,16 @@
                 $_SESSION['cur_layout'] = $_POST['layout-select'];
 
 				
+								//get activities and populat activityMap
+				$getActivities = $dbh->prepare('SELECT * FROM activity');
 
+                $getActivities->execute();
+				
+				/*foreach ($getActivities as $row) {
+					console.log("Getting Activities");
+					activityMap.set($row['activity_id'], $row['activity_description']);
+				}*/
+				
                 $getfurn = $dbh->prepare('SELECT * FROM furniture WHERE layout_id = :set_layout');
 
                 $layout = $_POST["layout-select"];
@@ -425,6 +471,7 @@
                     document.getElementById("checkall").style.display = "block";
                     document.getElementById("save").style.display = "block";
                     document.getElementById("wb_div").style.display = "block";
+					document.getElementById("rotate").style.display = "block";
 
                     furnMap.set(keyString, newFurniture);
                     <?php
@@ -467,8 +514,9 @@
         //On click of submission, Create's a Survey Record and Inserts each seat object into the database with that ID
         function submitSurveyHelper(){
             var username = "<?php echo $_SESSION['username']?>";
+
             submitSurvey(username, layout, furnMap);
-        };
+        }
 
     </script>
 </html>
