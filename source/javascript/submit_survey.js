@@ -24,8 +24,9 @@ function submitSurvey(username, layout, furnMap){
             for(var i of furnMap){
             	var cur_furn = iterateMap.next().value;
 
-            	if(cur_furn.modified){
-					submitModified(cur_furn, cur_survey_id);
+            	if(cur_furn.modified===true){
+					//submitModified(cur_furn, cur_survey_id);
+					cur_furn.furn_id;
 				}
 
             	if(cur_furn.seat_places.length === 0 && cur_furn.num_seats != 0){
@@ -48,7 +49,6 @@ function submitSurvey(username, layout, furnMap){
 				success: function(data){
 					console.log("Modified Furniture inserted");
 					var used_json = data;
-					console.log(used_json);
 					console.log("All ajax calls complete");
 					window.location.href = 'survey-success.php';
 				}

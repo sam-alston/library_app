@@ -27,6 +27,7 @@
    <script src="./javascript/submit_survey.js"></script>
    <script src="./javascript/make_popup.js"></script>
    <script src="./javascript/pop-activities.js"></script>
+   <script src="./javascript/add-areas.js"></script>
    <script type="text/javascript">
     /*Container for JS furniture objects*/
     /*This functions to manipulate the view of the navigation, header, and footer with the click of a button*/
@@ -143,6 +144,7 @@
         var layout ="default";
 
         var mymap = L.map('mapid', {crs: L.CRS.Simple});
+        var areaLayer = L.layerGroup().addTo(mymap);
         var furnitureLayer = L.layerGroup().addTo(mymap);
         var bounds = [[0,0], [360,550]];
         mymap.fitBounds(bounds);
@@ -154,6 +156,7 @@
 		var temp_seat_places = [];
         var furnMap = new Map();
 		var activityMap = new Map();
+        var areaMap = new Map();
 
         var popup = document.getElementById("popupTest"); 
         
@@ -268,7 +271,7 @@
         		rotateSlider.oninput = function()
         		{
         			selected_marker.setRotationOrigin("center");
-        			selected_marker.options.degreeOffset = rotateSlider.value;
+        			selected_marker.options.degree_offset = rotateSlider.value;
         			selected_marker.setRotationAngle(rotateSlider.value);
         			sliderValue.innerText = "Value: " + rotateSlider.value;
         		}
@@ -311,7 +314,15 @@
 			this.seat_type = 32;
             this.whiteboard = 0;
 			this.totalOccupants = 0;
+            this.marker;
+            this.modified = false;
+            this.degreeOffset = 0;
+            this.x;
+            this.y;
+            this.ftype;
         }
+
+        
 
         //checks the constant state of the Layout and Builds out the view
         $(document).ready(function(){
@@ -392,9 +403,11 @@
                     var newFurniture = new Furniture( <?php echo $row['furniture_id'] ?>,
                                                       <?php echo $numSeatResult['number_of_seats'] ?>);
 
+
                     x = <?php echo $row['x_location'] ?>;
                     y = <?php echo $row['y_location'] ?>;
-                    degreeOffset = <?php echo $row['degree_offset'] ?>;
+                    degree_offset = <?php echo $row['degree_offset'] ?>;
+                    newFurniture.degreeOffset = degree_offset;
                     furniture_type = <?php echo $row['furniture_type'] ?>;
                     default_seat_type = <?php echo $row['default_seat_type'] ?>;
                     num_seats = <?php echo $numSeatResult['number_of_seats'] ?>;
@@ -437,7 +450,7 @@
                     //place a marker for each furniture item
                     marker = L.marker(latlng, {
                         icon: selectedIcon,
-                        rotationAngle: degreeOffset,
+                        rotationAngle: degree_offset,
                         draggable: false,
                         ftype: furniture_type,
                         numSeats: num_seats,
@@ -449,9 +462,27 @@
 					
 					//update marker coords in marker map on dragend, set to modified
 					marker.on("dragend", function(e){
-						selected_furn.modified = true;
-						selected_furn.in_area = 1;
-						selected_furn.latlng = e.target.getLatLng();
+						latlng =  e.target.getLatLng();
+                        
+                        selected_furn.modified = true;
+                        selected_furn.latlng = latlng;
+                        y = latlng.lat;
+                        x = latlng.lng;
+                        area_id="TBD";
+                        selected_furn.y = y;
+                        selected_furn.x = x;
+                        areaMap.forEach(function(jtem, key, mapObj){
+                            
+                            if(isMarkerInsidePolygon(y,x, jtem.polyArea)){
+                                area_id = jtem.area_id;
+                            }
+                        });
+                        if(area_id !== "TBD"){
+                            selected_furn.in_area = area_id;
+                        }
+                        console.log("area_id: "+area_id);
+                        console.log("x: "+x+"\ny: "+y);
+
 					});
 
                     /*TODO: Seat's made on survey, not furniture creation*/
@@ -464,25 +495,14 @@
                     document.getElementById("checkall").style.display = "block";
                     document.getElementById("save").style.display = "block";
                     document.getElementById("wb_div").style.display = "block";
-		    document.getElementById("rotate").style.display = "block";
+                    document.getElementById("rotate").style.display = "block";
 
                     furnMap.set(keyString, newFurniture);
                     <?php
                 }
-				
-
-				
-                ?>
-                //add areas based on info from .pdo file from string literals
-                //this is an example
-                switch(floorIMGstr){
-                    case "1": floorOneAreas(mymap); break;
-                    case "2": floorTwoAreas(mymap); break;
-                    case "3": floorThreeAreas(mymap); break;
-                }
-                <?php
             }
             ?>
+            createAreas(layout);
         });
 
         //On zoomend, resize the marker icons

@@ -1,15 +1,37 @@
 <?php
+require_once('./../config.php');
 
 $jsondata = json_decode($_POST['to_json'], true);
 $survey_id = $_REQUEST['survey_id'];
 
-$dbh = new PDO('mysql:host=localhost;dbname=hsu_library;charset=utf8mb4', 'root', '');
+$dbh = new PDO($dbhost, $dbh_insert_user, $dbh_insert_pw);
 
 
 foreach($jsondata as $key => $value){
 	$furn_id = $value["furn_id"];
 	$seat_type = $value["seat_type"];
 	$num_seats = $value["num_seats"];
+	$modified = $value["modified"];
+
+	if($modified){
+		$new_x = $value["x"];
+		$new_y = $value["y"];
+		$degree_offset = $value["degreeOffset"];
+		$in_area = $value["in_area"];
+
+		$dbh->beginTransaction();
+		$insert_modified_stmt = $dbh->prepare('INSERT INTO modified_furniture(furniture_id, new_x, new_y, degree_offset, survey_id, in_area)
+												VALUES(:furniture_id, :new_x, :new_y, :degree_offset, :survey_id, :in_area)');
+
+		$insert_modified_stmt->bindParam(':furniture_id', $furn_id, PDO::PARAM_INT);
+		$insert_modified_stmt->bindParam(':new_x', $new_x, PDO::PARAM_STR);
+		$insert_modified_stmt->bindParam(':new_y', $new_y, PDO::PARAM_STR);
+		$insert_modified_stmt->bindParam(':degree_offset', $degree_offset, PDO::PARAM_INT);
+		$insert_modified_stmt->bindParam(':survey_id', $survey_id, PDO::PARAM_INT);
+		$insert_modified_stmt->bindParam(':in_area', $in_area, PDO::PARAM_INT);
+		$insert_modified_stmt->execute();
+		$dbh->commit();
+	}
 
 	if ($value["num_seats"] === 0) {
 		$occupants = $value["totalOccupants"];
