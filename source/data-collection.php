@@ -464,6 +464,7 @@
                     document.getElementById("checkall").style.display = "block";
                     document.getElementById("save").style.display = "block";
                     document.getElementById("wb_div").style.display = "block";
+		    document.getElementById("rotate").style.display = "block";
 
                     furnMap.set(keyString, newFurniture);
                     <?php
