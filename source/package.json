@@ -1,0 +1,15 @@
+{
+  "name": "library_app",
+  "version": "1.0.0",
+  "description": "The HSU Library Space use app.",
+  "main": "index.js",
+  "dependencies": {
+    "leaflet-draw": "^1.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "SRA",
+  "license": "ISC"
+}

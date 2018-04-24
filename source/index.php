@@ -49,20 +49,7 @@
 			    if($username == "admin" && $password == "gdc4562" ){
 
 			    // set up db connection string THIS WILL BE REPLACED WITH HUMBOLDT ACCOUNT INFORMATION
-			    
-
-			    try{
-				    $dbh = new PDO($dbhost, $dbh_select_user, $dbh_select_pw);
-				    foreach($dbh->query('SELECT * from furniture') as $row) {
-				        print_r($row);
-				    }
-				    $dbh = null;
-					}
-				catch (PDOException $e){
-					    print "Error!: " . $e->getMessage() . "<br/>";
-					    die();
-				}
-			
+			    			
 				//if I reach here, I have connected to my username and password, and can now travel to the next page and store session variables
 				$_SESSION["username"] = $username;
 				$_SESSION["password"] = $password;

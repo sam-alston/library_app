@@ -12,12 +12,15 @@
     <link rel="stylesheet" href="styles/layout.css" type="text/css" >
     <link rel="stylesheet" href="styles/format.css" type="text/css" >
     <link rel="stylesheet" href="styles/popup.css" type="text/css" >
+	
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
    integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
    crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
    integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
    crossorigin=""></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
    <script src="./javascript/get_layouts.js"></script>
    <script src="./javascript/icons.js"></script>
    <script src="./javascript/layoutFunction.js"></script>
@@ -99,10 +102,12 @@
             <div id="popupTest">
                 <div id="seat_div"></div>
                     <div id="wb_div">
+					
                     <!-- Cannot have the same class name as seat dropdown button because we add a
                         event listener to the seat dropdown and search for it by class name-->
 					<!--the following button is a dev tool to calculate the insert statements for each furniture object with the area they are in.
-					<button onclick="markerInPolyHelper()" id="miph" class="wb"><label>What area am i in?</label></button>-->
+					<button onclick="markerInPolyHelper()" id="miph" class="wb"><label>Generate Inserts with area_in for current layout</label></button>-->
+					
                     <button onclick="drop_func()" id="wb_button" class="wb">
                         <label>Whiteboard</label></button><input type="checkbox" name="wb" class="inuse_input"/>
                         <div id="wb_div">
@@ -127,6 +132,9 @@
                     <label id="seat_operator"></label>
                     <button onclick="minusHelper()" id="minus" style="display:none">-</button>
                     <button onclick="plusHelper()" id="plus" style="display:none">+</button>
+					<div class="loading">
+						<img src="images/loadwheel.svg" id="load-image">
+					</div>
                 </div>
         			
             <footer class="footd foot_hide">
@@ -138,6 +146,8 @@
         ?>
     </body>
     <script>
+	//require leaflet
+	//var leafletDraw = require('leaflet-draw');
         //generates a map location
         var submit = document.getElementById("sub_layout");
         var floor_image = "local";
@@ -150,6 +160,40 @@
 		var areaLayer = L.layerGroup().addTo(mymap);
         var bounds = [[0,0], [360,550]];
         mymap.fitBounds(bounds);
+		
+		/*leaflet drawing
+		var drawnItems = new L.FeatureGroup();
+		mymap.addLayer(drawnItems);
+
+		var drawControl = new L.Control.Draw();
+		mymap.addControl(drawControl);
+
+		//function to make area_vertices insert
+		function makeAreaVert(x,y, order){
+			return "INSERT INTO area_vertices(area_id, v_y, v_x, load_order) VALUES (TBD, "+y+", "+x+", "+order+");";
+		}
+		
+		mymap.on('draw:created', function(e) {
+		  var type = e.layerType,
+			layer = e.layer;
+			//if (type === 'polygon') {
+				// export the coordinates from the layer
+				coordinates = [];
+				latlngs = layer.getLatLngs();
+				larray = latlngs[0];
+				for (var i = 0; i < larray.length; i++) {
+					coordinates.push([larray[i].lng, larray[i].lat]);
+					console.log(makeAreaVert(larray[i].lat,larray[i].lng,i));
+					
+				}
+			//}
+			
+		  drawnItems.addLayer(layer);
+		  
+		  
+		});
+		end leaflet drawing*/
+		
         var image;
         var selected_furn;
 		var selected_marker;
@@ -157,6 +201,7 @@
 		//to store the seat_places array to be saved
 		var temp_seat_places = [];
         var furnMap = new Map();
+		var modifiedFurnMap = new Map();
 		var activityMap = new Map();
 		var areaMap = new Map();
 
@@ -320,6 +365,7 @@
 			this.seat_type = 32;
             this.whiteboard = 0;
 			this.marker;
+			this.modified = false;
 			this.totalOccupants = 0;
 			this.x;
 			this.y;
