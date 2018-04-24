@@ -252,6 +252,7 @@
         		rotateSlider.min = "-180";
         		rotateSlider.max = "180";
         		rotateSlider.value = "0";
+        		rotateSlider.step = "10";
         		rotateSlider.id = "rotateSlider";
         		
         		var sliderValue = document.createElement("p");
@@ -264,8 +265,9 @@
         			
         		rotateSlider.oninput = function()
         		{
+        			selected_marker.setRotationOrigin("center");
         			selected_marker.options.degreeOffset = rotateSlider.value;
-        			selected_marker.setRotationAngle(degreeOffset);
+        			selected_marker.setRotationAngle(rotateSlider.value);
         			sliderValue.innerText = "Value: " + rotateSlider.value;
         		}
         	}
