@@ -118,6 +118,7 @@
                 </div>
                 <button onClick="saveHelper()" id="save" style="display:none">Save and Exit</button>
                 <button onClick="lockHelper()" id="lock">Unlock</button>
+		<button onClick="rotateHelper()" id="rotate">Rotate</button>
                 <button onClick="checkAllHelper()" id="checkall" style="display:none">Check All</button>
                 <label id="seat_operator"></label>
                 <button onclick="minusHelper()" id="minus" style="display:none">-</button>
@@ -243,6 +244,44 @@
         		lockButton.innerText = "Unlock";
         	}
         }
+	    
+	function rotateHelper()
+        {
+        	if(document.getElementById("rotateSlider") == null)
+        	{
+        		var rotateSlider = document.createElement("input");
+        		rotateSlider.type = "range";
+        		rotateSlider.min = "-180";
+        		rotateSlider.max = "180";
+        		rotateSlider.value = "0";
+        		rotateSlider.step = "10";
+        		rotateSlider.id = "rotateSlider";
+        		
+        		var sliderValue = document.createElement("p");
+        		sliderValue.id = "sliderValue";
+        		sliderValue.innerText = "Value: 0";
+        		
+        		document.getElementById("seat_div_child").appendChild(sliderValue);
+        		document.getElementById("seat_div_child").appendChild(rotateSlider);
+        	
+        			
+        		rotateSlider.oninput = function()
+        		{
+        			selected_marker.setRotationOrigin("center");
+        			selected_marker.options.degreeOffset = rotateSlider.value;
+        			selected_marker.setRotationAngle(rotateSlider.value);
+        			sliderValue.innerText = "Value: " + rotateSlider.value;
+        		}
+        	}
+        	
+        	else
+        	{
+        		document.getElementById("rotateSlider").remove();
+        		document.getElementById("sliderValue").remove();
+        	}
+        
+        }
+        
         
         function minusHelper(){
             minus(selected_furn);
