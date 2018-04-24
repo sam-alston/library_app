@@ -2,7 +2,9 @@
 function markerClick(e){
 	//bool check to test if we are in a different popup
 	var added_seats = false;
+	//document.getElementById("popupTest").style.margin = "0em";
 	furnMap = getFurnMap();
+	activityMap = getActivityMap();
 	document.getElementById("lock").style.display = "inline";
 	document.getElementById("lock").innerText = "Unlock";
 	
@@ -248,10 +250,34 @@ function minus(cur_furn)
 function div_content(dd_div)
 {
 	var length = seat_num;
+	var actMapValues = activityMap.values();
+	for(var property of activityMap){
+		var cur_prop = actMapValues.next().value;
+
+		cur_prop = titleCase(cur_prop);
+		var label = document.createElement('label');
+		label.id = cur_prop+length;
+		label.className = "action_label";
+		label.appendChild(document.createTextNode(cur_prop));
+
+		var input = document.createElement('input');
+		input.type = "checkbox";
+		input.id = "cb"+length;
+		input.className = "action_input";
+		input.name = cur_prop+length;
+
+		dd_div.appendChild(input);
+		dd_div.appendChild(label);
+		
+
+		var br = document.createElement('br');
+		br.id = "br"+cur_prop;
+		dd_div.appendChild(br); 
+	}
+	//var length = seat_num;
 	//temp_seat_places = [];
 	//var tempseat = cur_furn.seat_places[length];
-	var tempseat = temp_seat_places[length];
-	for (var property in tempseat)
+	/*for (var tempseat in activityMap)
 	{
 		if(tempseat.hasOwnProperty(property))
 		{
@@ -278,7 +304,8 @@ function div_content(dd_div)
 	 			dd_div.appendChild(br); 
 			}
 		}
-	}
+	}*/
+
 }
 
 //Expects: Nothing
