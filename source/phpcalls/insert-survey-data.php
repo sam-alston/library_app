@@ -60,7 +60,22 @@ foreach($jsondata as $key => $value){
 				$insert_seat_stmt->bindParam(':seat_type', $seat_type, PDO::PARAM_INT);
 				$insert_seat_stmt->bindParam(':survey_id', $survey_id, PDO::PARAM_INT);
 				$insert_seat_stmt->execute();
+				$seat_id = $dbh->lastInsertId();
 				$dbh->commit();
+								
+				if(array_key_exists('activity', $value2)){
+					foreach ($value2["activity"] as $actKey => $actVal){
+						$dbh->beginTransaction();
+						$insert_seat_act_stmt = $dbh->prepare('INSERT INTO seat_has_activity (seat_id, activity_id)
+														VALUES (:seat_id, (SELECT activity_id FROM activity WHERE activity_description = :activity))');
+														
+						$insert_seat_act_stmt->bindParam(':seat_id', $seat_id, PDO::PARAM_INT);
+						$insert_seat_act_stmt->bindParam(':activity', $actVal, PDO::PARAM_STR);
+						//:seat_id, (SELECT activity_id FROM activity WHERE activity_description = :activity)
+						$insert_seat_act_stmt->execute();
+						$dbh->commit();
+					}
+				}
 			}
 		}
 	}

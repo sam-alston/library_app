@@ -290,12 +290,13 @@
             minus(selected_furn);
         }
 
-        function plusHelper(){
+		function plusHelper(){
 			//selected_furn.seat_places.push(new Seat(selected_furn.seat_places.length));
-            temp_seat_places.push(new Seat(temp_seat_places.length));
+			var newSeat = new Seat(temp_seat_places.length);
+            temp_seat_places.push(newSeat);
 			//plus(selected_furn, selected_furn.seat_places.length);
 			//pass true for occupied because we are adding another seat to the default
-			plus(temp_seat_places, temp_seat_places.length, true);
+			plus(newSeat, temp_seat_places.length, true);
 			checkAll(selected_furn);
         }
 
