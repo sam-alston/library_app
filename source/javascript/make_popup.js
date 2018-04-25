@@ -84,16 +84,6 @@ function markerClick(e){
 	}
 }
 
-function roomPlus(){
-	var occupantInput = document.getElementById("occupantInput");
-	value = occupantInput.value;
-}
-
-function roomMinus(){
-	var occupantInput = document.getElementById("occupantInput");
-	value = occupantInput.value;
-	alert(value);
-}
 
 /*sets all seats of the selected furniture to occupied*/
 function checkAll(cur_furn){
@@ -117,6 +107,17 @@ function addRoomInput(currentOccupants){
 	document.getElementById("seat_div_child").appendChild(occupantsInput);
 	occ = document.getElementById("occupantInput");
 	occ.value = currentOccupants;
+	
+	if(temp_seat_places.length === 0){
+		var roomSeat = new Seat(0);
+		temp_seat_places.push(roomSeat);
+		plus(roomSeat, 1);
+	} else {
+		var roomSeat = temp_seat_places[0];
+	}
+	seat = document.getElementById("dd_button"+1);
+	seat.textContent="Room activity";
+	
 	
 }
 //Expects: the current furniture to add seat to, and the seat number to add

@@ -44,7 +44,7 @@ foreach($jsondata as $key => $value){
 		$insert_room_stmt->execute();
 		$dbh->commit();
 	}
-	else{
+	//else{
 		if (array_key_exists('seat_places', $value)) {
 			foreach ($value["seat_places"] as $key2 => $value2) {
 				$occupied_state = $value2["occupied"];
@@ -78,7 +78,7 @@ foreach($jsondata as $key => $value){
 				}
 			}
 		}
-	}
+	//}
 }
 
 print json_encode($jsondata);
