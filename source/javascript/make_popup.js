@@ -29,9 +29,14 @@ function markerClick(e){
 			var cur_num_seats;
 			var surveyExists = true;
 			//check if it has been surveyed it will have seats in the array
-			if(selected_furn.seat_places.length >= this.options.numSeats){
+			if(selected_furn.seat_places.length >= this.options.numSeats)
+			{
 				cur_num_seats = selected_furn.seat_places.length;
-			} else {
+				
+			} 
+			
+			else 
+			{
 				surveyExists = false;
 				//this is the first time the cur_furn is surveyed, so we push on the initial furniture pieces.
 				cur_num_seats = this.options.numSeats;
@@ -40,17 +45,23 @@ function markerClick(e){
 			
 			for (seat_num = 0; seat_num < cur_num_seats; seat_num++)
 			{
-				temp_seat_places.push(new Seat(seat_num));
-				var occupiedBool = false;
 				if(surveyExists)
 				{
-					plus(selected_furn.seat_places[seat_num], seat_num+1);
+					var copy_seat = Object.assign({}, selected_furn.seat_places[seat_num]);
+					if(Array.isArray(copy_seat.activity))
+					{
+						copy_seat.activity = copy_seat.activity.slice();
+					}
+					temp_seat_places.push(copy_seat);
+					//plus(selected_furn.seat_places[seat_num], seat_num+1);
 				}
 				
 				else
 				{
-					plus(temp_seat_places[seat_num], seat_num+1);
+					temp_seat_places.push(new Seat(seat_num));
+					//plus(temp_seat_places[seat_num], seat_num+1);
 				}
+				plus(temp_seat_places[seat_num], seat_num+1);
 			}
 			
 			//find +/- buttons to st onclick
