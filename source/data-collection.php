@@ -257,10 +257,11 @@
         		rotateSlider.value = "0";
         		rotateSlider.step = "10";
         		rotateSlider.id = "rotateSlider";
+				rotateSlider.value = selected_furn.degreeOffset;
         		
         		var sliderValue = document.createElement("p");
         		sliderValue.id = "sliderValue";
-        		sliderValue.innerText = "Value: 0";
+        		sliderValue.innerText = "Value: "+selected_furn.degreeOffset;
         		
         		document.getElementById("seat_div_child").appendChild(sliderValue);
         		document.getElementById("seat_div_child").appendChild(rotateSlider);
@@ -269,6 +270,7 @@
         		rotateSlider.oninput = function()
         		{
         			selected_marker.setRotationOrigin("center");
+					selected_furn.degreeOffset =rotateSlider.value;
         			selected_marker.options.degree_offset = rotateSlider.value;
         			selected_marker.setRotationAngle(rotateSlider.value);
         			sliderValue.innerText = "Value: " + rotateSlider.value;
