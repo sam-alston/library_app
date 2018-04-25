@@ -244,6 +244,7 @@
 				selected_marker.dragging.disable();
         		lockButton.innerText = "Unlock";
         	}
+			mymap.closePopup();
         }
 	    
 	function rotateHelper()
