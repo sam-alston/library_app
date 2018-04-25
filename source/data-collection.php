@@ -118,7 +118,7 @@
                 </div>
                 <button onClick="saveHelper()" id="save" style="display:none">Save and Exit</button>
                 <button onClick="lockHelper()" id="lock">Unlock</button>
-		<button onClick="rotateHelper()" id="rotate">Rotate</button>
+				<button onClick="rotateHelper()" id="rotate">Rotate</button>
                 <button onClick="checkAllHelper()" id="checkall" style="display:none">Check All</button>
                 <label id="seat_operator"></label>
                 <button onclick="minusHelper()" id="minus" style="display:none">-</button>
@@ -464,7 +464,6 @@
                     document.getElementById("checkall").style.display = "block";
                     document.getElementById("save").style.display = "block";
                     document.getElementById("wb_div").style.display = "block";
-		    		document.getElementById("rotate").style.display = "block";
 
                     furnMap.set(keyString, newFurniture);
                     <?php

@@ -6,6 +6,7 @@ function markerClick(e){
 	furnMap = getFurnMap();
 	activityMap = getActivityMap();
 	document.getElementById("lock").style.display = "inline";
+	document.getElementById("rotate").style.display = "block";
 	document.getElementById("lock").innerText = "Unlock";
 	
 	selected_furn = furnMap.get(this.options.fid);
@@ -41,10 +42,15 @@ function markerClick(e){
 			{
 				temp_seat_places.push(new Seat(seat_num));
 				var occupiedBool = false;
-				if(surveyExists){
-					occupiedBool = selected_furn.seat_places[seat_num].occupied;
+				if(surveyExists)
+				{
+					plus(selected_furn.seat_places[seat_num], seat_num+1);
 				}
-				plus(temp_seat_places, seat_num+1, occupiedBool);
+				
+				else
+				{
+					plus(temp_seat_places[seat_num], seat_num+1);
+				}
 			}
 			
 			//find +/- buttons to st onclick
@@ -114,19 +120,24 @@ function addRoomInput(currentOccupants){
 //Returns: nothing
 //Outputs: this will create all the default seat objects for the table, will also add a new 
 //		   seat if the user push the plus button
-function plus( temp_seat_places, seat_num, occupiedBool)
+function plus( cur_seat, seat_num, occupiedBool)
 {
 	//get the current seat from seat_places
 	//var cur_seat = cur_furn.seat_places[seat_num-1];
-	var cur_seat = temp_seat_places[seat_num-1];
+	//var cur_seat = temp_seat_places[seat_num-1];
 	//create the checkbox for the occupied input
 	var cb = document.createElement('input');
 	cb.type = "checkbox";
 	cb.id = "checkbox"+ seat_num;
 	cb.className = "inuse_input";
 	cb.name = "occupied"+seat_num;
-	cb.checked = occupiedBool;
-	cur_seat.occupied = occupiedBool;
+	
+	if(cur_seat.occupied == true)
+	{
+		cb.checked = true;
+	}
+	//cb.checked = occupiedBool;
+	//cur_seat.occupied = occupiedBool;
 	//onchange listener sets occupied state
 	cb.onchange = function(){
 		if(cb.checked === true){
@@ -272,17 +283,17 @@ function div_content(dd_div, cur_seat)
 			{
 				cur_seat.activity.push(this.value);
 			}
-			
-			else
+		}
+		
+		if(cur_seat.activity.length > 0)
+		{
+			for(var i = 0; i < cur_seat.activity.length; i++)
 			{
-				for(var i = 0; i < cur_seat.activity.length; i++)
+				if(cur_seat.activity[i] === cur_prop)
 				{
-					if(cur_seat.activity[i] === this.value)
-					{
-						cur_seat.activity.splice(i, 1);
-					}
+					input.checked = true;
 				}
-			}
+			} 
 		}
 
 		dd_div.appendChild(input);
@@ -301,6 +312,7 @@ function isInArray(cur_array, cur_value)
 	{
 		if(cur_array[i] === cur_value)
 		{
+			cur_array.splice(i, 1);
 			return true;
 		}
 	}
