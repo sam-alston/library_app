@@ -1,5 +1,6 @@
 <?php
     session_start();
+	require_once('./config.php');
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -17,9 +18,6 @@
     <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
    integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
    crossorigin=""></script>
-   <script src="./scripts/floor1.js"></script>
-   <script src="./scripts/floor2.js"></script>
-   <script src="./scripts/floor3.js"></script>
    <script src="./javascript/get_layouts.js"></script>
    <script src="./javascript/icons.js"></script>
    <script src="./javascript/layoutFunction.js"></script>
@@ -73,7 +71,7 @@
     /******All contents in this if else statement inside this else to be replaced with AJAX calls, leading to dynamic creation of layout select******/
     else{
         nav_form();
-        $dbh = new PDO('mysql:host=localhost;dbname=hsu_library;charset=utf8mb4', 'root', '');
+		$dbh = new PDO($dbhost, $dbh_select_user, $dbh_select_pw);
 
         /*Checks to see if you have selected a form, in order to build the proper layout select, if you have selected a floor, this if statement fires*/
         /*********To Be Replaced with form function*********/
@@ -389,6 +387,11 @@
                     //seperate query to get num seats based on furniture
                     /*To be replaced with ajax call*/
 
+                ?>
+
+                console.log('furn object');
+
+                <?php
                     $numSeatsQuery = $dbh->prepare('SELECT number_of_seats
                                                     FROM furniture_type
                                                     WHERE furniture_type_id = :infurnid');
