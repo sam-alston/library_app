@@ -89,3 +89,13 @@ INSERT INTO `hsu_library`.`room`
 (FACILITIES_ID, NAME)
 VALUES
 ("LIB 308", "Humboldt Room Archives");
+
+INSERT INTO `hsu_library`.`room`
+(FACILITIES_ID, NAME)
+VALUES
+("LIB 309", "Room 309");
+
+INSERT INTO `hsu_library`.`room`
+(FACILITIES_ID, NAME)
+VALUES
+("LIB 306", "Room 306");

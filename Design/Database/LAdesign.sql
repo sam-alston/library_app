@@ -174,6 +174,7 @@ CREATE TABLE `hsu_library`.`modified_furniture` (
   `furniture_id` INT NOT NULL,
   `new_x` FLOAT NOT NULL,
   `new_y` FLOAT NOT NULL,
+  `degree_offset` INT NOT NULL,
   `survey_id` INT NOT NULL,
   `in_area` INT NOT NULL,
   PRIMARY KEY (`modified_furn_id`),
