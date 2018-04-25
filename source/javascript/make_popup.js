@@ -153,7 +153,7 @@ function plus( temp_seat_places, seat_num, occupiedBool)
 	dd_div.name = "div";
 	dd_div.id = "dd_div" + seat_num;
 	dd_div.className = "div";
-	div_content(dd_div);
+	div_content(dd_div, cur_seat);
 
 	//adds a new line for each seat
 	var br = document.createElement('br');
@@ -247,7 +247,7 @@ function minus(cur_furn)
 //Expects: The div wrapper for the drop down
 //Returns: nothing
 //Outputs: All the actions of the seat object as elements with a checkbox 
-function div_content(dd_div)
+function div_content(dd_div, cur_seat)
 {
 	var length = seat_num;
 	var actMapValues = activityMap.values();
@@ -262,9 +262,28 @@ function div_content(dd_div)
 
 		var input = document.createElement('input');
 		input.type = "checkbox";
-		input.id = "cb"+length;
 		input.className = "action_input";
 		input.name = cur_prop+length;
+		input.value = cur_prop;
+		input.onchange = function()
+		{
+			var activityCheck = isInArray(cur_seat.activity, this.value);	
+			if (!activityCheck)
+			{
+				cur_seat.activity.push(this.value);
+			}
+			
+			else
+			{
+				for(var i = 0; i < cur_seat.activity.length; i++)
+				{
+					if(cur_seat.activity[i] === this.value)
+					{
+						cur_seat.activity.splice(i, 1);
+					}
+				}
+			}
+		}
 
 		dd_div.appendChild(input);
 		dd_div.appendChild(label);
@@ -274,39 +293,21 @@ function div_content(dd_div)
 		br.id = "br"+cur_prop;
 		dd_div.appendChild(br); 
 	}
-	//var length = seat_num;
-	//temp_seat_places = [];
-	//var tempseat = cur_furn.seat_places[length];
-	/*for (var tempseat in activityMap)
-	{
-		if(tempseat.hasOwnProperty(property))
-		{
-			if(property != 'occupied')
-			{
-				property = titleCase(property);
-				var label = document.createElement('label');
-				label.id = property+length;
-				label.className = "action_label";
-				label.appendChild(document.createTextNode(property));
-	
-				//creates the checkbox for the action
-				var input = document.createElement('input');
-				input.type = "checkbox";
-				input.id = "cb"+length;
-				input.className = "action_input";
-				input.name = property+length;
-	
-				dd_div.appendChild(input);
-				dd_div.appendChild(label);
-		
-				var br = document.createElement('br');
-				br.id = "br"+property;
-	 			dd_div.appendChild(br); 
-			}
-		}
-	}*/
-
 }
+
+function isInArray(cur_array, cur_value)
+{
+	for(var i = 0; i < cur_array.length; i++)
+	{
+		if(cur_array[i] === cur_value)
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 
 //Expects: Nothing
 //Returns: Nothing
