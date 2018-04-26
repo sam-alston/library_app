@@ -13,7 +13,7 @@
         <?php
 	}
 
-	function form_lay_selct(){
+	/*function form_lay_selct(){
 		?>
 			<form class="layout-selector" id="lay-select">
 	            <fieldset>
@@ -38,5 +38,21 @@
 	            </fieldset>
 	        </form>
 		<?php
+	}*/
+
+	function get_dates_options(){
+		require_once('config.php');
+		//get activities and populate activityMap
+		$dbh = new PDO($dbhost, $dbh_select_user, $dbh_select_pw);
+
+		$getDates = $dbh->prepare('SELECT CONVERT(survey_date, DATE) as date_surveyed FROM survey_record');
+
+		if($getDates->execute()){
+			while($row = $getDates->fetch(PDO::FETCH_ASSOC)){
+				?>
+				<option value="<?= $row['date_surveyed'] ?>"> Survey's for: <?= $row['date_surveyed'] ?> </option>
+				<?php
+			}
+		}
 	}
 ?>

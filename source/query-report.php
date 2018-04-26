@@ -1,5 +1,6 @@
 <?php
     session_start();
+    require_once('form_functions.php');
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -12,6 +13,47 @@
     <link rel="stylesheet" href="styles/layout.css" type="text/css" >
     <link rel="stylesheet" href="styles/format.css" type="text/css" >
 </head>
+<script type="text/javascript">
+
+    var cur_selected_date;
+
+    $(function(){
+        $('#date-select').on("change", function(){
+            var form_info = document.getElementById("choose_survey_form");
+            cur_selected_date = form_info.elements["date-select"].value;
+
+            //Get rid previous select options before repopulating 
+            var select = document.getElementById('survey_id_select');
+            var length = select.options.length;
+            if(length > 1){
+                for(i = 0; i < length; i++){
+                    select.remove(1);
+                }
+            }
+            $.ajax({
+                url: 'phpcalls/get-survey-ids.php',
+                type: 'get',
+                data:{ 'selected_date': cur_selected_date },
+                success: function(data){
+
+                    console.log("got dates");
+                    var json_object = JSON.parse(data);
+                    var survey_select = document.getElementById('survey_id_select');
+
+                    for(var i = 0; i < json_object.length; i++){
+                        var obj = json_object[i];
+                        surv_id = obj['survey_id'];
+                        lay_id = obj['layout_id'];
+                        var option = document.createElement('option');
+                        option.value = surv_id;
+                        option.innerHTML = "Survey: " + surv_id +" for Layout" + lay_id;
+                        survey_select.appendChild(option);
+                    }
+                }
+            });
+        });
+    });
+</script>
 <body>
     <header>
         <img class="logo" src="images/hsu-wm.svg">
@@ -42,30 +84,20 @@
     </header>
     <main>
         <h2><?= $_SESSION["username"]?> what shall we query today? </h2>
-        <form class="report-selector">
+        <form class="report-selector" id="choose_survey_form">
             <fieldset>
                 <!--THIS IS A PLACEHOLDER! SELECT WILL BE POPULATED BY DATES FROM DB-->
-                <select name="date">
-                    <option value="">Choose a Date</option>
-                    <option value="d1">Date 1</option>
-                    <option value="d2">Date 2</option>
-                    <option value="d3">Date 3</option>
+                <select name="date" id="date-select">
+                    <option value="0">Choose a Date</option>
+                    <?php
+                    get_dates_options();
+                    ?>
                 </select>
                 <!--THIS IS A PLACEHOLDER! SELECT WILL BE POPULATED BY TIMES FROM DB-->
-                <select name="time">
-                    <option value="">Choose a Time</option>
-                    <option value="time-1">Time 1</option>
-                    <option value="time-2">Time 2</option>
-                    <option value="time-3">Time 3</option>
-                    <option value="time-4">Time 4</option>
+                <select name="survey_id" id="survey_id_select">
+                    <option value="">Choose a Survey</option>
                 </select>
-                <!--THIS IS A PLACEHOLDER! SELECT WILL BE POPULATED BY TIMES FROM DB-->
-                <select name="floor">
-                    <option value="">Choose a Floor</option>
-                    <option value="f1">Floor 1</option>
-                    <option value="f2">Floor 2</option>
-                    <option value="f3">Floor 3</option>
-                </select>
+
                 <input type="submit" name="submit-query" />
             </fieldset>
         </form>
