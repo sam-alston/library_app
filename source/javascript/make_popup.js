@@ -5,15 +5,21 @@ function markerClick(e){
 	//document.getElementById("popupTest").style.margin = "0em";
 	furnMap = getFurnMap();
 	activityMap = getActivityMap();
+	wb_activityMap = getWhiteboardActivityMap();
 	document.getElementById("lock").style.display = "inline";
-	document.getElementById("rotate").style.display = "block";
 	document.getElementById("lock").innerText = "Unlock";
+	document.getElementById("rotate").style.display = "block";
+	document.getElementById("plus").style.display = "block";
+    document.getElementById("minus").style.display = "block";
+    document.getElementById("checkall").style.display = "block";
+	document.getElementById("save").style.display = "block";
 	
 	selected_furn = furnMap.get(this.options.fid);
 	selected_marker = this;
 	selected_marker.dragging.disable();
 	
 	temp_seat_places = [];
+	whiteboard_activity = "0";
 
 	while(added_seats == false)
 	{
@@ -29,14 +35,9 @@ function markerClick(e){
 			var cur_num_seats;
 			var surveyExists = true;
 			//check if it has been surveyed it will have seats in the array
-			if(selected_furn.seat_places.length >= this.options.numSeats)
-			{
+			if(selected_furn.seat_places.length >= this.options.numSeats){
 				cur_num_seats = selected_furn.seat_places.length;
-				
-			} 
-			
-			else 
-			{
+			} else {
 				surveyExists = false;
 				//this is the first time the cur_furn is surveyed, so we push on the initial furniture pieces.
 				cur_num_seats = this.options.numSeats;
@@ -45,21 +46,18 @@ function markerClick(e){
 			
 			for (seat_num = 0; seat_num < cur_num_seats; seat_num++)
 			{
+				//newSeat = new Seat(seat_num);
 				if(surveyExists)
 				{
 					var copy_seat = Object.assign({}, selected_furn.seat_places[seat_num]);
-					if(Array.isArray(copy_seat.activity))
-					{
+					if(Array.isArray(copy_seat.activity)){
 						copy_seat.activity = copy_seat.activity.slice();
 					}
 					temp_seat_places.push(copy_seat);
-					//plus(selected_furn.seat_places[seat_num], seat_num+1);
 				}
-				
 				else
 				{
 					temp_seat_places.push(new Seat(seat_num));
-					//plus(temp_seat_places[seat_num], seat_num+1);
 				}
 				plus(temp_seat_places[seat_num], seat_num+1);
 			}
@@ -88,20 +86,82 @@ function markerClick(e){
 			//if there is a div element with the seats remove it (This is a different popup)
 			var seat_div_child = document.getElementById("seat_div_child");
 			seat_div_child.remove();
+			
+			var wb_div_child = document.getElementById("wb_div_child");
+			wb_div_child.remove();
 		}
 	}
+	
+	var wbActivityValues = wb_activityMap.values();
+	var wb_div_child = document.createElement("div");
+	wb_div_child.id = "wb_div_child";
+	document.getElementById("wb_div").appendChild(wb_div_child);
+	
+	//creates a button for a drop down menu for whiteboard
+	var wb_button = document.createElement('button');
+	//wb_button.name = "dropdown";
+	wb_button.id = "wb_button";
+	wb_button.className = "wb";
+	wb_button.appendChild(document.createTextNode('Whiteboard'));
+
+	//creates a div the will be in the drop down menu with more options for whiteboard
+	var wb_dd_div = document.createElement('div');
+	wb_dd_div.name = "div";
+	wb_dd_div.id = "wb_dropContent";
+	wb_dd_div.style.display = "none";
+	wb_dd_div.className = "div";
+	
+	for(var property of wb_activityMap)
+	{
+		var cur_prop = wbActivityValues.next().value;
+
+		cur_prop = titleCase(cur_prop);
+		var label = document.createElement('label');
+		label.className = "action_label";
+		label.appendChild(document.createTextNode(cur_prop));
+
+		var input = document.createElement('input');
+		input.type = "radio";
+		input.className = "action_input";
+		input.name = "wb_activity";
+		input.value = cur_prop;
+		input.onchange = function()
+		{
+			whiteboard_activity = this.value;
+		}
+		
+		if(selected_furn.whiteboard == cur_prop)
+		{
+			input.checked = true;
+		}
+		
+		wb_dd_div.appendChild(input);
+		wb_dd_div.appendChild(label);
+		
+
+		var br = document.createElement('br');
+		wb_dd_div.appendChild(br);
+	}
+	wb_div_child.appendChild(wb_button);
+	wb_div_child.appendChild(wb_dd_div);
+	wb_button.onclick = function()
+	{
+		var div = document.getElementById("wb_dropContent");
+		if (div.style.display === "block") 
+		{
+			div.style.display = "none";
+			wb_button.className = wb_button.className.replace(" active", "");
+		} 
+		
+		else 
+		{
+    		div.style.display = "block";
+			wb_button.className += " active";
+		}
+	};
+	 
 }
 
-function roomPlus(){
-	var occupantInput = document.getElementById("occupantInput");
-	value = occupantInput.value;
-}
-
-function roomMinus(){
-	var occupantInput = document.getElementById("occupantInput");
-	value = occupantInput.value;
-	alert(value);
-}
 
 /*sets all seats of the selected furniture to occupied*/
 function checkAll(cur_furn){
@@ -126,12 +186,23 @@ function addRoomInput(currentOccupants){
 	occ = document.getElementById("occupantInput");
 	occ.value = currentOccupants;
 	
+	if(temp_seat_places.length === 0){
+		var roomSeat = new Seat(0);
+		temp_seat_places.push(roomSeat);
+		plus(roomSeat, 1);
+	} else {
+		var roomSeat = temp_seat_places[0];
+	}
+	seat = document.getElementById("dd_button"+1);
+	seat.textContent="Room activity";
+	
+	
 }
 //Expects: the current furniture to add seat to, and the seat number to add
 //Returns: nothing
 //Outputs: this will create all the default seat objects for the table, will also add a new 
 //		   seat if the user push the plus button
-function plus( cur_seat, seat_num, occupiedBool)
+function plus( cur_seat, seat_num)
 {
 	//get the current seat from seat_places
 	//var cur_seat = cur_furn.seat_places[seat_num-1];
@@ -197,20 +268,6 @@ function plus( cur_seat, seat_num, occupiedBool)
 	dd[(dd.length - 1)].addEventListener("click", 
 		function() 
 		{
-			//Check to see if another dropdown is open, if it is close it
-			/*if (this.id != open	&& open != "")
-			{
-				var div_close = document.getElementById(open);
-			
-				//Check to make sure we didn't remove the seat object that was open
-				if(div_close != null)
-				{
-					div_close.className = div_close.className.replace(" active", "");
-					div_close = div_close.nextElementSibling.nextElementSibling;
-					div_close.style.display = "none";
-				}
-			}*/
-		
 			var div = this.nextElementSibling.nextElementSibling;
 				if (div.style.display === "block") 
 				{
@@ -222,7 +279,6 @@ function plus( cur_seat, seat_num, occupiedBool)
 			{
 					div.style.display = "block";
 					this.className += " active";
-					//open = this.id;
 			}
 		});
 }
@@ -238,7 +294,6 @@ function minus(cur_furn)
 	var length = temp_seat_places.length;
 	
 	//used to make sure the user doesn't delete the default seats
-	//if(cur_furn.seat_places.length > cur_furn.num_seats)
 	if(temp_seat_places.length > cur_furn.num_seats)	
 	{
 		//removing each of the element in the the popup
@@ -289,6 +344,12 @@ function div_content(dd_div, cur_seat)
 		input.value = cur_prop;
 		input.onchange = function()
 		{
+			//if they are given an activity, the seat will be occupied. Make it so.
+			cur_seat.occupied = true;
+			//get the CB of the Seat object
+			seatOccupiedCB = document.getElementById("checkbox"+(cur_seat.seatPos+1));
+			seatOccupiedCB.checked = true;
+			
 			var activityCheck = isInArray(cur_seat.activity, this.value);	
 			if (!activityCheck)
 			{
@@ -338,9 +399,9 @@ function isInArray(cur_array, cur_value)
 //		  also, sets class name to active when clicked, so we can change the arrow effect
 function drop_func()
 {
-	var div = document.getElementById('wb_label');
+	var div = document.getElementById("wb_dropContent");
 	if (div.style.display === "block") 
-		{
+	{
 		div.style.display = "none";
 		wb_button.className = wb_button.className.replace(" active", "");
 	} 

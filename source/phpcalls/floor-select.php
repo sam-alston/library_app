@@ -1,9 +1,10 @@
 <?php
 session_start();
+require_once('./../config.php');
 
 $floor_ID =  $_REQUEST['floor_ID'];
 
-$dbh = new PDO('mysql:host=localhost;dbname=hsu_library;charset=utf8mb4', 'root', '');
+$dbh = new PDO($dbhost, $dbh_select_user, $dbh_select_pw);
 
 $stmt1 = $dbh->prepare("SELECT layout_id FROM layout where floor = :floor");
 /*statment for after layout is selected*/

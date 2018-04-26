@@ -9,9 +9,21 @@ $(window).on("load", function(){
             var json_object = JSON.parse(data);
             for(var i = 0; i < json_object.length; i++){
             	var obj = json_object[i];
-            	var activity_id = obj['activity_id'];
-                var description = obj['activity_description'];
-                activityMap.set(activity_id, description);
+            	if(obj['wb_activity'] == 0)
+            	{
+            		var activity_id = obj['activity_id'];
+                	var description = obj['activity_description'];
+                	activityMap.set(activity_id, description);
+                }
+                
+                else
+                {
+                	var activity_id = obj['activity_id'];
+                	var description = obj['activity_description'];
+                	wb_activityMap.set(activity_id, description);
+                }
+                
+                
             }
         }
     });

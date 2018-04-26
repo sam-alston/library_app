@@ -1,6 +1,8 @@
 <?php
+	require_once('./../config.php');
+
 	//get activities and populate activityMap
-	$dbh = new PDO('mysql:host=localhost;dbname=hsu_library;charset=utf8mb4', 'root', '');
+	$dbh = new PDO($dbhost, $dbh_select_user, $dbh_select_pw);
 
 	$getActivities = $dbh->prepare('SELECT * FROM activity');
 

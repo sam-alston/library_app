@@ -69,7 +69,7 @@
                 <input type="submit" name="submit-query" />
             </fieldset>
         </form>
-                ?php
+                <?php
             }
         ?>
     </main>
