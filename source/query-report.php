@@ -9,7 +9,6 @@
     <title> Library Query Report </title>
     <meta charset="utf-8" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="normalize.css" type="text/css" >
     <link rel="stylesheet" href="styles/layout.css" type="text/css" >
     <link rel="stylesheet" href="styles/format.css" type="text/css" >
 </head>
@@ -65,6 +64,30 @@
             <h3 class="log-state"> Logged In: <?= $_SESSION["username"]?> </h3>
             <?php
         }
+		
+		if (array_key_exists("survey_id", $_GET)){
+			?>
+			<script>
+				var survey_id = <?= $_GET["survey_id"] ?>;
+				
+				$.ajax({
+                url: 'phpcalls/reportAreaUse.php',
+                type: 'get',
+                data:{ 'survey_id': survey_id },
+                success: function(data){
+					var reportDiv = document.getElementById("reportDiv");
+					reportDiv.innerHTML = data;
+                    console.log("Printed Area Use.");
+                },
+				error: function(XMLHttpRequest, textStatus, errorThrown) { 
+					console.log("Status: " + textStatus);
+					console.log("Error: " + errorThrown); 
+				}     
+            });
+			
+			</script>
+			<?php
+		}
     ?>
         <?php
             if (!array_key_exists("username", $_SESSION)){
@@ -104,6 +127,7 @@
                 <?php
             }
         ?>
+		<div id="reportDiv"></div>
     </main>
     <footer>
         <p>Designed by Web App team</p>
