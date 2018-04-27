@@ -1,4 +1,7 @@
 <?php
+	//Data-collection loads layouts from selected floors. A chosen layout will populate a map, its areas, and furniture layout
+	//to a leaflet map, storing areas in an areaMap, furniture in a furnMap.
+	//TODO: move functions out of data-collection to separate files.
     session_start();
 	require_once('./config.php');
 ?>
@@ -18,7 +21,6 @@
     <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
    integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
    crossorigin=""></script>
-   <script src="./javascript/get_layouts.js"></script>
    <script src="./javascript/icons.js"></script>
    <script src="./javascript/layoutFunction.js"></script>
    <script src="./javascript/leaflet.rotatedMarker.js"></script>
@@ -26,7 +28,10 @@
    <script src="./javascript/make_popup.js"></script>
    <script src="./javascript/pop-activities.js"></script>
    <script src="./javascript/add-areas.js"></script>
-   <script type="text/javascript">
+   <script src="./javascript/markerInPoly.js"></script>
+	<!--script for updating furniture location in DB -->
+	<script src="./javascript/updateFurn.js"></script>
+  <script type="text/javascript">
     /*Container for JS furniture objects*/
     /*This functions to manipulate the view of the navigation, header, and footer with the click of a button*/
     $(function() {
@@ -130,14 +135,14 @@
         mymap.fitBounds(bounds);
         var image;
         var selected_furn;
-		var selected_marker;
+		    var selected_marker;
         var seat_num;
-		//to store the seat_places array to be saved
-		var temp_seat_places = [];
-		var whiteboard_activity = "0";
+		    //to store the seat_places array to be saved
+		    var temp_seat_places = [];
+		    var whiteboard_activity = "0";
         var furnMap = new Map();
-		var activityMap = new Map();
-		var wb_activityMap = new Map();
+		    var activityMap = new Map();
+		    var wb_activityMap = new Map();
         var areaMap = new Map();
 
         var popup = document.getElementById("popupTest"); 
@@ -192,6 +197,29 @@
                 layout = form_info.elements["layout-select"].value;
             });
         });
+
+		//this helper will iterate over furnmap and provide update statements for all furnitures location.
+		function updateHelper(){
+			var outString="";
+			
+			furnMap.forEach(function(item, key, mapObj){
+				aid = "TBD";
+				x = item.x;
+				y = item.y;
+				areaMap.forEach(function(jtem, jkey, mapObj){
+						
+					if(isMarkerInsidePolygon(y,x, jtem.polyArea)){
+						aid = jtem.area_id;
+					}
+				});
+				if(area_id !== "TBD"){
+					item.in_area = aid;
+				}
+                outString+= updateFurn(item);
+				outString+="\n";
+			});
+			console.log(outString);
+		}
 
         function getFurnMap(){
             return furnMap;
@@ -409,42 +437,53 @@
                     x = <?php echo $row['x_location'] ?>;
                     y = <?php echo $row['y_location'] ?>;
                     degree_offset = <?php echo $row['degree_offset'] ?>;
-                    newFurniture.degreeOffset = degree_offset;
                     furniture_type = <?php echo $row['furniture_type'] ?>;
                     default_seat_type = <?php echo $row['default_seat_type'] ?>;
                     num_seats = <?php echo $numSeatResult['number_of_seats'] ?>;
                     var latlng = [y,x];
                     var selectedIcon;
+                    newFurniture.degreeOffset = degree_offset;					
+					<!--add x,y, area_id -->
+					area_id="TBD";
+					newFurniture.y = y;
+					newFurniture.x = x;
+
+					
+					<!--end add x,y area_id -->
 
                     switch(furniture_type){
-                        case 21: selectedIcon=computerStation;break;
-                        case 16:
-                        case 17:
-                        case 18:
-                        case 19: selectedIcon=collabStation; break;
+						case 1:
+                        case 2:
+                        case 3:
+                        case 4: selectedIcon=rectTable ; break;
+                        case 5:
+                        case 6: selectedIcon=counterCurved; break;
                         case 7:
                         case 8:
                         case 9:
                         case 10: selectedIcon=circTable; break;
+						case 11: selectedIcon=couchCurved ; break;
+						case 12: selectedIcon=couchTwo ; break;
                         case 13: selectedIcon=couchThree ; break;
-                        case 11: selectedIcon=couchCurved ; break;
+						case 14: selectedIcon=couchFour; break;
                         case 15: selectedIcon=couchSix ; break;
-                        case 14: selectedIcon=couchFour; break;
-                        case 12: selectedIcon=couchTwo ; break;
-                        case 5:
-                        case 6: selectedIcon=counterCurved; break;
-                        case 1:
-                        case 2:
-                        case 3:
-                        case 4: selectedIcon=rectTable ; break;
-                        case 33: selectedIcon=rectTable ; break;
+                        case 16:
+                        case 17:
+                        case 18:
+                        case 19: selectedIcon=collabStation; break;
                         case 20: selectedIcon=roomIcon; break;
+						case 21: selectedIcon=computerStation;break;
+						case 22: selectedIcon= seatOne; break;
                         case 23: selectedIcon= seatOneSoft; break;
-                        case 22: selectedIcon= seatOne; break;
-                        case 30: selectedIcon= studyFour; break;
+                        case 24: selectedIcon= fitDeskEmpty; break;
+                        case 25: selectedIcon= medCornerEmpty; break;
+						case 26: selectedIcon= mfReaderEmpty; break;
                         case 27: selectedIcon= studyOne; break;
-                        case 29: selectedIcon= studyThree; break;
                         case 28: selectedIcon= studyTwo; break;
+						case 29: selectedIcon= studyThree; break;
+						case 30: selectedIcon= studyFour; break;
+						case 31: selectedIcon= vidViewerEmpty; break;
+						case 33: selectedIcon=rectTable ; break;
                         default: selectedIcon= computerStation; break;
                     }
 
@@ -453,6 +492,7 @@
                     marker = L.marker(latlng, {
                         icon: selectedIcon,
                         rotationAngle: degree_offset,
+					            	rotationOrigin: "center",
                         draggable: false,
                         ftype: furniture_type,
                         numSeats: num_seats,
@@ -464,9 +504,9 @@
 					
 					//update marker coords in marker map on dragend, set to modified
 					marker.on("dragend", function(e){
+						selected_furn.modified = true;
 						latlng =  e.target.getLatLng();
-                        
-                        selected_furn.modified = true;
+
                         selected_furn.latlng = latlng;
                         y = latlng.lat;
                         x = latlng.lng;
@@ -491,7 +531,6 @@
                     /*for(i = 0; i < newFurniture.num_seats; i++){
                         newFurniture.seat_places[i] = new Seat(i, newFurniture.seat_type);
                     }*/
-
                     furnMap.set(keyString, newFurniture);
                     <?php
                 }

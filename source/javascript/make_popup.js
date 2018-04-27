@@ -7,11 +7,12 @@ function markerClick(e){
 	activityMap = getActivityMap();
 	wb_activityMap = getWhiteboardActivityMap();
 	document.getElementById("lock").style.display = "inline";
+	document.getElementById("rotate").style.display = "block";
 	document.getElementById("lock").innerText = "Unlock";
 	document.getElementById("rotate").style.display = "block";
 	document.getElementById("plus").style.display = "block";
-    document.getElementById("minus").style.display = "block";
-    document.getElementById("checkall").style.display = "block";
+  document.getElementById("minus").style.display = "block";
+  document.getElementById("checkall").style.display = "block";
 	document.getElementById("save").style.display = "block";
 	
 	selected_furn = furnMap.get(this.options.fid);

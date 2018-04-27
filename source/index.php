@@ -1,7 +1,10 @@
 <?php
 	session_start();
+	require_once("config.php");
 
 	//initilize an admin account for only those who know it to access it
+	//request user login information
+	//TODO: Remove current sign on and replace with calls to DB
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -47,21 +50,6 @@
 			    $author = "has no value";
 
 			    if($username == "admin" && $password == "gdc4562" ){
-
-			    // set up db connection string THIS WILL BE REPLACED WITH HUMBOLDT ACCOUNT INFORMATION
-			    $db_conn_str = new PDO('mysql:host=localhost;hsu_library', "root", "");
-
-			    try{
-				    $dbh = new PDO('mysql:host=localhost;hsu_library', "root", "");
-				    foreach($dbh->query('SELECT * from furniture') as $row) {
-				        print_r($row);
-				    }
-				    $dbh = null;
-					}
-				catch (PDOException $e){
-					    print "Error!: " . $e->getMessage() . "<br/>";
-					    die();
-				}
 			
 				//if I reach here, I have connected to my username and password, and can now travel to the next page and store session variables
 				$_SESSION["username"] = $username;

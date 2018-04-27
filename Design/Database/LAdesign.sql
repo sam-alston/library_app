@@ -107,6 +107,7 @@ COMMENT = 'Areas are able to be complex geometric shapes, so there are a minimum
 CREATE TABLE `hsu_library`.`activity` (
   `activity_id` INT NOT NULL AUTO_INCREMENT,
   `activity_description` VARCHAR(45) NOT NULL,
+  `wb_activity` TINYINT,
   PRIMARY KEY (`activity_id`))
 COMMENT = 'An activity is anything that should be tracked by a seat, so there is an ID and a descriptive label.';
 
