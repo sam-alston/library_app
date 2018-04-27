@@ -23,7 +23,7 @@ foreach($jsondata as $key => $value){
 		$new_y = $value["y"];
 		$degree_offset = $value["degreeOffset"];
 		$in_area = $value["in_area"];
-		
+
 		$dbh->beginTransaction();
 		$insert_modified_stmt = $dbh->prepare('INSERT INTO modified_furniture(furniture_id, new_x, new_y, degree_offset, survey_id, in_area)
 												VALUES(:furniture_id, :new_x, :new_y, :degree_offset, :survey_id, :in_area)');
@@ -54,6 +54,7 @@ foreach($jsondata as $key => $value){
 		$insert_room_stmt->execute();
 		$dbh->commit();
 	}
+  
 	//if seat_places exists, we enter each seat to the database. A room will have a seat when it has activities.
 	if (array_key_exists('seat_places', $value)) {
 		foreach ($value["seat_places"] as $key2 => $value2) {
@@ -89,7 +90,6 @@ foreach($jsondata as $key => $value){
 				}
 			}
 		}
-	}
 }
 
 print json_encode($jsondata);

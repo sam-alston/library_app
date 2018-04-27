@@ -28,10 +28,10 @@
    <script src="./javascript/make_popup.js"></script>
    <script src="./javascript/pop-activities.js"></script>
    <script src="./javascript/add-areas.js"></script>
-    <script src="./javascript/markerInPoly.js"></script>
+   <script src="./javascript/markerInPoly.js"></script>
 	<!--script for updating furniture location in DB -->
 	<script src="./javascript/updateFurn.js"></script>
-   <script type="text/javascript">
+  <script type="text/javascript">
     /*Container for JS furniture objects*/
     /*This functions to manipulate the view of the navigation, header, and footer with the click of a button*/
     $(function() {
@@ -101,26 +101,7 @@
             <div id="mapid"></div>
             <div id="popupTest">
                 <div id="seat_div"></div>
-                <div id="wb_div">
-                <!-- Cannot have the same class name as seat dropdown button because we add a
-                    event listener to the seat dropdown and search for it by class name-->
-                <button onclick="drop_func()" id="wb_button" class="wb">
-					<!--<button onclick="updateHelper()" id="wb_button" class="wb">-->
-                    <label>Whiteboard</label></button><input type="checkbox" name="wb" class="inuse_input"/>
-                    <div id="wb_div">
-                        <div id="wb_label" class="div">
-                            <input type="radio" name="wb" value="partion" class="action_input"/> 
-                            <label class="action_label">
-                                Partion </label> <br />
-                            <input type="radio" name="wb" value="writing" class="action_input"/>
-                            <label class="action_label">
-                                Writing </label> <br />
-                            <input type="radio" name="wb" value="other" class="action_input"/>
-                            <label class="action_label">
-                                Other </label> <br />
-                        </div>
-                    </div>
-                </div>
+                <div id="wb_div"></div>
                 <button onClick="saveHelper()" id="save" style="display:none">Save and Exit</button>
                 <button onClick="lockHelper()" id="lock">Unlock</button>
 				<button onClick="rotateHelper()" id="rotate">Rotate</button>
@@ -154,12 +135,14 @@
         mymap.fitBounds(bounds);
         var image;
         var selected_furn;
-		var selected_marker;
+		    var selected_marker;
         var seat_num;
-		//to store the seat_places array to be saved
-		var temp_seat_places = [];
+		    //to store the seat_places array to be saved
+		    var temp_seat_places = [];
+		    var whiteboard_activity = "0";
         var furnMap = new Map();
-		var activityMap = new Map();
+		    var activityMap = new Map();
+		    var wb_activityMap = new Map();
         var areaMap = new Map();
 
         var popup = document.getElementById("popupTest"); 
@@ -245,6 +228,10 @@
         function getActivityMap(){
             return activityMap;
         }
+        
+         function getWhiteboardActivityMap(){
+            return wb_activityMap;
+        }
 
         function checkAllHelper(){
         	checkAll(selected_furn);
@@ -252,12 +239,19 @@
         
         function saveHelper(){
 			var occupants = document.getElementById("occupantInput");
-			if(occupants){
+			if(occupants)
+			{
 				selected_furn.totalOccupants = occupants.value;
 			}
 			selected_marker.setOpacity(1);
 			selected_furn.seat_places = temp_seat_places;
-        	mymap.closePopup();
+			
+			if(whiteboard_activity != "0")
+			{
+				selected_furn.whiteboard = whiteboard_activity;
+			}
+			
+		  	mymap.closePopup();
         }
         
         function lockHelper(){
@@ -443,14 +437,11 @@
                     x = <?php echo $row['x_location'] ?>;
                     y = <?php echo $row['y_location'] ?>;
                     degree_offset = <?php echo $row['degree_offset'] ?>;
-
-					
                     furniture_type = <?php echo $row['furniture_type'] ?>;
                     default_seat_type = <?php echo $row['default_seat_type'] ?>;
                     num_seats = <?php echo $numSeatResult['number_of_seats'] ?>;
                     var latlng = [y,x];
                     var selectedIcon;
-					
                     newFurniture.degreeOffset = degree_offset;					
 					<!--add x,y, area_id -->
 					area_id="TBD";
@@ -501,7 +492,7 @@
                     marker = L.marker(latlng, {
                         icon: selectedIcon,
                         rotationAngle: degree_offset,
-						rotationOrigin: "center",
+					            	rotationOrigin: "center",
                         draggable: false,
                         ftype: furniture_type,
                         numSeats: num_seats,
@@ -514,8 +505,8 @@
 					//update marker coords in marker map on dragend, set to modified
 					marker.on("dragend", function(e){
 						selected_furn.modified = true;
-						
 						latlng =  e.target.getLatLng();
+
                         selected_furn.latlng = latlng;
                         y = latlng.lat;
                         x = latlng.lng;
@@ -540,14 +531,6 @@
                     /*for(i = 0; i < newFurniture.num_seats; i++){
                         newFurniture.seat_places[i] = new Seat(i, newFurniture.seat_type);
                     }*/
-
-                    document.getElementById("plus").style.display = "block";
-                    document.getElementById("minus").style.display = "block";
-                    document.getElementById("checkall").style.display = "block";
-                    document.getElementById("save").style.display = "block";
-                    document.getElementById("wb_div").style.display = "block";
-                    document.getElementById("rotate").style.display = "block";
-
                     furnMap.set(keyString, newFurniture);
                     <?php
                 }
