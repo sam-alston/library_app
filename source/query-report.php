@@ -1,5 +1,9 @@
 <?php
-    session_start();
+	//The main page for any queries that the user will grab from the DB.
+	//Needs more queries such as activities, whiteboard use.
+	//TODO: give a calendar view to choose the date of a survey record,
+	//  Load the state of the library during that survey to give us not only area_use, but furniture location
+	session_start();
     require_once('form_functions.php');
 ?>
 <!DOCTYPE html>

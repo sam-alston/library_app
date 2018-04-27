@@ -1,4 +1,8 @@
 <?php
+	//Survey successfully submitted, display message to user of Success.
+	//Routed here from data-collection.php on survey submit
+	//TODO: add a button to make another survey, perhaps let us choose the floor and layout and send us
+	//to data-collection with that in GET array to immediately load a new floor to survey.
     session_start();
 ?>
 <!DOCTYPE html>

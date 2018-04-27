@@ -1,4 +1,5 @@
 <?php
+//is this still being used?
 	public function getLayouts(){
 
 		foreach($dbh->query('SELECT * FROM layout WHERE floor = '.$_SESSION['cur_floor']) as $row){

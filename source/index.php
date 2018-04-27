@@ -1,5 +1,6 @@
 <?php
 	session_start();
+	require_once("config.php");
 
 	//initilize an admin account for only those who know it to access it
 ?>
@@ -49,10 +50,10 @@
 			    if($username == "admin" && $password == "gdc4562" ){
 
 			    // set up db connection string THIS WILL BE REPLACED WITH HUMBOLDT ACCOUNT INFORMATION
-			    $db_conn_str = new PDO('mysql:host=localhost;hsu_library', "root", "");
+			    $db_conn_str = 
 
 			    try{
-				    $dbh = new PDO('mysql:host=localhost;hsu_library', "root", "");
+				    $dbh = new PDO($dbhost, $dbh_select_user, $dbh_select_pw);
 				    foreach($dbh->query('SELECT * from furniture') as $row) {
 				        print_r($row);
 				    }

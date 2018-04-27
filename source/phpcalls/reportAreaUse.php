@@ -53,9 +53,26 @@
 		$totalNumberSeats = $totalSeatStmt->fetchColumn();
 		//print to screen
 		if($totalNumberSeats == 0){
-			print $area_name . " is a room. <br/>";
+			//this is a room area
+			//select furniture id of the room in this area
+			$roomIdStmt = $dbh->prepare("SELECT furniture_id FROM furniture WHERE layout_id = :layout_id AND in_area = :in_area");
+			$roomIdStmt->bindParam(':layout_id', $layout_id, PDO::PARAM_INT);
+			$roomIdStmt->bindParam(':in_area', $area_id, PDO::PARAM_INT);
+			
+			$roomIdStmt->execute();
+			$roomId = $roomIdStmt->fetchColumn();
+			
+			//now select total occupants of the room
+			$roomOccupantStmt = $dbh->prepare("SELECT total_occupants FROM surveyed_room WHERE furniture_id = :furniture_id AND survey_id = :survey_id");
+			$roomOccupantStmt->bindParam(':furniture_id', $roomId, PDO::PARAM_INT);
+			$roomOccupantStmt->bindParam(':survey_id', $survey_id, PDO::PARAM_INT);
+			
+			$roomOccupantStmt->execute();
+			$roomOccupants = 0;
+			$roomOccupants += $roomOccupantStmt->fetchColumn();
+			print $area_name . " total occupants: " . $roomId . " <br/>";
 		} else {
-			print $area_name  . " use ratio: " . $totalOccupiedSeats . " / " . $totalNumberSeats . "= " . $totalOccupiedSeats/$totalNumberSeats . "<br/>";
+			print $area_name  . " use ratio: " . $totalOccupiedSeats . " / " . $totalNumberSeats . "= " . $totalOccupiedSeats/$totalNumberSeats . " <br/>";
 
 		}
 		
