@@ -1,0 +1,57 @@
+//TODO's!
+
+
+survey-success.php
+==================
+TODO: add a button to make another survey, perhaps let us choose the floor and layout and send us
+	//to data-collection with that in GET array to immediately load a new floor to survey.
+	
+	
+query-report.php
+================
+TODO: give a calendar view to choose the date of a survey record,
+	//  Load the state of the library during that survey to give us not only area_use, but furniture location
+	
+
+index.php
+=========
+TODO: Remove current sign on and replace with calls to DB
+
+
+home.php
+========
+TODO: Add large buttons to data-collection, query-report and create-layout for ease of use and to fill-in space
+	//Also add instructions for new users.
+	
+
+editor.php
+==========
+TODO: add editor from alpha directory to editor
+
+
+data-collection.php
+===================
+TODO: move functions out of data-collection to separate files.
+
+
+pop-activities.js
+=================
+TODO: add field for wb_activity column
+
+
+Cheryl's notes on a survey:
+//take away from seat activity
+//add laptop activity
+//survey not pulled up on query-report.php
+//add teaching activity for rooms
+//cb for whiteboard, multiple activities
+//indicate what furniture has been unlocked
+//add an undo for runiture move
+
+
+	
+//Are these pages still relevant?
+
+popup.html
+pop_layout.php
+main.css

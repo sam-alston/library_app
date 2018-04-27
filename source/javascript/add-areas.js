@@ -1,4 +1,11 @@
-	
+//This file defines all classes and functions to pull areas from DB, store in objects, and draw polygons of areas.
+
+//Call to createAreas takes a layout, looksup all areas in that layout.
+//Calls area-select.php to get areas from DB. 
+//	Create area object, then set to areaMap.
+//Calls area-vertices-select.php to get vertices of each area from DB.
+//	Creates areaVertices and pushes to current area object.
+//Once all areas have been created add to areaLayer (attached to mymap)
 function createAreas(layout){
 	$.ajax({
 	    url: 'phpcalls/area-select.php',
@@ -7,7 +14,7 @@ function createAreas(layout){
 	    success: function(data){
 	        console.log("got area_IDs");
 	        var json_object = JSON.parse(data);
-	        
+	        //iterate through all area_id's
 	        for(var i = 0; i < json_object.length; i++){
 	            var obj = json_object[i];
 	            area_id = obj['area_id'];
@@ -16,6 +23,7 @@ function createAreas(layout){
 	            cur_area = new Area(area_id, area_name);
 	            areaMap.set(i, cur_area);
 	        }
+			//for each area, get its areaVertices
 	        areaMap.forEach( function(item, key, mapObj){
 	            $.ajax({
 	                url: 'phpcalls/area-vertices-select.php',
@@ -31,7 +39,7 @@ function createAreas(layout){
 	                        var cur_vert = new AreaVertices(v_x, v_y);
 	                        item.area_vertices.push(cur_vert);
 	                    }
-	                    //draw area poly
+	                    //draw area polys and add to areaLayer
 	                    var polyArea = drawArea(item);
 	                    item.polyArea = polyArea;
 	                    polyArea.addTo(areaLayer);
@@ -42,7 +50,8 @@ function createAreas(layout){
 	});
 }
 
-
+//define Area class.
+//Take in the area_id, and area_name to set to the object at creation
 function Area(area_id, area_name){
     this.area_id = area_id;
     this.area_name = area_name;
@@ -50,11 +59,16 @@ function Area(area_id, area_name){
     this.polyArea;
 }
 
+//define AreaVertices, a class that is a member of Area
+//areaVertices are a two-tuple array.
 function AreaVertices(x,y){
     this.x = x;
     this.y = y;
 }
 
+//iterate over areaMap calling drawArea for each member of the map.
+//catch the polygon returned by drawArea, add to areaLayer (which is attached to mymap).
+//currently: UNUSED
 function addAreas(){
     //draws the areas
     areaMap.forEach(function(item, key, mapObj){
@@ -63,6 +77,8 @@ function addAreas(){
     })
 }
 
+//take an Area object and draw a polygon with Area's area_vertices member
+//takes an Area object, returns a polygon of that area.
 function drawArea(area){
 	var verts = [];
 	
@@ -77,9 +93,10 @@ function drawArea(area){
 }
 
 
+//determine if a point defined by x,y is inside a polygon called poly
+//return true if point is in poly, else return false
 function isMarkerInsidePolygon(x,y, poly) {
 	var inside = false;
-	//var x = marker.getLatLng().lat, y = marker.getLatLng().lng;
 	for (var ii=0;ii<poly.getLatLngs().length;ii++){
 		var polyPoints = poly.getLatLngs()[ii];
 		for (var i = 0, j = polyPoints.length - 1; i < polyPoints.length; j = i++) {

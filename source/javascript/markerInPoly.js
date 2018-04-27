@@ -1,3 +1,5 @@
+//determine if a point defined by x,y is inside a polygon called poly
+//returns true if inside, else false
 function isMarkerInsidePolygon(x,y, poly) {
 	var inside = false;
 	//var x = marker.getLatLng().lat, y = marker.getLatLng().lng;

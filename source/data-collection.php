@@ -1,4 +1,7 @@
 <?php
+	//Data-collection loads layouts from selected floors. A chosen layout will populate a map, its areas, and furniture layout
+	//to a leaflet map, storing areas in an areaMap, furniture in a furnMap.
+	//TODO: move functions out of data-collection to separate files.
     session_start();
 	require_once('./config.php');
 ?>
@@ -18,7 +21,6 @@
     <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
    integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
    crossorigin=""></script>
-   <script src="./javascript/get_layouts.js"></script>
    <script src="./javascript/icons.js"></script>
    <script src="./javascript/layoutFunction.js"></script>
    <script src="./javascript/leaflet.rotatedMarker.js"></script>

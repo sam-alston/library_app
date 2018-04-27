@@ -1,4 +1,6 @@
 <?php
+	//This is the page for creating and editing layouts.
+	//TODO: add editor from alpha directory to editor
     session_start();
 ?>
 <!DOCTYPE html>

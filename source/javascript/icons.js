@@ -1,3 +1,6 @@
+//This file extends Marker to contain furniture information
+//and extend Icon class to create new icons for each piece of furniture
+
 //extend the marker class to add furniture data
 var marker = L.Marker.extend({
 	options: {

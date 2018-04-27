@@ -1,4 +1,5 @@
 <?php
+//insert the room occupants, seats, their activities and and any modified pieces of furniture
 require_once('./../config.php');
 
 $jsondata = json_decode($_POST['to_json'], true);
@@ -71,7 +72,6 @@ foreach($jsondata as $key => $value){
 														
 						$insert_seat_act_stmt->bindParam(':seat_id', $seat_id, PDO::PARAM_INT);
 						$insert_seat_act_stmt->bindParam(':activity', $actVal, PDO::PARAM_STR);
-						//:seat_id, (SELECT activity_id FROM activity WHERE activity_description = :activity)
 						$insert_seat_act_stmt->execute();
 						$dbh->commit();
 					}

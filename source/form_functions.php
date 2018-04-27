@@ -1,6 +1,6 @@
 <?php
 	/*These functions build HTML form elements used for the collection of data and navigation*/
-
+	//navigation buttons
 	function nav_form(){
 		?>
 			<nav class="hidden">
@@ -13,33 +13,7 @@
         <?php
 	}
 
-	/*function form_lay_selct(){
-		?>
-			<form class="layout-selector" id="lay-select">
-	            <fieldset>
-	                <!-- Set up a Query here to add options for each layout based on what floors are available in the databse-->
-	                <select name="floor-select" id="floor-select">
-	                    <option value="default">Choose a Floor</option>
-	                    <option value="1">Floor 1</option>
-	                    <option value="2">Floor 2</option>
-	                    <option value="3">Floor 3</option>
-	                </select>
-	                <select name="layout-select">
-	                    <!-- Populate these options with those from the database-->
-	                    <option value="default">Choose a Layout</option>
-	                    <?php
-	                        //Will replace hardcoded floor with ajax statement to get floor when floor changes
-	                        foreach($dbh->query('SELECT * FROM layout WHERE floor = "1"') as $row){
-	                            ?> <option value="<?= $row['layout_id'] ?>">Layout <?= $i ?> for Layout ID: <?= $row['layout_id'] ?> </option> <?php
-	                        }
-	                    ?>
-	                </select>
-	                <button type="button" id="sub_layout">Load</button>
-	            </fieldset>
-	        </form>
-		<?php
-	}*/
-
+	//selects the dates of survey records
 	function get_dates_options(){
 		require_once('config.php');
 		//get activities and populate activityMap

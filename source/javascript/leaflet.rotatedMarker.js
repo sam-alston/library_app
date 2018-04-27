@@ -1,3 +1,4 @@
+//gives markers the rotation property used to rotate pieces of furniture on maps.
 (function() {
     // save these original methods before they are overwritten
     var proto_initIcon = L.Marker.prototype._initIcon;

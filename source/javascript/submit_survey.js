@@ -1,5 +1,4 @@
 /*This function is called when the survey is submitted and it populates the database with the appropriate seat objects*/
-
 function submitSurvey(username, layout, furnMap){
     var cur_survey_id;
     console.log("You are submitting the survey");
@@ -57,23 +56,7 @@ function submitSurvey(username, layout, furnMap){
     });
 };
 
-function submitModified(cur_furn, survey_id) {
-	$.ajax({
-		url: 'phpcalls/insert-modified.php',
-		type: 'post',
-		data:{
-			'furn_id': cur_furn.furn_id,
-			'new_x': cur_furn.latlng.lng,
-			'new_y': cur_furn.latlng.lat,
-			'survey_id': survey_id,
-			'in_area': cur_furn.in_area
-		},
-		success: function(data){
-			console.log("Modified Furniture inserted");
-		}
-	});
-}
-
+//takes a furnMap and returns it as an object array
 function mapToObj(inputMap) {
     var obj = {};
 
