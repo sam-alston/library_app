@@ -40,6 +40,7 @@ TODO: add field for wb_activity column
 
 
 Cheryl's notes on a survey:
+//push eric change to spell partition correctly
 //take away from seat activity
 //add laptop activity
 //survey not pulled up on query-report.php

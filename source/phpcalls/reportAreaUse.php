@@ -1,4 +1,6 @@
 <?php
+	//query the area use ratio of each area, get total number of occupants from a room]
+	//TODO: not getting total occupants on reclaim hosting, only localhost.
 	session_start();
 	require_once('../config.php');
 	//retrieve survey_id from ajax call.
@@ -68,9 +70,8 @@
 			$roomOccupantStmt->bindParam(':survey_id', $survey_id, PDO::PARAM_INT);
 			
 			$roomOccupantStmt->execute();
-			$roomOccupants = 0;
-			$roomOccupants += $roomOccupantStmt->fetchColumn();
-			print $area_name . " total occupants: " . $roomId . " <br/>";
+			$roomOccupants = $roomOccupantStmt->fetchColumn();
+			print $area_name . " total occupants: " . $roomOccupants . " <br/>";
 		} else {
 			print $area_name  . " use ratio: " . $totalOccupiedSeats . " / " . $totalNumberSeats . "= " . $totalOccupiedSeats/$totalNumberSeats . " <br/>";
 
