@@ -7,20 +7,20 @@ function markerClick(e){
 	activityMap = getActivityMap();
 	wb_activityMap = getWhiteboardActivityMap();
 	document.getElementById("lock").style.display = "inline";
-	document.getElementById("rotate").style.display = "block";
 	document.getElementById("lock").innerText = "Unlock";
 	document.getElementById("rotate").style.display = "block";
 	document.getElementById("plus").style.display = "block";
-  document.getElementById("minus").style.display = "block";
-  document.getElementById("checkall").style.display = "block";
+  	document.getElementById("minus").style.display = "block";
+  	document.getElementById("checkall").style.display = "block";
 	document.getElementById("save").style.display = "block";
-	
+	document.getElementById("save").style.top = "40.5%";
+
 	selected_furn = furnMap.get(this.options.fid);
 	selected_marker = this;
 	selected_marker.dragging.disable();
 	
 	temp_seat_places = [];
-	whiteboard_activity = "0";
+	whiteboard_activity = [];
 
 	while(added_seats == false)
 	{
@@ -29,6 +29,26 @@ function markerClick(e){
 			var seat_div_child = document.createElement("div");
 			seat_div_child.id = "seat_div_child";
 			document.getElementById("seat_div").appendChild(seat_div_child);
+
+			//find +/- buttons to st onclick
+			plusbutton = document.getElementById("plus");
+			minusbutton = document.getElementById("minus");
+			
+			if(this.options.numSeats === 0)
+			{
+				//add room input
+				addRoomInput(selected_furn.totalOccupants);
+				minusbutton.disabled = true;
+				plusbutton.disabled = true;
+				
+			} 
+			
+			else 
+			{
+				//not a room, reattach +/- buttons to plusHelper/minusHelper
+				minusbutton.disabled = false;
+				plusbutton.disabled = false;
+			
 
 			//If the JS object seat_places array is as big as default number of seats, it has been surveyed
 			//otherwise make the new seats and push onto array.
@@ -62,22 +82,6 @@ function markerClick(e){
 				}
 				plus(temp_seat_places[seat_num], seat_num+1);
 			}
-			
-			//find +/- buttons to st onclick
-			plusbutton = document.getElementById("plus");
-			minusbutton = document.getElementById("minus");
-			
-			if(this.options.numSeats === 0){
-				//add room input
-				
-				addRoomInput(selected_furn.totalOccupants);
-				minusbutton.disabled = true;
-				plusbutton.disabled = true;
-				
-			} else {
-				//not a room, reattach +/- buttons to plusHelper/minusHelper
-				minusbutton.disabled = false;
-				plusbutton.disabled = false;
 			}
 			added_seats = true;
 		}
@@ -122,16 +126,24 @@ function markerClick(e){
 		label.appendChild(document.createTextNode(cur_prop));
 
 		var input = document.createElement('input');
-		input.type = "radio";
+		input.type = "checkbox";
 		input.className = "action_input";
 		input.name = "wb_activity";
 		input.value = cur_prop;
 		input.onchange = function()
 		{
-			whiteboard_activity = this.value;
+			var activityCheck = isInArray(whiteboard_activity, this.value);	
+			if (!activityCheck)
+			{
+				whiteboard_activity.push(this.value);
+			}
 		}
 		
-		if(selected_furn.whiteboard == cur_prop)
+		//check to see if the current activity is in the furnitures whiteboard activity array
+		var furnActivityCheck = isInArray(selected_furn.whiteboard, cur_prop);
+		
+		//if it is mark the checkbox as checked
+		if(furnActivityCheck)
 		{
 			input.checked = true;
 		}
@@ -196,7 +208,9 @@ function addRoomInput(currentOccupants){
 	}
 	seat = document.getElementById("dd_button"+1);
 	seat.textContent="Room activity";
-	
+	document.getElementById("checkbox1").style.display = "none";
+	document.getElementById("checkall").style.display = "none";
+	document.getElementById("save").style.top = "33%";
 	
 }
 //Expects: the current furniture to add seat to, and the seat number to add
@@ -219,13 +233,25 @@ function plus( cur_seat, seat_num)
 	{
 		cb.checked = true;
 	}
-	//cb.checked = occupiedBool;
-	//cur_seat.occupied = occupiedBool;
+	
 	//onchange listener sets occupied state
 	cb.onchange = function(){
-		if(cb.checked === true){
+		if(cb.checked === true)
+		{
 			cur_seat.occupied = true;
-		} else {
+			if(cur_seat.seatPos > 0)
+			{
+				for( var i = 0; i < cur_seat.seatPos; i++)
+				{
+					//elements are named after seat place, 1 indexed, seat_places array is 0 indexed
+					var default_seat = document.getElementById("checkbox"+(i+1));
+					temp_seat_places[i].occupied = true;
+					default_seat.checked = true;
+				}
+			}
+		} 
+		else 
+		{
 			cur_seat.occupied = false;
 		}
 	};
@@ -347,9 +373,19 @@ function div_content(dd_div, cur_seat)
 		{
 			//if they are given an activity, the seat will be occupied. Make it so.
 			cur_seat.occupied = true;
+			if(cur_seat.seatPos >= 0)
+			{
+				for( var i = 0; i <= cur_seat.seatPos; i++)
+				{
+					//elements are named after seat place, 1 indexed, seat_places array is 0 indexed
+					var default_seat = document.getElementById("checkbox"+(i+1));
+					temp_seat_places[i].occupied = true;
+					default_seat.checked = true;
+				}
+			}
 			//get the CB of the Seat object
-			seatOccupiedCB = document.getElementById("checkbox"+(cur_seat.seatPos+1));
-			seatOccupiedCB.checked = true;
+			//seatOccupiedCB = document.getElementById("checkbox"+(cur_seat.seatPos+1));
+			//seatOccupiedCB.checked = true;
 			
 			var activityCheck = isInArray(cur_seat.activity, this.value);	
 			if (!activityCheck)

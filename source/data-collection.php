@@ -146,7 +146,7 @@
         var areaMap = new Map();
 
         var popup = document.getElementById("popupTest"); 
-        
+
         var popupDim = 
         {
             'maxWidth': '5000',
@@ -246,7 +246,7 @@
 			selected_marker.setOpacity(1);
 			selected_furn.seat_places = temp_seat_places;
 			
-			if(whiteboard_activity != "0")
+			if(whiteboard_activity != [])
 			{
 				selected_furn.whiteboard = whiteboard_activity;
 			}
@@ -337,7 +337,7 @@
             this.num_seats = num_seats;
             this.seat_places = [];
 			this.seat_type = 32;
-            this.whiteboard = 0;
+            this.whiteboard = [];
 			this.totalOccupants = 0;
             this.marker;
             this.modified = false;
@@ -486,7 +486,7 @@
 						case 33: selectedIcon=rectTable ; break;
                         default: selectedIcon= computerStation; break;
                     }
-
+					
                     /*Add erics code to get rid of bind and open popup*/
                     //place a marker for each furniture item
                     marker = L.marker(latlng, {
