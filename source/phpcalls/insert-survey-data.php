@@ -90,6 +90,7 @@ foreach($jsondata as $key => $value){
 				}
 			}
 		}
+	}
 }
 
 print json_encode($jsondata);

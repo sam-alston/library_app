@@ -48,7 +48,7 @@ function submitSurvey(username, layout, furnMap){
 				success: function(data){
 					console.log("Modified Furniture inserted");
 					var used_json = data;
-					console.log("All ajax calls complete");
+					console.log(data);
 					window.location.href = 'survey-success.php';
 				}
 			});
