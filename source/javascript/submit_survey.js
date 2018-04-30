@@ -15,10 +15,10 @@ function submitSurvey(username, layout, furnMap){
             'layout': layout
         },
         success: function(data){
-            console.log("Inserted New Survey Record");
+            console.log(data);
             /*Get that new Survey ID for insertion statements*/
             var json_object = JSON.parse(data);
-            cur_survey_id = json_object.s_id;
+            cur_survey_id = json_object.survey_id;
             var iterateMap = furnMap.values();
             for(var i of furnMap){
             	var cur_furn = iterateMap.next().value;
