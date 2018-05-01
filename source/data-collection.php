@@ -212,8 +212,150 @@
             if(array_key_exists("layout-select", $_POST)){
                 ?>
                 layout = "<?php echo $_POST['layout-select']?>";
+<<<<<<< HEAD
                 build_markers(layout);
             <?php
+=======
+                <?php
+
+                $_SESSION['cur_layout'] = $_POST['layout-select'];
+
+				
+
+                $getfurn = $dbh->prepare('SELECT * FROM furniture WHERE layout_id = :set_layout');
+
+                $layout = $_POST["layout-select"];
+
+                $getfurn->bindParam(':set_layout', $layout, PDO::PARAM_INT);
+
+                $getfurn->execute();
+
+                ?>
+
+                console.log('Prepared Select stament and executed statement');
+
+                <?php
+                foreach ($getfurn as $row) {
+                    //seperate query to get num seats based on furniture
+                    /*To be replaced with ajax call*/
+
+                    $numSeatsQuery = $dbh->prepare('SELECT number_of_seats
+                                                    FROM furniture_type
+                                                    WHERE furniture_type_id = :infurnid');
+
+                    $numSeatsQuery->bindParam(':infurnid', $row['furniture_type'], PDO::PARAM_INT);
+                    $numSeatsQuery->execute();
+
+                    $numSeatResult = $numSeatsQuery->fetch(PDO::FETCH_ASSOC);
+
+                    ?>
+                    /*Creating furniture container*/
+                    var keyString = "<?php echo $row['furniture_id'] ?>";
+                    var newFurniture = new Furniture( <?php echo $row['furniture_id'] ?>,
+                                                      <?php echo $numSeatResult['number_of_seats'] ?>);
+
+
+                    x = <?php echo $row['x_location'] ?>;
+                    y = <?php echo $row['y_location'] ?>;
+                    degree_offset = <?php echo $row['degree_offset'] ?>;
+                    furniture_type = <?php echo $row['furniture_type'] ?>;
+                    default_seat_type = <?php echo $row['default_seat_type'] ?>;
+                    num_seats = <?php echo $numSeatResult['number_of_seats'] ?>;
+                    var latlng = [y,x];
+                    var selectedIcon;
+                    newFurniture.degreeOffset = degree_offset;					
+					<!--add x,y, area_id -->
+					area_id="TBD";
+					newFurniture.y = y;
+					newFurniture.x = x;
+
+					
+					<!--end add x,y area_id -->
+
+                    switch(furniture_type){
+						case 1:
+                        case 2:
+                        case 3:
+                        case 4: selectedIcon=rectTable ; break;
+                        case 5:
+                        case 6: selectedIcon=counterCurved; break;
+                        case 7:
+                        case 8:
+                        case 9:
+                        case 10: selectedIcon=circTable; break;
+						case 11: selectedIcon=couchCurved ; break;
+						case 12: selectedIcon=couchTwo ; break;
+                        case 13: selectedIcon=couchThree ; break;
+						case 14: selectedIcon=couchFour; break;
+                        case 15: selectedIcon=couchSix ; break;
+                        case 16:
+                        case 17:
+                        case 18:
+                        case 19: selectedIcon=collabStation; break;
+                        case 20: selectedIcon=roomIcon; break;
+						case 21: selectedIcon=computerStation;break;
+						case 22: selectedIcon= seatOne; break;
+                        case 23: selectedIcon= seatOneSoft; break;
+                        case 24: selectedIcon= fitDeskEmpty; break;
+                        case 25: selectedIcon= medCornerEmpty; break;
+						case 26: selectedIcon= mfReaderEmpty; break;
+                        case 27: selectedIcon= studyOne; break;
+                        case 28: selectedIcon= studyTwo; break;
+						case 29: selectedIcon= studyThree; break;
+						case 30: selectedIcon= studyFour; break;
+						case 31: selectedIcon= vidViewerEmpty; break;
+						case 33: selectedIcon=rectTable ; break;
+                        default: selectedIcon= computerStation; break;
+                    }
+					
+                    /*Add erics code to get rid of bind and open popup*/
+                    //place a marker for each furniture item
+                    marker = L.marker(latlng, {
+                        icon: selectedIcon,
+                        rotationAngle: degree_offset,
+					            	rotationOrigin: "center",
+                        draggable: false,
+                        ftype: furniture_type,
+                        numSeats: num_seats,
+                        fid: keyString
+                    }).addTo(furnitureLayer).bindPopup(popup, popupDim);
+
+                    marker.on('click', markerClick);
+					marker.setOpacity(.3);
+					
+					//update marker coords in marker map on dragend, set to modified
+					marker.on("dragend", function(e){
+						selected_furn.modified = true;
+						latlng =  e.target.getLatLng();
+
+                        selected_furn.latlng = latlng;
+                        y = latlng.lat;
+                        x = latlng.lng;
+                        area_id="TBD";
+                        selected_furn.y = y;
+                        selected_furn.x = x;
+                        areaMap.forEach(function(jtem, key, mapObj){
+                            
+                            if(isMarkerInsidePolygon(y,x, jtem.polyArea)){
+                                area_id = jtem.area_id;
+                            }
+                        });
+                        if(area_id !== "TBD"){
+                            selected_furn.in_area = area_id;
+                        }
+                        console.log("area_id: "+area_id);
+                        console.log("x: "+x+"\ny: "+y);
+
+					});
+
+                    /*TODO: Seat's made on survey, not furniture creation*/
+                    /*for(i = 0; i < newFurniture.num_seats; i++){
+                        newFurniture.seat_places[i] = new Seat(i, newFurniture.seat_type);
+                    }*/
+                    furnMap.set(keyString, newFurniture);
+                    <?php
+                }
+>>>>>>> origin/master
             }
         ?>
             createAreas(layout);
