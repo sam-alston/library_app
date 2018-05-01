@@ -15,6 +15,9 @@
 	$layout_id = $layoutStmt->fetchColumn();
 
 	
+	//string to store
+	$retString = "";
+	
 	//Prepare stmt to get areas in layout
 	$areaStmt = $dbh->prepare("SELECT * FROM area WHERE area_id IN (SELECT area_id FROM area_in_layout WHERE layout_id = :layout_id)");
 	$areaStmt->bindParam(':layout_id', $layout_id, PDO::PARAM_INT);
@@ -71,14 +74,27 @@
 			
 			$roomOccupantStmt->execute();
 			$roomOccupants = $roomOccupantStmt->fetchColumn();
-			print $area_name . " total occupants: " . $roomOccupants . " <br/>";
+			$retString .= $area_name . " total occupants: " . $roomOccupants . " \n";
 		} else {
-			print $area_name  . " use ratio: " . $totalOccupiedSeats . " / " . $totalNumberSeats . "= " . $totalOccupiedSeats/$totalNumberSeats . " <br/>";
+			$retString .= $area_name  . " use ratio: " . $totalOccupiedSeats . " / " . $totalNumberSeats . "= " . $totalOccupiedSeats/$totalNumberSeats . " \n";
 
 		}
 		
 	}
+	
+	$getActivitiesStmt = $dbh->prepare("SELECT activity_description, COUNT(*) FROM seat_has_activity, activity WHERE seat_id in (SELECT seat_id FROM seat where survey_id = :survey_id) AND seat_has_activity.activity_id = activity.activity_id GROUP BY seat_has_activity.activity_id");
+	
+	$getActivitiesStmt->bindParam(':survey_id', $survey_id, PDO::PARAM_INT);
+	
+	$getActivitiesStmt->execute();
+	
+	$activityCounts = $getActivitiesStmt->fetchAll();
+	
+	
+	foreach($activityCounts as $row){
+		$retString .= "/n Activity: " . $row["activity_description"] . "   Occurances: " . $row["COUNT(*)"];
+	}
 
 	$dbh= null;
 	//print $returnString;
-	//print json_encode($area_result);
+	print json_encode($retString);
