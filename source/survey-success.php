@@ -12,7 +12,6 @@
     <title> Library Collect Data </title>
     <meta charset="utf-8" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="./javascript/get_layouts.js"></script>
     <link rel="stylesheet" href="normalize.css" type="text/css" >
     <link rel="stylesheet" href="styles/layout.css" type="text/css" >
     <link rel="stylesheet" href="styles/format.css" type="text/css" >
@@ -48,28 +47,10 @@
             </nav>
     </header>
     <main>
-        
-        <form method="post" action="data-collection.php" class="layout-selector" id="lay-select">
-            <fieldset>
-                 <select name="floor-select" id="floor-select">
-                    <option value="0" selected="selected">Choose a Floor</option>
-                    <option value="1" >Floor 1</option>
-                    <option value="2">Floor 2</option>
-                    <option value="3">Floor 3</option>
-                </select>
-                <select name="layout-select" id="current_layouts">
-                    <option value="default">Choose a Layout</option>
-                </select>
-                <input type="submit" id="sub_layout" value="Load Layout"/>
-            </fieldset>
-        </form>
-        
-        <h2>Success <?= $_SESSION["username"]?>, your survey has been recorded and saved to the database</h2>
+        <h2>Success <?= $_SESSION["username"]?>, Your survey has been recorded and saved to the database</h2>
 
-    </main>  
-         
 
-    
+    </main>       
             <?php
         }
     ?>

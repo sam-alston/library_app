@@ -46,14 +46,6 @@
     </header>
     <main>  
                 <h2> Welcome <?= $_SESSION["username"]?> what shall we survey today? </h2>
-                <form id="nav_form">
-					<input type="button" class="nav_button" value="Data Collection" 
-						   onclick="window.location.href='data-collection.php'" />
-					<input type="button" class="nav_button" value="Query Report" 
-						   onclick="window.location.href='query-report.php'" />
-					<input type="button" class="nav_button" value="Create A Layout" 
-						   onclick="window.location.href='editor.php'" />
-				</form>
     </main>
                 <?php
                 }

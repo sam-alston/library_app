@@ -27,7 +27,7 @@ header > h1{
 }
 
 h2{
-	text-align: center;
+	margin-left: 5em;
 }
 
 p{
@@ -199,6 +199,18 @@ footer > p{
 
 }
 
+#iframe
+{
+	border: none;
+	width: 45em;
+	height: 40em;
+}
+
+#mapid 
+{ 
+	height: 100em; 
+}
+
 #load-image{
 	width: 100px;
 	height: 100px;
@@ -226,18 +238,6 @@ footer > p{
 	-ms-animation: rotating .75s linear infinite;
 	-o-animation: rotating .75s linear infinite;
 	animation: rotating .75s linear infinite;
-}
-
-.nav_button{
-	display: inline;
-	width: 200px;
-	height: 200px;
-	text-align: center;
-	margin: 4px;
-}
-
-#nav_form{
-	text-align: center;
 }
 
 @keyframes rotating {
