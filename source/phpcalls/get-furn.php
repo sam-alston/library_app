@@ -1,4 +1,5 @@
 <?php
+//This file is called when the layout is build with build_markets.js to get data for the furniture in layout
 session_start();
 require_once('./../config.php');
 
@@ -37,7 +38,11 @@ foreach ($getfurn as $row) {
 
     $array_item = array( $keystring => array( 'furniture_id' => $keystring,
 											  'num_seats' => $num_seats,
-											  ''))
+											  'x' => $x,
+											  'y' => $y,
+											  'degree_offset' => $degree_offset,
+											  'furn_type' => $furniture_type,
+											  'default_seat_type' => $default_seat_type));
     array_push($data, $array_item);
 }
 
