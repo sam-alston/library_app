@@ -300,7 +300,7 @@
 						case 33: selectedIcon=rectTable ; break;
                         default: selectedIcon= computerStation; break;
                     }
-
+					
                     /*Add erics code to get rid of bind and open popup*/
                     //place a marker for each furniture item
                     marker = L.marker(latlng, {

@@ -13,7 +13,8 @@ function markerClick(e){
 	document.getElementById("minus").style.display = "block";
 	document.getElementById("checkall").style.display = "block";
 	document.getElementById("save").style.display = "block";
-	
+	document.getElementById("save").style.top = "40.5%";
+
 	selected_furn = furnMap.get(this.options.fid);
 	selected_marker = this;
 	selected_marker.dragging.disable();
@@ -28,6 +29,26 @@ function markerClick(e){
 			var seat_div_child = document.createElement("div");
 			seat_div_child.id = "seat_div_child";
 			document.getElementById("seat_div").appendChild(seat_div_child);
+
+			//find +/- buttons to st onclick
+			plusbutton = document.getElementById("plus");
+			minusbutton = document.getElementById("minus");
+			
+			if(this.options.numSeats === 0)
+			{
+				//add room input
+				addRoomInput(selected_furn.totalOccupants);
+				minusbutton.disabled = true;
+				plusbutton.disabled = true;
+				
+			} 
+			
+			else 
+			{
+				//not a room, reattach +/- buttons to plusHelper/minusHelper
+				minusbutton.disabled = false;
+				plusbutton.disabled = false;
+			
 
 			//If the JS object seat_places array is as big as default number of seats, it has been surveyed
 			//otherwise make the new seats and push onto array.
@@ -61,22 +82,6 @@ function markerClick(e){
 				}
 				plus(temp_seat_places[seat_num], seat_num+1);
 			}
-			
-			//find +/- buttons to st onclick
-			plusbutton = document.getElementById("plus");
-			minusbutton = document.getElementById("minus");
-			
-			if(this.options.numSeats === 0){
-				//add room input
-				
-				addRoomInput(selected_furn.totalOccupants);
-				minusbutton.disabled = true;
-				plusbutton.disabled = true;
-				
-			} else {
-				//not a room, reattach +/- buttons to plusHelper/minusHelper
-				minusbutton.disabled = false;
-				plusbutton.disabled = false;
 			}
 			added_seats = true;
 		}
@@ -206,9 +211,8 @@ function addRoomInput(currentOccupants){
 	document.getElementById("checkbox1").style.display = "none";
 	document.getElementById("checkall").style.display = "none";
 	document.getElementById("save").style.top = "33%";
-	
-	
 }
+
 //Expects: the current furniture to add seat to, and the seat number to add
 //Returns: nothing
 //Outputs: this will create all the default seat objects for the table, will also add a new 
@@ -379,7 +383,7 @@ function div_content(dd_div, cur_seat)
 					default_seat.checked = true;
 				}
 			}
-
+      
 			//get the CB of the Seat object
 			//seatOccupiedCB = document.getElementById("checkbox"+(cur_seat.seatPos+1));
 			//seatOccupiedCB.checked = true;
