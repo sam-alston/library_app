@@ -7,6 +7,15 @@
     height:40em;
 }
 
+#occupantInput
+{
+    width: 1.5em;
+    height: 2em;
+    font-size: 5em;
+    margin-left: 45px;
+}
+
+
 #rotate
 {
 	display: none;

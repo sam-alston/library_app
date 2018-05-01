@@ -128,32 +128,40 @@
         var s_layout = "local";
         var layout ="default";
 
+        var image;
+        var selected_furn;
+		var selected_marker;
+        var seat_num;
+		    //to store the seat_places array to be saved
+	    var temp_seat_places = [];
+	    var whiteboard_activity = "0";
+
         var mymap = L.map('mapid', {crs: L.CRS.Simple});
         var areaLayer = L.layerGroup().addTo(mymap);
         var furnitureLayer = L.layerGroup().addTo(mymap);
         var bounds = [[0,0], [360,550]];
+
         mymap.fitBounds(bounds);
-        var image;
-        var selected_furn;
-		    var selected_marker;
-        var seat_num;
-		    //to store the seat_places array to be saved
-		    var temp_seat_places = [];
-		    var whiteboard_activity = "0";
+
         var furnMap = new Map();
-		    var activityMap = new Map();
-		    var wb_activityMap = new Map();
+        var activityMap = new Map();
+        var wb_activityMap = new Map();
         var areaMap = new Map();
 
-        var popup = document.getElementById("popupTest"); 
-        
-        var popupDim = 
-        {
-            'maxWidth': '5000',
-            'maxHeight': '5000'
-        };//This is the dimensions for the popup
+        function getFurnMap(){
+            return furnMap;
+        }
 
-        //This function gets all the layouts for the florr and populates the dropdown
+        function getActivityMap(){
+            return activityMap;
+        }
+
+        function getWhiteboardActivityMap(){
+            return wb_activityMap;
+        }
+
+        var popup = document.getElementById("popupTest");
+
         $(function(){
             $('#floor-select').on("change", function(){
                 var form_info = document.getElementById("lay-select");
@@ -197,6 +205,12 @@
                 layout = form_info.elements["layout-select"].value;
             });
         });
+        
+        var popupDim = 
+        {
+            'maxWidth': '5000',
+            'maxHeight': '5000'
+        };//This is the dimensions for the popup
 
 		//this helper will iterate over furnmap and provide update statements for all furnitures location.
 		function updateHelper(){
@@ -221,18 +235,6 @@
 			console.log(outString);
 		}
 
-        function getFurnMap(){
-            return furnMap;
-        }
-
-        function getActivityMap(){
-            return activityMap;
-        }
-        
-         function getWhiteboardActivityMap(){
-            return wb_activityMap;
-        }
-
         function checkAllHelper(){
         	checkAll(selected_furn);
         }
@@ -246,7 +248,7 @@
 			selected_marker.setOpacity(1);
 			selected_furn.seat_places = temp_seat_places;
 			
-			if(whiteboard_activity != "0")
+			if(whiteboard_activity != [])
 			{
 				selected_furn.whiteboard = whiteboard_activity;
 			}
@@ -337,7 +339,7 @@
             this.num_seats = num_seats;
             this.seat_places = [];
 			this.seat_type = 32;
-            this.whiteboard = 0;
+            this.whiteboard = [];
 			this.totalOccupants = 0;
             this.marker;
             this.modified = false;
