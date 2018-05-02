@@ -49,7 +49,9 @@ function checkAllHelper(){
 	checkAll(selected_furn);
 }
 
-function rotateHelper()
+//rotate selected furniture
+//pass the div to append to
+function rotateHelper(parentDiv)
 {
 	if(document.getElementById("rotateSlider") == null)
 	{
@@ -66,8 +68,8 @@ function rotateHelper()
 		sliderValue.id = "sliderValue";
 		sliderValue.innerText = "Value: "+selected_furn.degreeOffset;
 		
-		document.getElementById("seat_div_child").appendChild(sliderValue);
-		document.getElementById("seat_div_child").appendChild(rotateSlider);
+		document.getElementById(parentDiv).appendChild(sliderValue);
+		document.getElementById(parentDiv).appendChild(rotateSlider);
 	
 			
 		rotateSlider.oninput = function()

@@ -97,7 +97,7 @@
                 <div id="wb_div"></div>
                 <button onClick="saveHelper()" id="save" style="display:none">Save and Exit</button>
                 <button onClick="lockHelper()" id="lock">Unlock</button>
-				<button onClick="rotateHelper()" id="rotate">Rotate</button>
+				<button onClick="rotateHelper('seat_div_child')" id="rotate">Rotate</button>
                 <button onClick="checkAllHelper()" id="checkall" style="display:none">Check All</button>
                 <label id="seat_operator"></label>
                 <button onclick="minusHelper()" id="minus" style="display:none">-</button>

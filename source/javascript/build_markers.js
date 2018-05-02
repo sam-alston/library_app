@@ -10,11 +10,15 @@ function build_markers(layout_id){
             console.log("got all furniture inside json array");
             var json_object = JSON.parse(data);
 
-            for(i in json_object){
-            	var furn_id = +i + +1;
+           
+            for(var i in json_object){
             	var keystring = json_object[i];
-            	
-            	var num_seats = keystring[furn_id].num_seats	;
+				var furn_id;
+				//get the value of the furniture id
+            	for(var i in keystring){
+					furn_id = i;
+				}
+            	var num_seats = keystring.num_seats;
                 var newFurniture = new Furniture( keystring, num_seats);
          
             	var x = keystring[furn_id].x;

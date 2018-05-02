@@ -20,6 +20,7 @@
    crossorigin=""></script>
    <script src="./javascript/icons.js"></script>
    <script src="./javascript/layoutFunction.js"></script>
+   <script src="./javascript/helpers.js"></script>
    <script src="./javascript/leaflet.rotatedMarker.js"></script>
    <script type="text/javascript">
     $(function() {
@@ -159,6 +160,7 @@
 		
 		//testing loop through each layer object
 		print.onclick = function(){
+			
 			furnMap.forEach(function(value, key, map){
 				console.log(value.fname);
 			});
@@ -306,7 +308,7 @@
 				rotateDiv.id = "rotateDiv";
 				//attach the rotatebutton div to the popup
 				document.getElementById("popup").appendChild(rotateDiv);
-				rotateHelper();
+				rotateHelper("rotateDiv");
 			}			
 		}
 		
@@ -319,7 +321,7 @@
 			furnMap.delete(selected_furn.id);
 		}
 		
-		//rotates the selected marker
+		/*rotates the selected marker
 		function rotateHelper()
         {
         	if(document.getElementById("rotateSlider") == null)
@@ -360,7 +362,7 @@
 			
 
         
-        }
+        }*/
     </script>
 </body>
 </html>
