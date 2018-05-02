@@ -39,6 +39,12 @@ pop-activities.js
 TODO: add field for wb_activity column
 
 
+//add a time-out for submitting
+//get rid of 0 in room occupants
+//be able to reorient the map
+
+//Known bug: WB only saves activities checked right before hitting save.
+
 Cheryl's notes on a survey:
 //push eric change to spell partition correctly
 //take away from seat activity
@@ -47,12 +53,11 @@ Cheryl's notes on a survey:
 //add teaching activity for rooms
 //cb for whiteboard, multiple activities
 //indicate what furniture has been unlocked
-//add an undo for runiture move
 
+Ben is on:
+//Cleanup data-collection.php (break apart)
 
-	
-//Are these pages still relevant?
-
-popup.html
-pop_layout.php
-main.css
+Eric is on:
+//home.php large navigation buttons
+//survey-success.php another layout
+//add an undo for furniture move

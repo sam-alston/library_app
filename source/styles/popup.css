@@ -15,6 +15,13 @@
     margin-left: 45px;
 }
 
+#deleteButton
+{
+	position: fixed;
+	right: 1em;
+	top: 2em;
+}
+
 
 #rotate
 {

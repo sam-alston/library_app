@@ -1,6 +1,8 @@
 //This file extends Marker to contain furniture information
 //and extend Icon class to create new icons for each piece of furniture
 
+//contains function to return selected icon type based on furniture type
+
 //extend the marker class to add furniture data
 var marker = L.Marker.extend({
 	options: {
@@ -18,7 +20,7 @@ var CircTableIcon = L.Icon.extend({
 		className: 'furnitureLargeIcon',
 		iconUrl: './images/icons/circ_table.svg',
         iconSize:     [38, 38],
-        iconAnchor:   [19,19],
+        iconAnchor:   [0,0],
         popupAnchor:  [0, 0]
     }
 });
@@ -305,7 +307,7 @@ var studyThree = new StudyThreeIcon();
 
 var StudyTwoIcon = L.Icon.extend({
 	options: {
-		className: 'furnitureIcon',
+		className: 'furnitureLargeIcon',
 		iconUrl: './images/icons/study_two.svg',
 		iconSize: [38,38],
 		iconAnchor: [0,0],
@@ -338,3 +340,48 @@ var VidViewerFilledIcon = L.Icon.extend({
 });
 
 var vidViewerFilled = new VidViewerFilledIcon();
+
+//return the icon type based on furniture typefunction 
+//takes an int
+//returns Icon object
+
+function getIconObj(furniture_type) {
+	
+	var selectedIcon;
+	switch(furniture_type){
+		case 1:
+		case 2:
+		case 3:
+		case 4: selectedIcon=rectTable ; break;
+		case 5:
+		case 6: selectedIcon=counterCurved; break;
+		case 7:
+		case 8:
+		case 9:
+		case 10: selectedIcon=circTable; break;
+		case 11: selectedIcon=couchCurved ; break;
+		case 12: selectedIcon=couchTwo ; break;
+		case 13: selectedIcon=couchThree ; break;
+		case 14: selectedIcon=couchFour; break;
+		case 15: selectedIcon=couchSix ; break;
+		case 16:
+		case 17:
+		case 18:
+		case 19: selectedIcon=collabStation; break;
+		case 20: selectedIcon=roomIcon; break;
+		case 21: selectedIcon=computerStation;break;
+		case 22: selectedIcon= seatOne; break;
+		case 23: selectedIcon= seatOneSoft; break;
+		case 24: selectedIcon= fitDeskEmpty; break;
+		case 25: selectedIcon= medCornerEmpty; break;
+		case 26: selectedIcon= mfReaderEmpty; break;
+		case 27: selectedIcon= studyOne; break;
+		case 28: selectedIcon= studyTwo; break;
+		case 29: selectedIcon= studyThree; break;
+		case 30: selectedIcon= studyFour; break;
+		case 31: selectedIcon= vidViewerEmpty; break;
+		case 33: selectedIcon=rectTable ; break;
+		default: selectedIcon= computerStation; break;
+	}
+	return selectedIcon;
+}
