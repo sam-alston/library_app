@@ -119,3 +119,12 @@ function submitSurveyHelper(){
     var username = "<?php echo $_SESSION['username']?>";
     submitSurvey(username, layout, furnMap);
 }
+
+//deletes the selected marker
+function deleteHelper()
+{
+	//remove marker
+	mymap.removeLayer(selected_marker);
+	//remove furniture from furnMap
+	furnMap.delete(selected_furn.id);
+}
