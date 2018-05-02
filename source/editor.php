@@ -167,69 +167,83 @@
 		
 		//place a draggable marker onClick!
 		function onMapClick(e) {
+			//get the furniture select element
 			var furn = document.getElementById("lay-select").elements.namedItem("furniture-select");
+			//get the type id from the value
 			var ftype = furn.value;
-			var findex = furn.selectedIndex;
-			var furnOption = furn.options;
-			var fname = furnOption[findex].text;
 			//convert the string furniture type into an int to send to getIconObj(int ftype)
 			ftype = parseInt(ftype);
 			
-			var selectedIcon = getIconObj(ftype);
+			//do not allow user to place chairs or rooms yet. 
+			//Chairs are objects to attach to furniture.
+			//Rooms require validating a room# and area before placing.
+			if(ftype == 20 || ftype == 32){
+				alert("Sorry, you can't place chairs or rooms yet. Contact your admin.");
+			}else{
+				//get the index of the selected item
+				var findex = furn.selectedIndex;
+				//get the options
+				var furnOption = furn.options;
+				//get the inner text of the selected furniture item to save the name.
+				var fname = furnOption[findex].text;
+				
+				
+				var selectedIcon = getIconObj(ftype);
+						
+				var latlng = e.latlng;
+				
+				//create the furniture object and store in map
+				var newFurn = new Furniture(mapKey, ftype, latlng, fname);
+				furnMap.set(mapKey, newFurn);
+				if(document.getElementById("popup") == null){
+						popupDiv = document.createElement("DIV");
+						popupDiv.id = "popup";
+						document.getElementById("popupHolder").appendChild(popupDiv);
+				}
+				
+				var popup = document.getElementById("popup");
+				var popupDim = 
+				{
+					'minWidth': '200',
+					'minHeight': '2000px',
+				};//This is the dimensions for the popup
+				
+				marker = L.marker(e.latlng, {
+						fid: mapKey++,
+						icon: selectedIcon,
+						rotationAngle: 0,
+						draggable: true
+				}).addTo(furnitureLayer).bindPopup(popup,popupDim);
+				//give it an onclick function
+				 marker.on('click', markerClick);
+				
+				//define drag events
+				marker.on('drag', function(e) {
+					console.log('marker drag event');
+				});
+				marker.on('dragstart', function(e) {
+					console.log('marker dragstart event');
+					mymap.off('click', onMapClick);
+				});
+				marker.on('dragend', function(e) {
+					//update latlng for insert string
+					var changedPos = e.target.getLatLng();
+					var lat=changedPos.lat;
+					var lng=changedPos.lng;		
 					
-			var latlng = e.latlng;
-			
-			//create the furniture object and store in map
-			var newFurn = new Furniture(mapKey, ftype, latlng, fname);
-			furnMap.set(mapKey, newFurn);
-			if(document.getElementById("popup") == null){
-					popupDiv = document.createElement("DIV");
-					popupDiv.id = "popup";
-					document.getElementById("popupHolder").appendChild(popupDiv);
+					//generate sql insert string for furniture
+					//var insertString = getFurnitureString(lng,lat,degreeOffset, furniture+"_"+numSeats, "chair");
+					//change popup to insertString
+					//this.bindPopup(insertString);
+					
+					//output to console to check values
+					console.log('marker dragend event');
+					
+					setTimeout(function() {
+						mymap.on('click', onMapClick);
+					}, 10);
+				});
 			}
-			
-			var popup = document.getElementById("popup");
-			var popupDim = 
-			{
-				'minWidth': '200',
-				'minHeight': '2000px',
-			};//This is the dimensions for the popup
-			
-			marker = L.marker(e.latlng, {
-					fid: mapKey++,
-					icon: selectedIcon,
-					rotationAngle: 0,
-					draggable: true
-			}).addTo(furnitureLayer).bindPopup(popup,popupDim);
-			//give it an onclick function
-			 marker.on('click', markerClick);
-			
-			//define drag events
-			marker.on('drag', function(e) {
-				console.log('marker drag event');
-			});
-			marker.on('dragstart', function(e) {
-				console.log('marker dragstart event');
-				mymap.off('click', onMapClick);
-			});
-			marker.on('dragend', function(e) {
-				//update latlng for insert string
-				var changedPos = e.target.getLatLng();
-				var lat=changedPos.lat;
-				var lng=changedPos.lng;		
-				
-				//generate sql insert string for furniture
-				//var insertString = getFurnitureString(lng,lat,degreeOffset, furniture+"_"+numSeats, "chair");
-				//change popup to insertString
-				//this.bindPopup(insertString);
-				
-				//output to console to check values
-				console.log('marker dragend event');
-				
-				setTimeout(function() {
-					mymap.on('click', onMapClick);
-				}, 10);
-			});
 		}
 			
 			//bind onMapClick function
