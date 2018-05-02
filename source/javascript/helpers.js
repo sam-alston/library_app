@@ -21,9 +21,9 @@ function saveHelper(){
 	selected_marker.setOpacity(1);
 	selected_furn.seat_places = temp_seat_places;
 	
-	if(whiteboard_activity != [])
+	if(temp_wb != [])
 	{
-		selected_furn.whiteboard = whiteboard_activity;
+		selected_furn.whiteboard = temp_wb;
 	}
 	
   	mymap.closePopup();

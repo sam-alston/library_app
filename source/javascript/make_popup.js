@@ -19,7 +19,7 @@ function markerClick(e){
 	selected_marker.dragging.disable();
 	
 	temp_seat_places = [];
-	whiteboard_activity = [];
+	temp_wb = [];
 
 	while(added_seats == false)
 	{
@@ -46,14 +46,17 @@ function markerClick(e){
 			
 			for (seat_num = 0; seat_num < cur_num_seats; seat_num++)
 			{
-				//newSeat = new Seat(seat_num);
+				//check if this furniture has been surveyed
 				if(surveyExists)
 				{
+					//it has been surveyed, so copy seats and wb to temp objects.
 					var copy_seat = Object.assign({}, selected_furn.seat_places[seat_num]);
 					if(Array.isArray(copy_seat.activity)){
 						copy_seat.activity = copy_seat.activity.slice();
 					}
 					temp_seat_places.push(copy_seat);
+					
+					temp_wb = selected_furn.whiteboard.slice();
 				}
 				else
 				{
@@ -127,10 +130,10 @@ function markerClick(e){
 		input.value = cur_prop;
 		input.onchange = function()
 		{
-			var activityCheck = isInArray(whiteboard_activity, this.value);	
+			var activityCheck = isInArray(temp_wb, this.value);	
 			if (!activityCheck)
 			{
-				whiteboard_activity.push(this.value);
+				temp_wb.push(this.value);
 			}
 		}
 		
