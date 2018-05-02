@@ -1,5 +1,4 @@
 //Constantly Checking the selected floor, to be used to implement building the layout select dynamically instead of a post
-
 $(function(){
     $('#floor-select').on("change", function(){
         var form_info = document.getElementById("lay-select");
@@ -42,4 +41,16 @@ $(function(){
         var form_info = document.getElementById("lay-select");
         layout = form_info.elements["layout-select"].value;
     });
+});
+
+$(function() {
+    $("#nav_toggle").click(function(){
+        $("nav").toggleClass("hidden");
+        $("header").toggleClass("hidden");
+        $("main").toggleClass("to-top");
+        $("footer").toggleClass("foot_hide");
+        $(".hide_nav").toggleClass("nav_open");
+        $(".submit_survey").toggleClass("nav_open");
+
+    })
 });
