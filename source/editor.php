@@ -205,6 +205,10 @@
 				});
 				if(area_id !== "TBD"){
 					value.in_area = area_id;
+				} else {
+					alert("Not all of your furniture is in an area, fix this before re-submitting!");
+					mymap.panTo([y,x]);
+					return;
 				}
 				console.log(value.toString());
 				console.log("area_id: "+area_id);
