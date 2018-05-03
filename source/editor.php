@@ -19,6 +19,7 @@
    integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
    crossorigin=""></script>
    <script src="./javascript/icons.js"></script>
+   <script src="./javascript/submit_layout.js"></script>   
    <script src="./javascript/layoutFunction.js"></script>
    <script src="./javascript/helpers.js"></script>
    <script src="./javascript/add-areas.js"></script>   
@@ -75,7 +76,7 @@
                             <option value=2>Floor 2</option>
                             <option value=3>Floor 3</option>
                         </select>
-						<button type="button" id="sub_layout">Submit</button>
+						<button type="button" id="submit_floor">Select</button>
 						</br></br>
 						<!--select a piece of furniture to place -->
 						<label>Select a piece of furniture:</label>
@@ -98,10 +99,12 @@
 						</select>
 						</br></br>
 						
-                        
 						<button type="button" id="getAreas" >Generate Areas</button>
 						<button type="button" id="insertLayout" disabled="true">Insert Layout</button>
-                    </fieldset>
+						<div class="loading">
+							<img src="images/loadwheel.svg" id="load-image">
+						</div>
+					</fieldset>
                 </form>
 				<!--Create div for the popup -->
 				<div id="popupHolder"><div id="popup"></div></div>
@@ -114,13 +117,7 @@
                 </footer>
             </main>
     <script>
-	
-        //generates a map location
-        var submit = document.getElementById("sub_layout");
-		var getAreas = document.getElementById("getAreas");
-		var insertLayout = document.getElementById("insertLayout");
-        var floor_image = "local";
-		
+		//create map
         var mymap = L.map('mapid', {crs: L.CRS.Simple, minZoom: 0, maxZoom: 4});
 		var furnitureLayer = L.layerGroup().addTo(mymap);
 		var areaLayer = L.layerGroup().addTo(mymap);
@@ -128,8 +125,10 @@
         var bounds = [[0,0], [360,550]];
 		mymap.fitBounds(bounds);
 		
+		//setup global variables
 		var selected_marker;
 		var selected_furn;
+		var floor_image = "local";
 		
 		//container for furniture objects
         var furnMap = new Map();
@@ -152,7 +151,8 @@
 			this.ftype = ftype;
 		}
 		
-        submit.onclick = function(){
+		var selectFloor = document.getElementById("submit_floor");
+        selectFloor.onclick = function(){
             //remove old floor image and place newly selected floor image
             if( mymap.hasLayer(image)){
                 mymap.removeLayer(image);
@@ -173,6 +173,7 @@
         }
 		
 		//get areas and place over map
+		var getAreas = document.getElementById("getAreas");
 		getAreas.onclick = function(){
 			//get areas for this floor
 			//TODO: create new areas or select different areas/
@@ -190,30 +191,44 @@
 			insertLayout.disabled = false;
 		}
 		
+		//Make sure all pieces of furniture are in areas before inserting a new layout.
+		var insertLayout = document.getElementById("insertLayout");
 		insertLayout.onclick = function(){
+			var layoutReady = true;
+			var outOfBoundsLatLng = [];
 			//calculate the area each piece of furniture is in.
 			furnMap.forEach(function(value, key, map){
-				
+				//get the x,y for each piece of furniture
 				y = value.y;
 				x = value.x;
 				area_id="TBD";
+				
 				areaMap.forEach(function(jtem, key, mapObj){
-					
+					//check if x,y are in a polygon
 					if(isMarkerInsidePolygon(y,x, jtem.polyArea)){
 						area_id = jtem.area_id;
 					}
 				});
 				if(area_id !== "TBD"){
-					value.in_area = area_id;
+					value.inArea = area_id;
 				} else {
-					alert("Not all of your furniture is in an area, fix this before re-submitting!");
-					mymap.panTo([y,x]);
-					return;
+					layoutReady = false;
+					outOfBoundsLatLng = [y,x];
 				}
-				console.log(value.toString());
-				console.log("area_id: "+area_id);
-				console.log("x: "+x+"\ny: "+y);
 			});
+			
+			
+			//check if the layout is ready to insert
+			if(layoutReady){
+				//var layoutName = prompt("Name this layout:");
+				//alert(layoutName);
+				var author = "<?= $_SESSION["username"]?>";
+				submitLayout(author, floor_selection, furnMap, areaMap);
+			}else{
+				//layout not ready, alert the user and pan to last marker out of bounds.
+				alert("Not all of your furniture is in an area, fix this before re-submitting!");
+				mymap.panTo(outOfBoundsLatLng);
+			}
 		}
 		
 		//place a draggable marker onClick!
