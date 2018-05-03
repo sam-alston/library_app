@@ -18,7 +18,7 @@ function build_markers(layout_id){
             	for(var i in keystring){
 					furn_id = i;
 				}
-            	var num_seats = keystring.num_seats;
+            	var num_seats = keystring[furn_id].num_seats;
                 var newFurniture = new Furniture( keystring, num_seats);
          
             	var x = keystring[furn_id].x;
