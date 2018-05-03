@@ -21,6 +21,7 @@
    <script src="./javascript/icons.js"></script>
    <script src="./javascript/layoutFunction.js"></script>
    <script src="./javascript/helpers.js"></script>
+   <script src="./javascript/add-areas.js"></script>   
    <script src="./javascript/leaflet.rotatedMarker.js"></script>
    <script type="text/javascript">
     $(function() {
@@ -70,9 +71,9 @@
                         <!-- Choose the floor to work from-->
                         <select name="floor-select">
                             <option value="default">Choose a Floor</option>
-                            <option value="floor1.svg">Floor 1</option>
-                            <option value="floor2.svg">Floor 2</option>
-                            <option value="floor3.svg">Floor 3</option>
+                            <option value=1>Floor 1</option>
+                            <option value=2>Floor 2</option>
+                            <option value=3>Floor 3</option>
                         </select>
 						<button type="button" id="sub_layout">Submit</button>
 						</br></br>
@@ -98,7 +99,8 @@
 						</br></br>
 						
                         
-						<button type="button" id="printfurn" >Print Furn</button>
+						<button type="button" id="getAreas" >Generate Areas</button>
+						<button type="button" id="insertLayout" disabled="true">Insert Layout</button>
                     </fieldset>
                 </form>
 				<!--Create div for the popup -->
@@ -115,11 +117,13 @@
 	
         //generates a map location
         var submit = document.getElementById("sub_layout");
-		var print = document.getElementById("printfurn");
+		var getAreas = document.getElementById("getAreas");
+		var insertLayout = document.getElementById("insertLayout");
         var floor_image = "local";
 		
         var mymap = L.map('mapid', {crs: L.CRS.Simple, minZoom: 0, maxZoom: 4});
 		var furnitureLayer = L.layerGroup().addTo(mymap);
+		var areaLayer = L.layerGroup().addTo(mymap);
 		var drawnItems = new L.FeatureGroup();
         var bounds = [[0,0], [360,550]];
 		mymap.fitBounds(bounds);
@@ -130,6 +134,9 @@
 		//container for furniture objects
         var furnMap = new Map();
 		var mapKey = 0;
+		
+		//create a container for areas
+		var areaMap = new Map();
 		
 		//floor image placed from dropdown selection	
         var image;
@@ -151,21 +158,59 @@
                 mymap.removeLayer(image);
             }
             var form_info = document.getElementById("lay-select");
-            floor_image = form_info.elements.namedItem("floor-select").value;
+            floor_selection = form_info.elements.namedItem("floor-select").value;
+			var floorIMGstr;
+			
+			switch(floor_selection){
+				case "1": floorIMGstr = "floor1.svg";break
+				case "2": floorIMGstr = "floor2.svg";break;
+				case "3": floorIMGstr = "floor3.svg";break;
+				default: floorIMGstr = "floor1.svg";break;
+			}
            
-			floorIMGstr = String(floor_image);
+
             image = L.imageOverlay('./images/' + floorIMGstr, bounds).addTo(mymap);
-            
         }
 		
-		//testing loop through each layer object
-		print.onclick = function(){
+		//get areas and place over map
+		getAreas.onclick = function(){
+			//get areas for this floor
+			//TODO: create new areas or select different areas/
+			//currently, it associates floor number with layout to get areas from L1 for floor 1, 2 for floor 2, etc.
 			
+			//check if the areaMap has been populated already
+			var mapPopulated = false;
+			areaMap.forEach(function(value, key, map){
+				mapPopulated = true;
+			});
+			//create areas if the map is empty
+			if(!mapPopulated){
+				createAreas(floor_selection);
+			}
+			insertLayout.disabled = false;
+		}
+		
+		insertLayout.onclick = function(){
+			//calculate the area each piece of furniture is in.
 			furnMap.forEach(function(value, key, map){
-				console.log(value.fname);
+				
+				y = value.y;
+				x = value.x;
+				area_id="TBD";
+				areaMap.forEach(function(jtem, key, mapObj){
+					
+					if(isMarkerInsidePolygon(y,x, jtem.polyArea)){
+						area_id = jtem.area_id;
+					}
+				});
+				if(area_id !== "TBD"){
+					value.in_area = area_id;
+				}
+				console.log(value.toString());
+				console.log("area_id: "+area_id);
+				console.log("x: "+x+"\ny: "+y);
 			});
 		}
-
 		
 		//place a draggable marker onClick!
 		function onMapClick(e) {
@@ -231,7 +276,12 @@
 					//update latlng for insert string
 					var changedPos = e.target.getLatLng();
 					var lat=changedPos.lat;
-					var lng=changedPos.lng;		
+					var lng=changedPos.lng;
+					
+					selected_marker = this;
+					selected_furn = furnMap.get(selected_marker.options.fid);
+					selected_furn.x = lng;
+					selected_furn.y = lat;
 					
 					//generate sql insert string for furniture
 					//var insertString = getFurnitureString(lng,lat,degreeOffset, furniture+"_"+numSeats, "chair");
@@ -312,57 +362,6 @@
 			}			
 		}
 		
-		//deletes the selected marker
-		function deleteHelper()
-		{
-			//remove marker
-			mymap.removeLayer(selected_marker);
-			//remove furniture from furnMap
-			furnMap.delete(selected_furn.id);
-		}
-		
-		/*rotates the selected marker
-		function rotateHelper()
-        {
-        	if(document.getElementById("rotateSlider") == null)
-        	{
-        		var rotateSlider = document.createElement("input");
-        		rotateSlider.type = "range";
-        		rotateSlider.min = "-180";
-        		rotateSlider.max = "180";
-        		rotateSlider.value = "0";
-        		rotateSlider.step = "15";
-        		rotateSlider.id = "rotateSlider";
-				rotateSlider.value = selected_furn.degreeOffset;
-        		
-        		var sliderValue = document.createElement("p");
-        		sliderValue.id = "sliderValue";
-        		sliderValue.innerHTML = "<strong>Offset: </strong>"+selected_furn.degreeOffset;
-        		
-        		rotateDiv = document.getElementById("rotateDiv");
-				rotateDiv.appendChild(sliderValue);
-        		rotateDiv.appendChild(rotateSlider);
-        	
-        			
-        		rotateSlider.oninput = function()
-        		{
-        			selected_marker.setRotationOrigin("center");
-					selected_furn.degreeOffset =rotateSlider.value;
-        			selected_marker.options.degree_offset = rotateSlider.value;
-        			selected_marker.setRotationAngle(rotateSlider.value);
-        			sliderValue.innerHTML = "<strong>Offset: </strong>" + rotateSlider.value;
-        		}
-        	}
-        	
-        	else
-        	{
-        		document.getElementById("rotateSlider").remove();
-        		document.getElementById("sliderValue").remove();
-        	}
-			
-
-        
-        }*/
     </script>
 </body>
 </html>
