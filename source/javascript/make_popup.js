@@ -13,6 +13,7 @@ function markerClick(e){
 	document.getElementById("minus").style.display = "block";
 	document.getElementById("checkall").style.display = "block";
 	document.getElementById("save").style.display = "block";
+	document.getElementById("save").style.top = "40.5%";
 	
 	selected_furn = furnMap.get(this.options.fid);
 	selected_marker = this;
