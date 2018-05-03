@@ -12,5 +12,5 @@ Stores links to communication hubs for the team.
 ### source
 Contains current build of project.
 
-### Licence
-The licence of this product.
+### License
+The license of this product.
