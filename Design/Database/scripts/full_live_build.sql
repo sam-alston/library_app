@@ -147,25 +147,19 @@ COMMENT = 'Each area has a default number of seats in it, divide that by number 
 
 
 CREATE TABLE `hsulibra_space_app`.`whiteboard` (
+  `whiteboard_id` INT NOT NULL,
   `furniture_id` INT NOT NULL,
   `survey_id` INT NOT NULL,
-  `use_type` INT NOT NULL,
-  PRIMARY KEY (`furniture_id`, `survey_id`),
+  PRIMARY KEY (`whiteboard_id`),
   INDEX `survey_fk_idx` (`survey_id` ASC),
-  INDEX `use_fk_idx` (`use_type` ASC),
   CONSTRAINT `attached_to_fk`
     FOREIGN KEY (`furniture_id`)
-    REFERENCES `hsulibra_space_app`.`furniture` (`furniture_id`)
+    REFERENCES `hsu_library`.`furniture` (`furniture_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `survey_id_fk`
     FOREIGN KEY (`survey_id`)
-    REFERENCES `hsulibra_space_app`.`survey_record` (`survey_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `use_fk`
-    FOREIGN KEY (`use_type`)
-    REFERENCES `hsulibra_space_app`.`activity` (`activity_id`)
+    REFERENCES `hsu_library`.`survey_record` (`survey_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 COMMENT = 'Whiteboards are used for writing on or partitioning space. They are used by a piece of furniture, and are only entered on a per survey, per use instance.';
@@ -264,6 +258,26 @@ CREATE TABLE `hsulibra_space_app`.`surveyed_room` (
 	ON DELETE NO ACTION
 	ON UPDATE NO ACTION)
 COMMENT = 'The furniture room doesn\'t hold seat items, it holds a total number of people in the room.';
+
+
+CREATE TABLE `hsulibra_space_app`.`wb_has_activity` (
+  `whiteboard_id` INT NOT NULL,
+  `activity_id` INT NOT NULL,
+  PRIMARY KEY (`whiteboard_id`, `activity_id`),
+  INDEX `wb_activity_fk_idx` (`activity_id` ASC),
+  CONSTRAINT `wb_fk`
+    FOREIGN KEY (`whiteboard_id`)
+    REFERENCES `hsulibra_space_app`.`hsulibra_space_app` (`whiteboard_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `wb_activity_fk`
+    FOREIGN KEY (`activity_id`)
+    REFERENCES `hsulibra_space_app`.`activity` (`activity_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+COMMENT = 'Multiple activities may be associated with a whiteboard, track which whiteboard was performing which activities.';
+
+
 
 INSERT INTO `hsulibra_space_app`.`room`
 (FACILITIES_ID, NAME)
