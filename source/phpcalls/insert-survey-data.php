@@ -16,6 +16,9 @@ foreach($jsondata as $key => $value){
 	$num_seats = $value["num_seats"];
 	$modified = $value["modified"];
 
+	//debug retstring
+	$retString;
+	
 	//if the furniture has been modified, add a modified_furniture entry
 	if($modified){
 		//get new location of furniture
@@ -52,15 +55,19 @@ foreach($jsondata as $key => $value){
 		$insert_room_stmt->bindParam(':survey_id', $survey_id, PDO::PARAM_INT);
 		
 		$insert_room_stmt->execute();
+		$retString = $insert_room_stmt;
 		$dbh->commit();
 	}
   
 	//if seat_places exists, we enter each seat to the database. A room will have a seat when it has activities.
 	if (array_key_exists('seat_places', $value)) {
-		foreach ($value["seat_places"] as $key2 => $value2) {
-			$occupied_state = $value2["occupied"];
-			$seat_position = $value2["seatPos"];
-
+		foreach ($value['seat_places'] as $key2 => $value2) {
+			$occupied_state=0;
+			if($value2['occupied']){
+				$occupied_state = 1;
+			}
+			$seat_position = $value2['seatPos'];
+			
 			$dbh->beginTransaction();
 			$insert_seat_stmt = $dbh->prepare('INSERT INTO seat (furniture_id, occupied, seat_position, seat_type, survey_id)
 											   VALUES (:furniture_id, :occupied, :seat_pos, :seat_type, :survey_id)');
@@ -103,4 +110,5 @@ foreach($jsondata as $key => $value){
 	}
 }
 
-print json_encode($insert_seat_act_stmt->rowCount());
+print json_encode($insert_seat_stmt->rowCount());
+//print $retString;

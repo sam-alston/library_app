@@ -47,10 +47,13 @@ function submitSurvey(username, layout, furnMap){
 					'to_json': json_string
 				},
 				success: function(data){
-					console.log("Modified Furniture inserted");
-					var used_json = data;
+					
 					console.log(data);
-					window.location.href = 'survey-success.php';
+					if(data>0){
+						window.location.href = 'survey-success.php';
+					} else {
+						alert("An error occured, please try again.");
+					}
 				}
 			});
         }

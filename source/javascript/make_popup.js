@@ -70,7 +70,7 @@ function markerClick(e){
 			plusbutton = document.getElementById("plus");
 			minusbutton = document.getElementById("minus");
 			
-			if(this.options.numSeats === "0"){
+			if(this.options.numSeats === 0){
 				//add room input
 				
 				addRoomInput(selected_furn.totalOccupants);

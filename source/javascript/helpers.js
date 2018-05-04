@@ -116,7 +116,6 @@ function updateHelper(){
 
 //On click of submission, Create's a Survey Record and Inserts each seat object into the database with that ID
 function submitSurveyHelper(){
-    var username = "<?php echo $_SESSION['username']?>";
     submitSurvey(username, layout, furnMap);
 }
 

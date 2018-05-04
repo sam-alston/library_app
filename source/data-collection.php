@@ -143,6 +143,9 @@
 
         var popup = document.getElementById("popupTest");
 
+		//set username variable to insert
+		var username = "<?php echo $_SESSION['username']?>";
+		
         var popupDim = 
         {
             'maxWidth': '5000',
