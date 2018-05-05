@@ -147,7 +147,7 @@ COMMENT = 'Each area has a default number of seats in it, divide that by number 
 
 
 CREATE TABLE `hsulibra_space_app`.`whiteboard` (
-  `whiteboard_id` INT NOT NULL,
+  `whiteboard_id` INT NOT NULL AUTO_INCREMENT,
   `furniture_id` INT NOT NULL,
   `survey_id` INT NOT NULL,
   PRIMARY KEY (`whiteboard_id`),

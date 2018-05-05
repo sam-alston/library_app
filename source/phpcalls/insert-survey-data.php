@@ -108,6 +108,39 @@ foreach($jsondata as $key => $value){
 			}
 		}
 	}
+
+	//if whiteboard array is not empty, we enter each white activity for that furniture id into the database
+	if (!empty($value["whiteboard"])){
+		$dbh->beginTransaction();
+		//whiteboard sql
+		$insert_wb_stmt = $dbh->prepare('INSERT INTO whiteboard(furniture_id, survey_id)
+									VALUES (:furn_id, :survey_id)');
+		$insert_wb_stmt->bindParam(':furn_id', $furn_id, PDO::PARAM_INT);
+		$insert_wb_stmt->bindParam(':survey_id', $survey_id, PDO::PARAM_INT);
+
+		$insert_wb_stmt->execute();
+		$wb_id = $dbh->lastInsertId();
+		$dbh->commit();
+			
+		foreach ($value['whiteboard'] as $wbkey => $wb_activity_value) {
+			$dbh_select = new PDO($dbhost, $dbh_select_user, $dbh_select_pw);
+			$get_wb_act_id_stmt = $dbh_select->prepare('SELECT activity_id FROM activity WHERE activity_description = :activity');
+			$get_wb_act_id_stmt->bindParam(':activity', $wb_activity_value, PDO::PARAM_STR);
+
+			$get_wb_act_id_stmt->execute();
+
+			$activity_id = $get_wb_act_id_stmt->fetchColumn();
+
+			$dbh->beginTransaction();
+			$insert_wb_act_stmt = $dbh->prepare('INSERT INTO wb_has_activity (whiteboard_id, activity_id)
+												 VALUES (:wb_id, :act_id)');
+			$insert_wb_act_stmt->bindParam(':wb_id', $wb_id, PDO::PARAM_INT);
+			$insert_wb_act_stmt->bindParam(':act_id', $activity_id, PDO::PARAM_INT);
+
+			$insert_wb_act_stmt->execute();
+			$dbh->commit();
+		}
+	}
 }
 
 print json_encode($insert_seat_stmt->rowCount());
