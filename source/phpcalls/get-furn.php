@@ -1,5 +1,5 @@
 <?php
-//This file is called when the layout is build with build_markets.js to get data for the furniture in layout
+//This file is called when the layout is built with build_markets.js to get data for the furniture in layout
 session_start();
 require_once('./../config.php');
 

@@ -13,6 +13,15 @@
     <title> Library Query Report </title>
     <meta charset="utf-8" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+    integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+    integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+    crossorigin=""></script>
+	<script src="./javascript/report-objs-pop.js"></script>
+	<script src="./javascript/leaflet.rotatedMarker.js"></script>
+	<script src="./javascript/icons.js"></script>
     <link rel="stylesheet" href="styles/layout.css" type="text/css" >
     <link rel="stylesheet" href="styles/format.css" type="text/css" >
 </head>
@@ -33,7 +42,7 @@
                     select.remove(1);
                 }
             }
-            $.ajax({
+			$.ajax({
                 url: 'phpcalls/get-survey-ids.php',
                 type: 'get',
                 data:{ 'selected_date': cur_selected_date },
@@ -54,6 +63,7 @@
                     }
                 }
             });
+			
         });
     });
 </script>
@@ -62,37 +72,7 @@
         <img class="logo" src="images/hsu-wm.svg">
         <h1>Library Data Collector</h1>
     
-    <?php
-        if (array_key_exists("username", $_SESSION)){
-            ?>
-            <h3 class="log-state"> Logged In: <?= $_SESSION["username"]?> </h3>
-            <?php
-        }
-		
-		if (array_key_exists("survey_id", $_GET)){
-			?>
-			<script>
-				var survey_id = <?= $_GET["survey_id"] ?>;
-				
-				$.ajax({
-                url: 'phpcalls/reportAreaUse.php',
-                type: 'get',
-                data:{ 'survey_id': survey_id },
-                success: function(data){
-					var reportDiv = document.getElementById("reportDiv");
-					reportDiv.innerHTML = data;
-                    console.log("Printed Area Use.");
-                },
-				error: function(XMLHttpRequest, textStatus, errorThrown) { 
-					console.log("Status: " + textStatus);
-					console.log("Error: " + errorThrown); 
-				}     
-            });
-			
-			</script>
-			<?php
-		}
-    ?>
+    
         <?php
             if (!array_key_exists("username", $_SESSION)){
                 ?>
@@ -131,7 +111,93 @@
                 <?php
             }
         ?>
+		
+		<div id="mapid"></div>
 		<div id="reportDiv"></div>
+		<?php
+        if (array_key_exists("username", $_SESSION)){
+            ?>
+            <h3 class="log-state"> Logged In: <?= $_SESSION["username"]?> </h3>
+            <?php
+        }
+		
+		if (array_key_exists("survey_id", $_GET)){
+			?>
+			<script>
+				//create maps and grab survey_id
+				var survey_id = <?= $_GET["survey_id"] ?>;
+				
+				areaMap = new Map();
+				furnMap = new Map();
+				
+				//define objects
+				function Area(area_id, verts, area_name){
+					this.area_id = area_id;
+					this.verts = verts;
+					this.area_name = area_name;
+					this.occupants = 0;
+					this.seats = 0;
+				}
+				function Verts(x,y, order){
+					this.x = x;
+					this.y = y;
+					this.order = order;
+				}
+				function Furniture(fid, numSeats, x, y, degreeOffset, ftype, inArea, occupants, activities){
+					this.fid = fid;
+					this.numSeats = numSeats;
+					this.x = x;
+					this.y = y;
+					this.degreeOffset = degreeOffset;
+					this.ftype = ftype;
+					this.inArea = inArea;
+					this.occupants = occupants;
+					this.activities = activities;
+				}
+				function Activity(count, name){
+					this.count = count;
+					this.name = name;
+				}
+				
+				//popuate furnMap and areaMap then place on map
+				populateObjs(survey_id);
+			
+			
+			//make map
+			var mymap = L.map('mapid', {crs: L.CRS.Simple});
+			var areaLayer = L.layerGroup().addTo(mymap);
+			var furnitureLayer = L.layerGroup().addTo(mymap);
+			var bounds = [[0,0], [360,550]];
+
+			mymap.fitBounds(bounds);
+			
+			
+			
+			//On zoomend, resize the marker icons
+        mymap.on('zoomend', function() {
+            var markerSize;
+            //resize the markers depending on zoomlevel so they appear to scale
+            //zoom is limited to 0-4
+            switch(mymap.getZoom()){
+                case 0: markerSize= 5; break;
+                case 1: markerSize= 10; break;
+                case 2: markerSize= 20; break;
+                case 3: markerSize= 40; break;
+                case 4: markerSize= 80; break;
+            }
+            //alert(mymap.getZoom)());
+            var newzoom = '' + (markerSize) +'px';
+            var newLargeZoom = '' + (markerSize*2) +'px';
+            $('#mapid .furnitureIcon').css({'width':newzoom,'height':newzoom});
+            $('#mapid .furnitureLargeIcon').css({'width':newLargeZoom,'height':newLargeZoom});          
+        });
+			
+			
+			
+			</script>
+			<?php
+		}
+    ?>
     </main>
     <footer>
         <p>Designed by Web App team</p>
