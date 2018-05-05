@@ -102,6 +102,30 @@
 			array_push($activities, array($row['COUNT(activity_description)'],$row['activity_description']));
 		}
 		
+		
+		//get modified furniture where it exists
+		$mod_furn_stmt = $dbh->prepare('SELECT *
+										FROM modified_furniture
+										WHERE furniture_id = :furniture_id
+											AND survey_id = :survey_id');
+											
+		$mod_furn_stmt->bindParam(':furniture_id', $fid, PDO::PARAM_INT);
+		$mod_furn_stmt->bindParam(':survey_id', $survey_id, PDO::PARAM_INT);
+		
+		$mod_furn_stmt->execute();
+		
+		$mod_furn = $mod_furn_stmt->fetch(PDO::FETCH_BOTH);
+		
+		//save original x&y to show where mod furned moved from
+		$original_x = $x;
+		$original_y = $y;
+		
+		if($mod_furn_stmt->rowCount() > 0){
+			$x = $mod_furn['new_x'];
+			$y = $mod_furn['new_y'];
+			$inArea = $mod_furn['in_area'];
+		}
+		
 		//bind furniture elements to array
 		$array_item = array( 'furniture_id' => $fid,
 							  'num_seats' => $numSeats,
@@ -111,7 +135,9 @@
 							  'furn_type' => $ftype,
 							  'in_area' => $inArea,
 							  'occupants' => $occupants,
-							  'activities' => $activities);
+							  'activities' => $activities,
+							  'original_x' => $original_x,
+							  'original_y' => $original_y);
 		array_push($data, $array_item);
 	}
 	

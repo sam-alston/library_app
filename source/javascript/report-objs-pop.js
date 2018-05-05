@@ -30,7 +30,6 @@ function queryFurniture(survey_id, layout_id){
 				'layout_id': layout_id},
 		success: function(data){
 			console.log("Retrieved survey record.");
-			console.log(data);
 			jsondata = JSON.parse(data);
 			popFurnMap(jsondata);
 		},
@@ -49,7 +48,6 @@ function queryArea(layout_id){
 		data:{ 'layout_id': layout_id },
 		success: function(data){
 			console.log("Retrieved areas.");
-			console.log(data);
 			jsondata = JSON.parse(data);
 			popAreaMap(jsondata);
 			addSurveyedFurniture();
@@ -65,9 +63,10 @@ function queryArea(layout_id){
 //populate the furnMap
 function popFurnMap(jsonFurniture){
 	for(key in jsonFurniture){
-		
+		//retrieve furniture
 		furn = jsonFurniture[key];
 		
+		//get activities for this furniture
 		activities = [];
 		jsonActivities = furn.activities;
 		for(iter in jsonActivities){
@@ -78,6 +77,13 @@ function popFurnMap(jsonFurniture){
 			activities.push(tempAct);
 		}
 		cur_furn = new Furniture(furn.furniture_id,furn.num_seats, furn.x, furn.y, furn.degree_offset, furn.furn_type, furn.in_area, furn.occupants, activities);
+		//if the original x&y are not equal to x&y, this furniture is modified
+		if(furn.y != furn.original_y || furn.x != furn.original_x){
+			cur_furn.modified = true;
+			cur_furn.original_x = furn.original_x;
+			cur_furn.original_y = furn.original_y;
+		}
+		
 		furnMap.set(furn.furniture_id, cur_furn);
 	}
 	
@@ -135,6 +141,21 @@ function addSurveyedFurniture(){
 		curArea = areaMap.get(areaId);
 		curArea.occupants += parseInt(occupied);
 		curArea.seats += parseInt(numSeats);
+		
+		//if this furniture is modified, draw a line from its original latlng
+		if(key.modified){
+			originalLatLng = [key.original_y, key.original_x];
+			pointList = [latlng, originalLatLng];
+			
+			polyline = new L.polyline(pointList, {
+				color: 'red',
+				weigth: 3,
+				opacity: 0.5,
+				smoothFactor: 1
+			});
+			
+			polyline.addTo(mymap);
+		}
 		
 		marker = L.marker(latlng, {
 			icon: selectedIcon,
