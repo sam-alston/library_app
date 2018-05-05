@@ -125,8 +125,11 @@
         var selected_furn;
 		var selected_marker;
         var seat_num;
-		    //to store the seat_places array to be saved
+		
+		//to store the seat_places array to be saved
 	    var temp_seat_places = [];
+	    
+	    //I don't think we need this
 	    var whiteboard_activity = "0";
 
         var mymap = L.map('mapid', {crs: L.CRS.Simple});

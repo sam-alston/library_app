@@ -131,17 +131,18 @@ function markerClick(e){
 		input.value = cur_prop;
 		input.onchange = function()
 		{
-			var activityCheck = isInArray(temp_wb, this.value);	
+			var activityCheck = isInArray(temp_wb, this.value, true);	
 			if (!activityCheck)
 			{
 				temp_wb.push(this.value);
 			}
 		}
 		
-		//check to see if the current activity is in the furnitures whiteboard activity array
-		var furnActivityCheck = isInArray(selected_furn.whiteboard, cur_prop);
+		//check to see if the current activity is in the furnitures whiteboard activity 
+		//		array if it was don't remove it
+		var furnActivityCheck = isInArray(selected_furn.whiteboard, cur_prop, false);
 		
-		//if it is mark the checkbox as checked
+		//mark the checkbox as checked if the value was in the array
 		if(furnActivityCheck)
 		{
 			input.checked = true;
@@ -336,7 +337,6 @@ function minus(cur_furn)
 		var removeBR = document.getElementById("br"+length);
 		removeBR.remove();
 
-		//cur_furn.seat_places.pop();
 		temp_seat_places.pop();
 		seat_num--;
 	}
@@ -384,11 +384,8 @@ function div_content(dd_div, cur_seat)
 				}
 			}
 
-			//get the CB of the Seat object
-			//seatOccupiedCB = document.getElementById("checkbox"+(cur_seat.seatPos+1));
-			//seatOccupiedCB.checked = true;
-			
-			var activityCheck = isInArray(cur_seat.activity, this.value);	
+			//Check to see if the value was already in the array, if it was remove it			
+			var activityCheck = isInArray(cur_seat.activity, this.value, true);	
 			if (!activityCheck)
 			{
 				cur_seat.activity.push(this.value);
@@ -416,13 +413,20 @@ function div_content(dd_div, cur_seat)
 	}
 }
 
-function isInArray(cur_array, cur_value)
+//Expects: an array, a value to search in the array, bool whether or not to remove the value from array
+//Returns: true if the item was in the array, false otherwise
+//Output: If you want the found value to be removed the value gets removed from the array
+function isInArray(cur_array, cur_value, remove)
 {
 	for(var i = 0; i < cur_array.length; i++)
 	{
 		if(cur_array[i] === cur_value)
 		{
-			cur_array.splice(i, 1);
+			if(remove)
+			{
+				cur_array.splice(i, 1);
+			}
+			
 			return true;
 		}
 	}
