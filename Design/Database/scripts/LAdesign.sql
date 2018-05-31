@@ -28,14 +28,7 @@ COMMENT = 'Layouts are the entities that unify which objects are on a certain fl
 CREATE TABLE `hsu_library`.`area` (
   `area_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
-  `facilities_id` VARCHAR(10) NOT NULL,
-  PRIMARY KEY (`area_id`),
-  INDEX `room_id_idx` (`facilities_id` ASC),
-  CONSTRAINT `room_id_fk`
-    FOREIGN KEY (`facilities_id`)
-    REFERENCES `hsu_library`.`room` (`facilities_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`area_id`))
 COMMENT = 'All the spaces on a layout are made up of areas. They have an ID, a human name that defaults to a room name if there is no sub area, the room id, and a layout.';
 
 CREATE TABLE `hsu_library`.`area_in_layout` (
